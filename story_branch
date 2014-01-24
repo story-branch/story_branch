@@ -10,14 +10,14 @@ end
 
 def main
 
-  if ENV['PIVOTAL_API_KEY'].nil? or ENV['PIVOTAL_PROJECT_ID'].nil
+  if ENV['PIVOTAL_API_KEY'].nil? or ENV['PIVOTAL_PROJECT_ID'].nil?
     puts "\nYou must have both PIVOTAL_PROJECT_ID and PIVOTAL_API_KEY\nset and valid in your shell environment, or things will go bad\n\n"
     exit
   end
 
   api_key = ENV['PIVOTAL_API_KEY']
   PivotalTracker::Client.token = api_key
-  project = PivotalTracker::Project.find ENV['PIVOTAL_PROJECT_ID']
+  project = PivotalTracker::Project.find(ENV['PIVOTAL_PROJECT_ID'].to_i)
   stories = project.stories.all({current_state: :started})
   stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
 
