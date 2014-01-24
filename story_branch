@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
 begin
   require 'pivotal-tracker'
@@ -9,9 +10,10 @@ end
 
 def main
 
-
-
-  puts ENV['PATH']
+  if ENV['PIVOTAL_API_KEY'].nil? or ENV['PIVOTAL_PROJECT_ID'].nil
+    puts "\nYou must have both PIVOTAL_PROJECT_ID and PIVOTAL_API_KEY\nset and valid in your shell environment, or things will go bad\n\n"
+    exit
+  end
 
   api_key = ENV['PIVOTAL_API_KEY']
   PivotalTracker::Client.token = api_key
