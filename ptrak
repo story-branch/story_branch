@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'pivotal-tracker'
+
+def main
+
+  api_key = "7a8f44c3480e2926702cd507ff01be94"
+  PivotalTracker::Client.token = api_key
+  project = PivotalTracker::Project.find 651417
+  stories = project.stories.all({current_state: :started})
+  stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
+
+  story_selection = nil
+  branch_name = nil
+
+  puts "Select a story"
+
+  while story_selection == nil or story_selection == 0 or story_selection > stories.length + 1
+    puts "invalid selection" if story_selection != nil
+    story_selection = gets.chomp.to_i
+  end
+
+  story = stories[story_selection - 1]
+
+  puts "##{story.id} : #{story.name} - Selected!"
+
+  current_branch = `git rev-parse --abbrev-ref HEAD`
+
+  if current_branch == "master"
+    puts "Create feature branch:"
+    branch_name = gets.chomp
+  end
+
+  # TODO: Validate that branchname is 'legal' and new.
+
+  `git checkout -b #{branch_name}-#{story.id}`
+
+end
+
+main
