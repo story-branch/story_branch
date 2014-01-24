@@ -1,12 +1,21 @@
 #!/usr/bin/env ruby
 
-require 'pivotal-tracker'
+begin
+  require 'pivotal-tracker'
+rescue
+  puts "Error: Pivotal Tracker ruby gem must be installed"
+  exit
+end
 
 def main
 
-  api_key = "7a8f44c3480e2926702cd507ff01be94"
+
+
+  puts ENV['PATH']
+
+  api_key = ENV['PIVOTAL_API_KEY']
   PivotalTracker::Client.token = api_key
-  project = PivotalTracker::Project.find 651417
+  project = PivotalTracker::Project.find ENV['PIVOTAL_PROJECT_ID']
   stories = project.stories.all({current_state: :started})
   stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
 
@@ -32,10 +41,12 @@ def main
     puts "Create feature branch:"
     branch_name = gets.chomp
 
-    # TODO: Validate that branchname is 'legal' and new.
+    # TODO: Validate that branchname is 'legal'
+    # TODO: Validate that branchname doesn't exist
     fq_branch_name = "#{branch_name}-#{story.id}"
     puts "Creating: #{fq_branch_name}"
     `git checkout -b #{fq_branch_name}`
+
   end
 end
 
