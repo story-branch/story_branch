@@ -24,17 +24,19 @@ def main
 
   puts "##{story.id} : #{story.name} - Selected!"
 
-  current_branch = `git rev-parse --abbrev-ref HEAD`
+  current_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+
+  puts "Current branch: #{current_branch}"
 
   if current_branch == "master"
     puts "Create feature branch:"
     branch_name = gets.chomp
+
+    # TODO: Validate that branchname is 'legal' and new.
+    fq_branch_name = "#{branch_name}-#{story.id}"
+    puts "Creating: #{fq_branch_name}"
+    `git checkout -b #{fq_branch_name}`
   end
-
-  # TODO: Validate that branchname is 'legal' and new.
-
-  `git checkout -b #{branch_name}-#{story.id}`
-
 end
 
 main
