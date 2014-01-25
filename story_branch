@@ -69,7 +69,7 @@ def dashed s
 end
 
 def validate_branch_name name
-  unless validate_branch_name? name
+  unless valid_branch_name? name
     puts "Error: #{name}\nis an invalid name."
     return false
   end
