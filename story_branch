@@ -1,55 +1,120 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
-begin
-  require 'pivotal-tracker'
-rescue
-  puts "Error: Pivotal Tracker ruby gem must be installed"
-  exit
-end
+# Name: story_branch (recommend: setting a git alias as "git story")
 
-def main
+# Description:
+#
+# Create a git branch with automatic reference to a Pivotal Tracker Story ID
+#
 
-  if ENV['PIVOTAL_API_KEY'].nil? or ENV['PIVOTAL_PROJECT_ID'].nil?
-    puts "\nYou must have both PIVOTAL_PROJECT_ID and PIVOTAL_API_KEY\nset and valid in your shell environment, or things will go bad\n\n"
+# Commentary:
+#
+# By default story_branch will present a list of started stories from
+# your active PivotalTracker project, you select one and then provide
+# a feature branch name for that story. The branch will be created and
+# the name will include the story_id as a suffix.
+#
+
+# TODO For milestone 'porus-flapjack'
+# [ ] Present safe version of story name (dash-cased) for editing
+# [ ] Provide readline editing
+# [ ]
+
+def friendly_require gem
+  begin
+    require gem
+  rescue LoadError
+    puts "The #{gem} gem must be installed"
     exit
   end
+end
 
-  api_key = ENV['PIVOTAL_API_KEY']
+def dash_cased s
+  s.tr(' ', '-')
+end
+
+def env_required var_name
+  if ENV[var_name].nil?
+    puts "#{var_name} must be set in your environment."
+    exit
+  end
+  ENV[var_name]
+end
+
+def list_pivotal_stories api_key, project_id
   PivotalTracker::Client.token = api_key
-  project = PivotalTracker::Project.find(ENV['PIVOTAL_PROJECT_ID'].to_i)
+  project = PivotalTracker::Project.find(project_id.to_i)
   stories = project.stories.all({current_state: :started})
   stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
+  stories
+end
 
+def readline prompt, history=[]
+  if history.length > 0
+    history.each {|i| Readline::HISTORY.push i}
+  end
+  begin
+    Readline.readline(prompt, false)
+  rescue Interrupt
+    exit
+  end
+end
+
+def select_story stories
   story_selection = nil
-  branch_name = nil
-
-  puts "Select a story"
-
   while story_selection == nil or story_selection == 0 or story_selection > stories.length + 1
     puts "invalid selection" if story_selection != nil
-    story_selection = gets.chomp.to_i
+    story_selection = readline("Select a story: ", Range.new(1,stories.length).to_a.map(&:to_s)).to_i
   end
-
   story = stories[story_selection - 1]
+  puts "Selected : ##{story.id} : #{story.name}"
+  return story
+end
 
-  puts "##{story.id} : #{story.name} - Selected!"
-
+def create_feature_branch story
   current_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+  dashed_story_name = (dash_cased story.name)[0..50].downcase
+  feature_branch_name = nil
 
-  puts "Current branch: #{current_branch}"
+  puts "You are checked out at: #{current_branch}"
 
   if current_branch == "master"
-    puts "Create feature branch:"
-    branch_name = gets.chomp
+
+    while feature_branch_name == nil or feature_branch_name == ""
+      puts "Provide a new branch name..." if [nil, ""].include? feature_branch_name
+      feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
+    end
+
+    feature_branch_name.chomp!
 
     # TODO: Validate that branchname is 'legal'
     # TODO: Validate that branchname doesn't exist
-    fq_branch_name = "#{branch_name}-#{story.id}"
-    puts "Creating: #{fq_branch_name}"
-    `git checkout -b #{fq_branch_name}`
 
+    branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+
+    # Create branch in git repo...
+    puts "Creating: #{branch_name_with_story_id}"
+    `git checkout -b #{branch_name_with_story_id}`
+
+  else
+    puts "Feature branches must be created from 'master'"
   end
 end
 
-main
+def story_branch_runner
+  #require
+  friendly_require 'pivotal-tracker'
+  friendly_require 'readline'
+
+  # env
+  api_key = env_required 'PIVOTAL_API_KEY'
+  project_id = env_required 'PIVOTAL_PROJECT_ID'
+
+  # do it...
+  stories = list_pivotal_stories api_key, project_id
+  story = select_story stories
+  create_feature_branch story
+end
+
+story_branch_runner
