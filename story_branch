@@ -64,10 +64,23 @@ def env_required var_name
   ENV[var_name]
 end
 
+# Readline wrapper with injected history
+def readline prompt, history=[]
+  if history.length > 0
+    history.each {|i| Readline::HISTORY.push i}
+  end
+  begin
+    Readline.readline(prompt, false)
+  rescue Interrupt
+    exit
+  end
+end
+
 def dashed s
   s.tr(' _', '-')
 end
 
+# Branch name validation
 def validate_branch_name name
   unless valid_branch_name? name
     puts "Error: #{name}\nis an invalid name."
@@ -93,6 +106,7 @@ def valid_branch_name? name
   name.match valid
 end
 
+# Git operations
 def is_existing_branch? name
   # we don't use the Git gem's is_local_branch? because we want to
   # ignore the id suffix while still avoiding name collisions
@@ -105,11 +119,6 @@ def is_existing_branch? name
   end
   return -1
 end
-
-# NOTE: In the forthcoming badness of over-engineering that is bound
-# to take place, silly things like opening the git repo each time we
-# call the following 3 methods, will be something we frown on and
-# refactor, or perhaps we won't...
 
 def git_branch_names
   g = Git.open "."
@@ -127,23 +136,13 @@ def git_create_branch name
   g.branch(name).checkout
 end
 
+# Use Pivotal tracker API to get Stories
 def list_pivotal_stories api_key, project_id
   PivotalTracker::Client.token = api_key
   project = PivotalTracker::Project.find(project_id.to_i)
   stories = project.stories.all({current_state: :started})
   stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
   stories
-end
-
-def readline prompt, history=[]
-  if history.length > 0
-    history.each {|i| Readline::HISTORY.push i}
-  end
-  begin
-    Readline.readline(prompt, false)
-  rescue Interrupt
-    exit
-  end
 end
 
 def select_story stories
@@ -161,44 +160,36 @@ def create_feature_branch story
   current_branch = git_current_branch
   dashed_story_name = (dashed story.name)[0..50].downcase
   feature_branch_name = nil
-
   puts "You are checked out at: #{current_branch}"
-
   if current_branch == "master"
     while feature_branch_name == nil or feature_branch_name == ""
       puts "Provide a new branch name..." if [nil, ""].include? feature_branch_name
       feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
     end
     feature_branch_name.chomp!
-
     validate_branch_name feature_branch_name
-
     feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-
-    # Create branch in git repo...
     puts "Creating: #{feature_branch_name_with_story_id}"
     git_create_branch feature_branch_name_with_story_id
-
   else
     puts "Feature branches must be created from 'master'"
   end
 end
 
-#require
-friendly_require 'pivotal-tracker'
-friendly_require 'readline'
-friendly_require 'git'
-friendly_require 'levenshtein', 'levenshtein-ffi'
-
-# env
-api_key = env_required 'PIVOTAL_API_KEY'
-project_id = File.read(".pivotal-id") rescue env_required('PIVOTAL_PROJECT_ID')
-
 def pivotal_story_branch api_key, project_id
-  # do it...
   stories = list_pivotal_stories api_key, project_id
   story = select_story stories
   create_feature_branch story
 end
 
+# -> init
+friendly_require 'pivotal-tracker'
+friendly_require 'readline'
+friendly_require 'git'
+friendly_require 'levenshtein', 'levenshtein-ffi'
+
+api_key = env_required 'PIVOTAL_API_KEY'
+project_id = File.read(".pivotal-id") rescue env_required('PIVOTAL_PROJECT_ID')
+
+# -> start
 pivotal_story_branch api_key, project_id
