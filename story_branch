@@ -171,7 +171,7 @@ def create_feature_branch story
     end
     feature_branch_name.chomp!
 
-    validate_branch_name
+    validate_branch_name feature_branch_name
 
     feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
 
