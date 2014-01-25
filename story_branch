@@ -27,33 +27,14 @@
 # Backlog:
 # Nothing...
 
-def friendly_require gem
+def friendly_require gem, name=nil
   begin
     require gem
   rescue LoadError
-    puts "The #{gem} gem must be installed"
+    name = gem if name.nil?
+    puts "The #{name} gem must be installed"
     exit
   end
-end
-
-def dash_cased s
-  s.tr(' ', '-')
-end
-
-def validate_branch_name name
-
-end
-
-def git_list_branches
-
-end
-
-def git_current_branch
-  `git rev-parse --abbrev-ref HEAD`.chomp
-end
-
-def git_create_branch name
-  `git checkout -b #{branch_name_with_story_id}`
 end
 
 def env_required var_name
@@ -62,6 +43,49 @@ def env_required var_name
     exit
   end
   ENV[var_name]
+end
+
+def dash_cased s
+  s.tr(' ', '-')
+end
+
+def validate_branch_name name
+  unless validate_branch_name? name
+    puts "Error: #{name}\nis an invalid name."
+    return false
+  end
+  unless is_existing_branch? name
+    puts "Error: #{name}\nmatches the name of an existing branch, a unique name is required"
+  end
+end
+
+def valid_branch_name? name
+  valid = /[a-zA-Z][-._0-9a-zA-Z]*/
+  name.match valid
+end
+
+def is_existing_branch? name
+  # we don't use the Git gem's is_local_branch? because we want to
+  # ignore the id suffix while still avoiding name collisions
+  git_branch_names.each do |n|
+    puts n
+  end
+end
+
+def git_branch_names
+  g = Git.open "."
+  g.branches.map(&:name)
+end
+
+def git_current_branch
+  g = Git.open "."
+  g.current_branch
+end
+
+def git_create_branch name
+  g = Git.open "."
+  g.branch(feature_branch_name_with_story_id).create
+  g.branch(feature_branch_name_with_story_id).checkout
 end
 
 def list_pivotal_stories api_key, project_id
@@ -107,30 +131,35 @@ def create_feature_branch story
       feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
     end
     feature_branch_name.chomp!
-    branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+
+    validate_branch_name
+
+    feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
 
     # Create branch in git repo...
-    puts "Creating: #{branch_name_with_story_id}"
-    git_create_branch branch_name_with_story_id
+    puts "Creating: #{feature_branch_name_with_story_id}"
+    git_create_branch feature_branch_name_with_story_id
 
   else
     puts "Feature branches must be created from 'master'"
   end
 end
 
-def story_branch_runner
-  #require
-  friendly_require 'pivotal-tracker'
-  friendly_require 'readline'
+#require
+friendly_require 'pivotal-tracker'
+friendly_require 'readline'
+friendly_require 'git'
+friendly_require 'levenshtein', 'levenshtein-ffi'
+# env
+api_key = env_required 'PIVOTAL_API_KEY'
+project_id = env_required 'PIVOTAL_PROJECT_ID'
 
-  # env
-  api_key = env_required 'PIVOTAL_API_KEY'
-  project_id = env_required 'PIVOTAL_PROJECT_ID'
-
+def pivotal_story_branch api_key, project_id
   # do it...
   stories = list_pivotal_stories api_key, project_id
   story = select_story stories
   create_feature_branch story
 end
 
-story_branch_runner
+# pivotal_story_branch api_key, project_id
+git_branch_names
