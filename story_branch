@@ -2,24 +2,30 @@
 # -*- coding: utf-8 -*-
 
 # Name: story_branch (recommend: setting a git alias as "git story")
-
-# Description:
 #
+# Author: Jason Milkins <jason@opsmanager.com> & Gabe Hollombe <gabe@neo.com>
+#
+# Description:
 # Create a git branch with automatic reference to a Pivotal Tracker Story ID
 #
-
 # Commentary:
-#
 # By default story_branch will present a list of started stories from
 # your active PivotalTracker project, you select one and then provide
 # a feature branch name for that story. The branch will be created and
 # the name will include the story_id as a suffix.
 #
-
-# TODO For milestone 'porus-flapjack'
-# [ ] Present safe version of story name (dash-cased) for editing
-# [ ] Provide readline editing
-# [ ]
+# Changelog:
+#
+# Milestone 'porus-flapjack'
+# * Present safe version of story name (dash-cased) for editing
+# * Provide readline editing
+#
+# Current Features being added:
+# TODO: Validate that branchname is 'legal'
+# TODO: Validate that branchname doesn't already exist (check name with and without pivotal tracker id)
+#
+# Backlog:
+# Nothing...
 
 def friendly_require gem
   begin
@@ -32,6 +38,22 @@ end
 
 def dash_cased s
   s.tr(' ', '-')
+end
+
+def validate_branch_name name
+
+end
+
+def git_list_branches
+
+end
+
+def git_current_branch
+  `git rev-parse --abbrev-ref HEAD`.chomp
+end
+
+def git_create_branch name
+  `git checkout -b #{branch_name_with_story_id}`
 end
 
 def env_required var_name
@@ -73,29 +95,23 @@ def select_story stories
 end
 
 def create_feature_branch story
-  current_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+  current_branch = git_current_branch
   dashed_story_name = (dash_cased story.name)[0..50].downcase
   feature_branch_name = nil
 
   puts "You are checked out at: #{current_branch}"
 
   if current_branch == "master"
-
     while feature_branch_name == nil or feature_branch_name == ""
       puts "Provide a new branch name..." if [nil, ""].include? feature_branch_name
       feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
     end
-
     feature_branch_name.chomp!
-
-    # TODO: Validate that branchname is 'legal'
-    # TODO: Validate that branchname doesn't exist
-
     branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
 
     # Create branch in git repo...
     puts "Creating: #{branch_name_with_story_id}"
-    `git checkout -b #{branch_name_with_story_id}`
+    git_create_branch branch_name_with_story_id
 
   else
     puts "Feature branches must be created from 'master'"
