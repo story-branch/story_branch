@@ -6,26 +6,45 @@
 # Author: Jason Milkins <jason@opsmanager.com> & Gabe Hollombe <gabe@neo.com>
 #
 # Description:
+#
 # Create a git branch with automatic reference to a Pivotal Tracker Story ID
 #
 # Commentary:
-# By default story_branch will present a list of started stories from
-# your active PivotalTracker project, you select one and then provide
-# a feature branch name for that story. The branch will be created and
-# the name will include the story_id as a suffix.
+#
+# By default story_branch will present a list of started
+# stories from your active PivotalTracker project, you select one and
+# then provide a feature branch name for that story. The branch will
+# be created and the name will include the story_id as a suffix.
+#
+# When picking a story, enter the selection number on the left (up
+# arrow / C-p will scroll through the numbers)
+#
+# Once a story is selected, a feature branch name must be entered, a
+# suggestion is shown if you press up arrow / C-p
 #
 # Changelog:
 #
-# Milestone 'porus-flapjack'
+# Milestone 'porus-flapjack' DONE
 # * Present safe version of story name (dash-cased) for editing
 # * Provide readline editing
 #
-# Current Features being added:
-# TODO: Validate that branchname is 'legal'
-# TODO: Validate that branchname doesn't already exist (check name with and without pivotal tracker id)
+# Milestone 'eggs-n-bakey' DONE
+# * Validate that branchname is 'legal'
+# * Validate that branchname doesn't already exist (strip pivotal
+#   tracker ids suffix from existing names when present)
+# * Use Levenshtein Distance to determine if name is (very) similar to
+#   existing branch names
+# * Use Git gem
+# * Use ActiveSupport gem
+# * Use Levenschtein-ffi gem
+# * Readline history injection for story selection & branch name suggestion
+#
+# Milestone 'tequila-grizzly' DONE
+# * Look for pivotal project id (.pivotal-id) in repo root (we assume
+#   we're in project root.) (before checking environment)
 #
 # Backlog:
-# Nothing...
+# ...
 
 def friendly_require gem, name=nil
   begin
@@ -45,7 +64,7 @@ def env_required var_name
   ENV[var_name]
 end
 
-def dash_cased s
+def dashed s
   s.tr(' _', '-')
 end
 
@@ -68,6 +87,8 @@ def validate_branch_name name
 end
 
 def valid_branch_name? name
+  # Valid names begin with a letter and are followed by alphanumeric
+  # with _ . - as allowed punctuation
   valid = /[a-zA-Z][-._0-9a-zA-Z]*/
   name.match valid
 end
@@ -76,7 +97,7 @@ def is_existing_branch? name
   # we don't use the Git gem's is_local_branch? because we want to
   # ignore the id suffix while still avoiding name collisions
   git_branch_names.each do |n|
-    normalised_branch_name = dash_cased n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]
+    normalised_branch_name = dashed n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]
     levenshtein_distance = Levenshtein.distance normalised_branch_name, name
     if levenshtein_distance < 2
       return levenshtein_distance
@@ -138,7 +159,7 @@ end
 
 def create_feature_branch story
   current_branch = git_current_branch
-  dashed_story_name = (dash_cased story.name)[0..50].downcase
+  dashed_story_name = (dashed story.name)[0..50].downcase
   feature_branch_name = nil
 
   puts "You are checked out at: #{current_branch}"
@@ -171,7 +192,7 @@ friendly_require 'levenshtein', 'levenshtein-ffi'
 
 # env
 api_key = env_required 'PIVOTAL_API_KEY'
-project_id = env_required 'PIVOTAL_PROJECT_ID'
+project_id = File.read(".pivotal-id") rescue env_required('PIVOTAL_PROJECT_ID')
 
 def pivotal_story_branch api_key, project_id
   # do it...
