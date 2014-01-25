@@ -123,8 +123,8 @@ end
 
 def git_create_branch name
   g = Git.open "."
-  g.branch(feature_branch_name_with_story_id).create
-  g.branch(feature_branch_name_with_story_id).checkout
+  g.branch(name).create
+  g.branch(name).checkout
 end
 
 def list_pivotal_stories api_key, project_id
