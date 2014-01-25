@@ -46,7 +46,7 @@ def env_required var_name
 end
 
 def dash_cased s
-  s.tr(' ', '-')
+  s.tr(' _', '-')
 end
 
 def validate_branch_name name
@@ -54,8 +54,16 @@ def validate_branch_name name
     puts "Error: #{name}\nis an invalid name."
     return false
   end
-  unless is_existing_branch? name
-    puts "Error: #{name}\nmatches the name of an existing branch, a unique name is required"
+  existing_name_score = is_existing_branch?(name)
+  unless existing_name_score == -1
+    puts <<-END.strip_heredoc
+      Name Collision Error:
+
+      #{name}
+
+      This is too similar to the name of an existing
+      branch, a more unique name is required
+    END
   end
 end
 
@@ -68,9 +76,19 @@ def is_existing_branch? name
   # we don't use the Git gem's is_local_branch? because we want to
   # ignore the id suffix while still avoiding name collisions
   git_branch_names.each do |n|
-    puts n
+    normalised_branch_name = dash_cased n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]
+    levenshtein_distance = Levenshtein.distance normalised_branch_name, name
+    if levenshtein_distance < 2
+      return levenshtein_distance
+    end
   end
+  return -1
 end
+
+# NOTE: In the forthcoming badness of over-engineering that is bound
+# to take place, silly things like opening the git repo each time we
+# call the following 3 methods, will be something we frown on and
+# refactor, or perhaps we won't...
 
 def git_branch_names
   g = Git.open "."
@@ -150,6 +168,7 @@ friendly_require 'pivotal-tracker'
 friendly_require 'readline'
 friendly_require 'git'
 friendly_require 'levenshtein', 'levenshtein-ffi'
+
 # env
 api_key = env_required 'PIVOTAL_API_KEY'
 project_id = env_required 'PIVOTAL_PROJECT_ID'
@@ -161,5 +180,4 @@ def pivotal_story_branch api_key, project_id
   create_feature_branch story
 end
 
-# pivotal_story_branch api_key, project_id
-git_branch_names
+pivotal_story_branch api_key, project_id
