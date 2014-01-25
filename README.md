@@ -33,7 +33,8 @@ supports running a ruby script. (Ruby 1.9.3+ but we recommend 2.x up)
 First make sure you have the gems listed below installed, run `bundle`
 in the same folder as `story_branch`
 
-Grab you Pivotal Tracker API key and place it in your .bashrc (or .zshrc etc.) as:
+Grab your Pivotal Tracker API key and place it in your .bashrc (or
+.zshrc etc.) as:
 
     export PIVOTAL_API_KEY=yourapikeywithoutquotesoranythingelse
 
