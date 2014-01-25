@@ -38,36 +38,30 @@ Grab your Pivotal Tracker API key and place it in your .bashrc (or
 
     export PIVOTAL_API_KEY=yourapikeywithoutquotesoranythingelse
 
-You can run that line on it's own too so you don't have to open a new
-shell. You'll find the Pivotal Tracker API key at the bottom of your
-Profile page when logged in.
+You also can run that line on it's own, so you don't have to open a
+new shell. The API key is visble at the bottom of your Pivotal Tracker
+Profile page when you're logged in.
 
 To identify which Pivotal Project to use, place a `.pivotal-id` file
 in the project root folder, alongside `.git` and `.gitignore` etc.
 
-`.pivotal-id` should just contain the id number of the project, and
-nothing else. Find it at the end of the project page url, its the
-number after the last `/`. There's an example `.pivotal-id` in the
-repository.
+`.pivotal-id` should just contain the id number of the project. Find
+it at the end of the project page url, it's the number after the last
+`/`. There's an example `.pivotal-id` in the repository.
 
-You can also use the environment var `PIVOTAL_PROJECT_ID` however,
-it's not so practical to do that.
+You can also use the environment var `PIVOTAL_PROJECT_ID` if you
+prefer.
 
 ## Usage
 
-Once you're all setup, you can put `story_branch` in your path, or
-move it somewhere (it's self contained) that's already in your path.
+Once you're setup, place `story_branch` in your path.
 
-> Note: story_branch will be converted to/released as a gem in a few
-> days/one week, so installation to the path will be automatic at that
-> time.
-
-Navigate to your project root, and while it's checkout out at your
+Navigate to your project root, and while it's checked out at your
 master branch, type:
 
     story_branch
 
-The rest is interactive from here on, when the process is finished,
+Follow the directions on screen. When the process is finished,
 you'll be switched automatically to the newly created branch.
 
 ## Dependencies
