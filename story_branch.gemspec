@@ -10,4 +10,12 @@ Gem::Specification.new do |s|
   s.homepage    =
     'http://rubygems.org/gems/story_branch'
   s.license       = 'MIT'
+  s.add_runtime_dependency "pivotal-tracker",
+    ["~> 0.5"]
+  s.add_runtime_dependency "git",
+    ["~> 1.2"]
+  s.add_runtime_dependency "levenshtein",
+    ["~> 0.2"]
+  s.add_runtime_dependency "levenshtein-ffi",
+    ["~> 1.0"]
 end
