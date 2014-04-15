@@ -193,3 +193,10 @@ project_id = File.read(".pivotal-id") rescue env_required('PIVOTAL_PROJECT_ID')
 
 # -> start
 pivotal_story_branch api_key, project_id
+
+
+class StoryBranch
+  def self.hi
+    puts "hi"
+  end
+end
