@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'story_branch'
-  s.version     = '0.0.1'
+  s.version     = '0.0.0'
   s.date        = '2014-04-15'
   s.summary     = "Story Branch - create git branches based on pivotal tracker stories"
   s.description = "Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story"
@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
     ["~> 0.2"]
   s.add_runtime_dependency "levenshtein-ffi",
     ["~> 1.0"]
+  s.executables  = ['story_branch']
 end
