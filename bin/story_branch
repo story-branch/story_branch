@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+#require 'story_branch'
+require_relative '../lib/story_branch'
+
+sb = StoryBranch.new()
+sb.connect
