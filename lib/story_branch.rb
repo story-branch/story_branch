@@ -1,7 +1,7 @@
 # Name: story_branch (recommend: setting a git alias as "git story")
 #
 # Authors: Jason Milkins <jason@opsmanager.com>
-#          Rui Baltazar <rbaltazar@airdrilling.com>
+#          Rui Baltazar <rui.p.baltazar@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
 # Description:
