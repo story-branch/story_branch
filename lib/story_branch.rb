@@ -1,17 +1,20 @@
 # Name: story_branch (recommend: setting a git alias as "git story")
 #
-# Author: Jason Milkins <jason@opsmanager.com> & Gabe Hollombe <gabe@neo.com>
+# Authors: Jason Milkins <jason@opsmanager.com>
+#          Rui Baltazar <rbaltazar@airdrilling.com>
+#          Gabe Hollombe <gabe@neo.com>
 #
 # Description:
 #
-# Create a git branch with automatic reference to a Pivotal Tracker Story ID
+# Create a git branch with automatic reference to a Pivotal Tracker
+# Story ID
 #
 # Commentary:
 #
-# By default story_branch will present a list of started
-# stories from your active PivotalTracker project, you select one and
-# then provide a feature branch name for that story. The branch will
-# be created and the name will include the story_id as a suffix.
+# By default story_branch will present a list of started stories from
+# your active PivotalTracker project, you select one and then provide
+# a feature branch name for that story. The branch will be created and
+# the name will include the story_id as a suffix.
 #
 # When picking a story, enter the selection number on the left (up
 # arrow / C-p will scroll through the numbers)
@@ -19,7 +22,26 @@
 # Once a story is selected, a feature branch name must be entered, a
 # suggestion is shown if you press up arrow / C-p
 #
+# Usage:
+#
+# Note: Run story_branch from the project root folder, with the
+# master branch checked out, or an error will be thrown.
+#
+# You must have a PIVOTAL_API_KEY environment variable set to your
+# Pivotal api key, and either a .pivotal-id file or PIVOTAL_PROJECT_ID
+# environment variable set, (the file will supersede the environment
+# variable)
+#
+#
 # Changelog:
+#
+# Milestone 'twiddly-winks' DONE
+# * Format as Ruby gem, command line tool
+# * Refactor to StoryBranch class
+# * Add usage info (draft) to file header
+# * Add simple_sanitize method to remove common punctuation from story
+#   names / existing branch names
+# * Remove arbitrary 50 char limit on branch names
 #
 # Milestone 'porus-flapjack' DONE
 # * Present safe version of story name (dash-cased) for editing
@@ -47,7 +69,6 @@ require 'pivotal-tracker'
 require 'readline'
 require 'git'
 require 'levenshtein'
-require 'levenshtein-ffi'
 
 class StoryBranch
 
@@ -60,7 +81,7 @@ class StoryBranch
   def connect
     pivotal_story_branch @api_key, @project_id
   end
-  
+
   private
   def env_required var_name
     if ENV[var_name].nil?
@@ -69,7 +90,7 @@ class StoryBranch
     end
     ENV[var_name]
   end
-  
+
   # Readline wrapper with injected history
   def readline prompt, history=[]
     if history.length > 0
@@ -81,11 +102,15 @@ class StoryBranch
       exit
     end
   end
-  
+
   def dashed s
-    s.tr(' _', '-')
+    s.tr(' _,.', '-')
   end
-  
+
+  def simple_sanitize s
+    s.tr '\'"%!@#$(){}[]*;:/\\?', ''
+  end
+
   # Branch name validation
   def validate_branch_name name
     unless valid_branch_name? name
@@ -96,28 +121,28 @@ class StoryBranch
     unless existing_name_score == -1
       puts <<-END.strip_heredoc
         Name Collision Error:
-  
+
         #{name}
-  
+
         This is too similar to the name of an existing
         branch, a more unique name is required
       END
     end
   end
-  
+
   def valid_branch_name? name
     # Valid names begin with a letter and are followed by alphanumeric
     # with _ . - as allowed punctuation
     valid = /[a-zA-Z][-._0-9a-zA-Z]*/
     name.match valid
   end
-  
+
   # Git operations
   def is_existing_branch? name
     # we don't use the Git gem's is_local_branch? because we want to
     # ignore the id suffix while still avoiding name collisions
     git_branch_names.each do |n|
-      normalised_branch_name = dashed n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]
+      normalised_branch_name = simple_sanitize(dashed(n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]))
       levenshtein_distance = Levenshtein.distance normalised_branch_name, name
       if levenshtein_distance < 2
         return levenshtein_distance
@@ -125,23 +150,23 @@ class StoryBranch
     end
     return -1
   end
-  
+
   def git_branch_names
     g = Git.open "."
     g.branches.map(&:name)
   end
-  
+
   def git_current_branch
     g = Git.open "."
     g.current_branch
   end
-  
+
   def git_create_branch name
     g = Git.open "."
     g.branch(name).create
     g.branch(name).checkout
   end
-  
+
   # Use Pivotal tracker API to get Stories
   def list_pivotal_stories api_key, project_id
     PivotalTracker::Client.token = api_key
@@ -150,7 +175,7 @@ class StoryBranch
     stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
     stories
   end
-  
+
   def select_story stories
     story_selection = nil
     while story_selection == nil or story_selection == 0 or story_selection > stories.length + 1
@@ -161,10 +186,10 @@ class StoryBranch
     puts "Selected : ##{story.id} : #{story.name}"
     return story
   end
-  
+
   def create_feature_branch story
     current_branch = git_current_branch
-    dashed_story_name = (dashed story.name)[0..50].downcase
+    dashed_story_name = simple_sanitize((dashed story.name).downcase)
     feature_branch_name = nil
     puts "You are checked out at: #{current_branch}"
     if current_branch == "master"
@@ -181,7 +206,7 @@ class StoryBranch
       puts "Feature branches must be created from 'master'"
     end
   end
-  
+
   def pivotal_story_branch api_key, project_id
     stories = list_pivotal_stories api_key, project_id
     story = select_story stories
