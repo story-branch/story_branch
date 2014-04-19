@@ -46,7 +46,6 @@
 require 'pivotal-tracker'
 require 'readline'
 require 'git'
-require 'levenshtein'
 require 'levenshtein-ffi'
 
 class StoryBranch
@@ -60,12 +59,15 @@ class StoryBranch
   def connect
     pivotal_story_branch @api_key, @project_id
   end
+
+  def valid?
+    return (not @api_key.strip.empty? and not @project_id.strip.empty?)
+  end
   
   private
   def env_required var_name
     if ENV[var_name].nil?
-      puts "#{var_name} must be set in your environment."
-      exit
+      raise "PIVOTAL_API_KEY must be set"
     end
     ENV[var_name]
   end
