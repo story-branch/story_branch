@@ -10,9 +10,13 @@ Gem::Specification.new do |s|
   s.homepage    =
     'http://rubygems.org/gems/story_branch'
   s.license       = 'MIT'
+  #Runtime Dependencies
   s.required_ruby_version = '>= 1.9.3'
   s.add_runtime_dependency 'pivotal-tracker','~> 0.5'
   s.add_runtime_dependency 'git', '~> 1.2'
   s.add_runtime_dependency 'levenshtein-ffi', '~> 1.0'
+  #Development dependencies
+  s.add_development_dependency "rspec"
+  #Scripts available after instalation
   s.executables  = ['story_branch']
 end
