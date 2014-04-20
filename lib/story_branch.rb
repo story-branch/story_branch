@@ -50,10 +50,11 @@ require 'levenshtein-ffi'
 
 class StoryBranch
 
-  def initialize(project_id_file_path=nil)
-    #confirm requirements - PIVOTAL_API_KEY and PIVOTAL_PROJECT_ID
-    @api_key = env_required 'PIVOTAL_API_KEY'
-    @project_id = (not project_id_file_path.nil?) ? (File.read(project_id_file_path) rescue env_required('PIVOTAL_PROJECT_ID')) : env_required('PIVOTAL_PROJECT_ID')
+  def initialize
+    @api_key = File.read(".pivotal_api_key") rescue env_required('PIVOTAL_API_KEY')
+    raise "Existing .pivotal_api_key config file found, but without contents" unless not @api_key.empty?
+    @project_id = File.read(".pivotal_project_id") rescue env_required('PIVOTAL_PROJECT_ID')
+    raise "Existing .pivotal_project_id config file found, but without contents" unless not @project_id.empty?
   end
 
   def connect
@@ -67,7 +68,7 @@ class StoryBranch
   private
   def env_required var_name
     if ENV[var_name].nil?
-      raise "PIVOTAL_API_KEY must be set"
+      raise "#{var_name} must be set"
     end
     ENV[var_name]
   end
