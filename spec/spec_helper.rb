@@ -9,8 +9,17 @@ RSpec.configure do |config|
   end
 end
 
-def copy_config_files(filelist)
+def copy_config_files(filelist, empty_contents = [])
   FileUtils.cp filelist, '.'
+  if empty_contents.empty?
+    empty_contents = Array.new(filelist.length, false)
+  end
+  empty_contents.to_enum.with_index.each do |to_empty, i|
+    if to_empty
+      f = File.basename(filelist[i])
+      File.open("./#{f}", 'w') {|file| file.truncate(0) }
+    end
+  end
 end
 
 def clear_env_variables
