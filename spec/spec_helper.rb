@@ -1,5 +1,5 @@
-#require 'story_branch'
-require_relative '../lib/story_branch'
+require 'story_branch'
+#require_relative '../lib/story_branch'
 
 RSpec.configure do |config|
   # some (optional) config here
