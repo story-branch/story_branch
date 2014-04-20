@@ -12,7 +12,7 @@ describe StoryBranch do
       end
 
       it "should exit with error message config file found in path is empty" do
-        copy_config_files %w(spec/files/.pivotal_api_key)
+        copy_config_files %w(spec/files/.pivotal_api_key), %w(true)
         expect{
           sb = StoryBranch.new
         }.to raise_error("Existing .pivotal_api_key config file found, but without contents")
@@ -29,9 +29,9 @@ describe StoryBranch do
         expect(sb).to be_nil
       end
   
-      it "should exit with error message if no PIVOTAL_PROJECT_ID is defined in enviroment NOR in the config file found in current path" do
+      it "should exit with error message if config file found in current path is empty" do
         ENV['PIVOTAL_API_KEY']="ABC123DEF"
-        copy_config_files %w(spec/files/.pivotal_project_id)
+        copy_config_files %w(spec/files/.pivotal_project_id), %w(true)
         expect{
           sb = StoryBranch.new
         }.to raise_error("Existing .pivotal_project_id config file found, but without contents")
@@ -62,6 +62,7 @@ describe StoryBranch do
     it "should be a valid object with api key set based on config file and project_id set based on environment" do
       copy_config_files %w(spec/files/.pivotal_api_key)
       ENV['PIVOTAL_PROJECT_ID']="ABC123DEF"
+      debugger
       expect{
         sb = StoryBranch.new
       }.to_not raise_error
@@ -70,8 +71,7 @@ describe StoryBranch do
     end
 
     it "should be a valid object with api_key and project_id both set based on config files" do
-      copy_config_files %w(spec/files/.pivotal_api_key)
-      copy_config_files %w(spec/files/.pivotal_project_id)
+      copy_config_files %w(spec/files/.pivotal_api_key spec/files/.pivotal_project_id)
       expect{
         sb = StoryBranch.new
       }.to_not raise_error
