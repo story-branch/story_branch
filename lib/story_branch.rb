@@ -54,7 +54,6 @@ class StoryBranch
   def initialize
     if config_file
       @pivotal_info = YAML.load_file config_file
-      p @pivotal_info
     end
 
     @api_key = config_value "api", 'PIVOTAL_API_KEY'
@@ -66,11 +65,7 @@ class StoryBranch
   end
 
   def config_value key, env
-
-
     value = @pivotal_info[key] if @pivotal_info and @pivotal_info[key]
-    p value
-
     puts "...checking for $#{env}" unless value
     value ||= env_required env
     value
