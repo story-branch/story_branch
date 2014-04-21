@@ -4,6 +4,8 @@
 #          Rui Baltazar <rui.p.baltazar@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
+# Version: 0.1.1
+#
 # Description:
 #
 # Create a git branch with automatic reference to a Pivotal Tracker
@@ -32,39 +34,8 @@
 # environment variable set, (the file will supersede the environment
 # variable)
 #
-#
-# Changelog:
-#
-# Milestone 'twiddly-winks' DONE
-# * Format as Ruby gem, command line tool
-# * Refactor to StoryBranch class
-# * Add usage info (draft) to file header
-# * Add simple_sanitize method to remove common punctuation from story
-#   names / existing branch names
-# * Remove arbitrary 50 char limit on branch names
-#
-# Milestone 'porus-flapjack' DONE
-# * Present safe version of story name (dash-cased) for editing
-# * Provide readline editing
-#
-# Milestone 'eggs-n-bakey' DONE
-# * Validate that branchname is 'legal'
-# * Validate that branchname doesn't already exist (strip pivotal
-#   tracker ids suffix from existing names when present)
-# * Use Levenshtein Distance to determine if name is (very) similar to
-#   existing branch names
-# * Use Git gem
-# * Use ActiveSupport gem
-# * Use Levenschtein-ffi gem
-# * Readline history injection for story selection & branch name suggestion
-#
-# Milestone 'tequila-grizzly' DONE
-# * Look for pivotal project id (.pivotal-id) in repo root (we assume
-#   we're in project root.) (before checking environment)
-#
-# Backlog:
-# ...
 
+require 'yaml'
 require 'pivotal-tracker'
 require 'readline'
 require 'git'
@@ -72,26 +43,61 @@ require 'levenshtein'
 
 class StoryBranch
 
-  def initialize(project_id_file_path=nil)
-    #confirm requirements - PIVOTAL_API_KEY and PIVOTAL_PROJECT_ID
-    @api_key = env_required 'PIVOTAL_API_KEY'
-    @project_id = (not project_id_file_path.nil?) ? (File.read(project_id_file_path) rescue env_required('PIVOTAL_PROJECT_ID')) : env_required('PIVOTAL_PROJECT_ID')
+  # Config file = .pivotal or ~/.pivotal
+  # contains YAML
+  # project: pivotal-id
+  # api: pivotal api key
+
+  # NOTE: Is this Windows friendly? Await freak-outs from those users... *crickets*
+  PIVOTAL_CONFIG_FILES = ['.story_branch',"#{ENV['HOME']}/.story_branch"]
+
+  def initialize
+    if config_file
+      @pivotal_info = YAML.load_file config_file
+      p @pivotal_info
+    end
+
+    @api_key = config_value "api", 'PIVOTAL_API_KEY'
+    @project_id = config_value "project", 'PIVOTAL_PROJECT_ID'
+  end
+
+  def config_file
+    PIVOTAL_CONFIG_FILES.select{|conf| File.exists? conf}.first
+  end
+
+  def config_value key, env
+
+
+    value = @pivotal_info[key] if @pivotal_info and @pivotal_info[key]
+    p value
+
+    puts "...checking for $#{env}" unless value
+    value ||= env_required env
+    value
   end
 
   def connect
-    pivotal_story_branch @api_key, @project_id
+    begin
+      pivotal_story_branch @api_key, @project_id
+    rescue RestClient::Unauthorized
+      puts "Pivotal API key or Project ID invalid"
+      exit
+    end
+  end
+
+  def valid?
+    return (not @api_key.strip.empty? and not @project_id.strip.empty?)
   end
 
   private
   def env_required var_name
     if ENV[var_name].nil?
-      puts "#{var_name} must be set in your environment."
+      puts "$#{var_name} must be set or in .story_branch file"
       exit
     end
     ENV[var_name]
   end
 
-  # Readline wrapper with injected history
   def readline prompt, history=[]
     if history.length > 0
       history.each {|i| Readline::HISTORY.push i}
@@ -138,6 +144,7 @@ class StoryBranch
   end
 
   # Git operations
+
   def is_existing_branch? name
     # we don't use the Git gem's is_local_branch? because we want to
     # ignore the id suffix while still avoiding name collisions
@@ -168,6 +175,7 @@ class StoryBranch
   end
 
   # Use Pivotal tracker API to get Stories
+
   def list_pivotal_stories api_key, project_id
     PivotalTracker::Client.token = api_key
     project = PivotalTracker::Project.find(project_id.to_i)
