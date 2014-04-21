@@ -1,80 +1,76 @@
-# Story Branch
+# Story Branch-0.1.1
 
 Create a git feature branch with automatic reference to a Pivotal Tracker Story
 
 By default `story_branch` will present a list of started stories from
-your PivotalTracker project (set by `.pivotal-id` file or
-`PIVOTAL_PROJECT_ID` environment var), you select one and then provide
+your Pivotal Tracker project, you select one and then provide
 a feature branch name for that story. The branch will be created and
-the name will include the story_id as a suffix.
+the name will include the selected `story_id` as a suffix.
 
-When picking a story, enter the selection number on the left, using up
+When picking a story, enter the selection number on the left, using the up
 arrow (or C-p) will scroll through the selection numbers.
 
 Once a story is selected, a feature branch name can be entered, a
-suggestion is shown if you press the up arrow (or C-p)
+suggestion is provided (press the up arrow (or C-p) to see it)
 
 The feature branch name input has full
 [Readline](http://tiswww.case.edu/php/chet/readline/rluserman.html#SEC5)
 capability, to make it easy and pleasant to edit.
 
-(P.S. I'd recommend setting a git alias of "git story" to run this
-script)
-
-For the moment, this is just a dirty little implementation.  It will
-be improved / cleaned and wrapped in thor, and published as a gem, in
-due course.
-
 ## Setup
 
-This is a terminal only utility, it will work with anything that
-supports running a ruby script. (Ruby 1.9.3+ but we recommend 2.x up)
+Install the gem:
 
-First make sure you have the gems listed below installed, run `bundle`
-in the same folder as `story_branch`
+    gem install story_branch
 
-Grab your Pivotal Tracker API key and place it in your .bashrc (or
-.zshrc etc.) as:
+Config the Pivotal API key and Project ID, either in the environment
+or using a config YAML file. (`.story_branch` in the git root, or
+`~/.story_branch`)
 
-    export PIVOTAL_API_KEY=yourapikeywithoutquotesoranythingelse
+The environment variables to set are `PIVOTAL_API_KEY` and `PIVOTAL_PROJECT_ID`
 
-You also can run that line on it's own, so you don't have to open a
-new shell. The API key is visble at the bottom of your Pivotal Tracker
-Profile page when you're logged in.
+The **Pivotal API** key is visble at the bottom of your Pivotal Tracker
+Profile page when you're logged in. the **Project ID** is in the URL for
+your pivotal project.
 
-To identify which Pivotal Project to use, place a `.pivotal-id` file
-in the project root folder, alongside `.git` and `.gitignore` etc.
+If you decide to use the `.story_branch` config file, it should look
+something like:
 
-`.pivotal-id` should just contain the id number of the project. Find
-it at the end of the project page url, it's the number after the last
-`/`. There's an example `.pivotal-id` in the repository.
+    project: 123456
+    api: REHTKHMYKEYISM328974Y32487AND_SO_ON
 
-You can also use the environment var `PIVOTAL_PROJECT_ID` if you
-prefer.
+Or just:
+
+    project: 123456
+
+Replace the values with your own. Any value not found in the config
+will attempt to be set from the environment. An error is thrown for a
+value that cannot be found anywhere.
 
 ## Usage
 
-Once you're setup, place `story_branch` in your path.
-
-Navigate to your project root, and while it's checked out at your
-master branch, type:
+While checked out at your master branch, and located in the git root.
 
     story_branch
 
-Follow the directions on screen. When the process is finished,
-you'll be switched automatically to the newly created branch.
+Follow the directions on screen. When the process is finished, you'll
+be switched automatically to the newly created branch. If you aren't
+checked out on **master** `story_branch` will throw an error.
 
-## Dependencies
+## Roadmap
 
-The following gems were used to build this. Along with Readline (which
-is in the Ruby stdlib, you should also use it, really.)
-
-* Pivotal Tracker - http://github.com/
-* Ruby Git - https://github.com/schacon/ruby-git
-* Levenshtein-ffi - http://rubydoc.info/gems/levenshtein-ffi/1.0.3/frames
+* Verify project id and api key with Pivotal Tracker
+* Interactive checkout to `master` if in another branch
+* Optional pivotal story type Prefix for branch name. `["feature/", "bugfix/", "chore/"]` set by config.
+* More advanced sanitization of branch names (TBC)
 
 ## Changelog
 
+* Update config method to use YAML .story_branch files (in git root or $HOME) see above.
+* Build/Publish as Ruby gem
+* Simple sanitization
+* Begin test coverage
+* Refactor to class
 * Provide readline editing for inputs
 * Present safe version of story name (dash-cased) for editing
 ** Readline history injection for story selection & branch name suggestion
@@ -86,6 +82,16 @@ is in the Ruby stdlib, you should also use it, really.)
 * Use Git gem
 * Use ActiveSupport gem
 * Use Levenschtein-ffi gem
-* Look for pivotal project id (.pivotal-id) in repo root (we assume
+* ~~Look for pivotal project id (.pivotal-id) in repo root (we assume
   we're in project root.) fallback to `PIVOTAL_PROJECT_ID` environment
-  var
+  var~~ **PLEASE NOTE:** Now uses `.story_branch` or `~/.story_branch` as config file, containing YAML.
+
+## Contributing
+
+If you'd like to contribute to `story_branch` please follow the steps below.
+
+* Fork, start a feature branch and check it out
+* Write tests / Pass them
+* Send a pull request
+
+**Note:** Acceptible PR's will require full test coverage.
