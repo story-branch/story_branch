@@ -1,4 +1,4 @@
-# Story Branch-0.1.1
+# Story Branch-0.1.2
 
 Create a git feature branch with automatic reference to a Pivotal Tracker Story
 
