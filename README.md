@@ -47,6 +47,10 @@ Replace the values with your own. Any value not found in the config
 will attempt to be set from the environment. An error is thrown for a
 value that cannot be found anywhere.
 
+Note, that only one config file will be used at the moment, values
+**CANNOT** currently be split over `.story_branch` in the git root and
+`~/.story_branch`
+
 ## Usage
 
 While checked out at your master branch, and located in the git root.
@@ -59,13 +63,16 @@ checked out on **master** `story_branch` will throw an error.
 
 ## Roadmap
 
-* Verify project id and api key with Pivotal Tracker
+* Allow usage of both `.story_branch` and `~/.story_branch` to store
+  different keys, favor local root `.story_branch` for values
 * Interactive checkout to `master` if in another branch
-* Optional pivotal story type Prefix for branch name. `["feature/", "bugfix/", "chore/"]` set by config.
+* Optional pivotal story type Prefix for branch
+  name. `["feature/", "bugfix/", "chore/"]` set by config.
 * More advanced sanitization of branch names (TBC)
 
 ## Changelog
 
+* Verify API key / Project ID
 * Update config method to use YAML .story_branch files (in git root or $HOME) see above.
 * Build/Publish as Ruby gem
 * Simple sanitization
@@ -73,7 +80,7 @@ checked out on **master** `story_branch` will throw an error.
 * Refactor to class
 * Provide readline editing for inputs
 * Present safe version of story name (dash-cased) for editing
-** Readline history injection for story selection & branch name suggestion
+* Readline history injection for story selection & branch name suggestion
 * Validate that branchname is 'legal'
 * Validate that branchname doesn't already exist (strip pivotal
   tracker ids suffix from existing names when present)
@@ -84,7 +91,9 @@ checked out on **master** `story_branch` will throw an error.
 * Use Levenschtein-ffi gem
 * ~~Look for pivotal project id (.pivotal-id) in repo root (we assume
   we're in project root.) fallback to `PIVOTAL_PROJECT_ID` environment
-  var~~ **PLEASE NOTE:** Now uses `.story_branch` or `~/.story_branch` as config file, containing YAML.
+  var~~ **PLEASE NOTE:** Now uses `.story_branch` or `~/.story_branch`
+  as config file, containing YAML. Only one is used, the local root
+  `.story_branch` is favoured.
 
 ## Contributing
 
