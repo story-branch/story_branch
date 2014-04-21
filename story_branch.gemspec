@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "story_branch"
-  s.version     = "0.1.1"
+  s.version     = "0.1.2"
   s.date        = "2014-04-21"
   s.summary     = "Story Branch - create git branches based on pivotal tracker stories"
   s.description = "Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story"
