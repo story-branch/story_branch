@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/story_branch.png)](http://badge.fury.io/rb/story_branch)
 
-# Story Branch-0.1.2
+# Story Branch
 
 Create a git feature branch with automatic reference to a Pivotal Tracker Story
 
