@@ -192,7 +192,7 @@ class StoryBranch
 
   def create_feature_branch story
     current_branch = git_current_branch
-    dashed_story_name = simple_sanitize((dashed story.name).downcase)
+    dashed_story_name = simple_sanitize((dashed story.name).downcase).squeeze("-")
     feature_branch_name = nil
     puts "You are checked out at: #{current_branch}"
     if current_branch == "master"
