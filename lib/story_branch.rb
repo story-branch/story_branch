@@ -3,8 +3,9 @@
 # Authors: Jason Milkins <jason@opsmanager.com>
 #          Rui Baltazar <rui.p.baltazar@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
+#          Dominic Wong <dominic.wong.617@gmail.com>
 #
-# Version: 0.1.1
+# Version: 0.1.4
 #
 # Description:
 #
@@ -105,11 +106,11 @@ class StoryBranch
   end
 
   def dashed s
-    s.tr(' _,.', '-')
+    s.tr(' _,./:;', '-')
   end
 
   def simple_sanitize s
-    s.tr '\'"%!@#$(){}[]*;:/\\?', ''
+    s.tr '\'"%!@#$(){}[]*\\?', ''
   end
 
   # Branch name validation
