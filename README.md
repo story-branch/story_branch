@@ -105,26 +105,4 @@ If you'd like to contribute to `story_branch` please follow the steps below.
 * Write tests / Pass them
 * Send a pull request
 
-**Note:** Acceptible PR's will require full test coverage.
-
-## Licence
-
-Copyright (c) Jason Milkins, Rui Baltazar & Gabe Hollombe
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-The second option is to modify it slightly, as shown in the examples below:
-
-Modified versions of the license
-
-The license can be modified to suit particular needs. For example, the Free Software Foundation agreed in 1998 to use a modified MIT License for ncurses, which adds this clause:[4]
-
-Except as contained in this notice, the name(s) of the above copyright holders shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization.
-The XFree86 Project uses a modified MIT License for XFree86 version 4.4 onward. The license includes a clause that requires attribution in software documentation.[5] The Free Software Foundation contends that this addition is incompatible with the version 2 of the GPL, but compatible with version 3.[6]
-
-The end-user documentation included with the redistribution, if any, must include the following acknowledgment: "This product includes software developed by The XFree86 Project, Inc (http://www.xfree86.org/) and its contributors", in the same place and form as other third-party acknowledgments. Alternately, this acknowledgment may appear in the software itself, in the same form and location as other such third-party acknowledgments.
-The source of information for the modified licenses is http://en.wikipedia.org/wiki/MIT_License
+**Note:** Pull requests require full test coverage to be accepted.
