@@ -5,7 +5,7 @@
 #          Gabe Hollombe <gabe@neo.com>
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #
-# Version: 0.1.4
+# Version: 0.1.5
 #
 # Description:
 #
@@ -67,7 +67,6 @@ class StoryBranch
 
   def config_value key, env
     value = @pivotal_info[key] if @pivotal_info and @pivotal_info[key]
-    puts "...checking for $#{env}" unless value
     value ||= env_required env
     value
   end
