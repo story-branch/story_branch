@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name        = "story_branch"
-  s.version     = "0.1.5"
-  s.date        = "2014-05-26"
+  s.version     = "0.1.5a"
+  s.date        = "2014-06-02"
   s.summary     = "Story Branch - create git branches based on pivotal tracker stories"
   s.description = "Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story"
   s.authors     = ["Jason Milkins", "Gabe Hollombe", "Rui Baltazar", "Dominic Wong"]
   s.email       = ["jasonm23@gmail.com", "gabe@neo.com", "rui.p.baltazar@gmail.com", "dominic.wong.617@gmail.com"]
-  s.files       = Dir['lib/   *.rb'] + Dir['bin/*'] + %W(README.md LICENCE)
+  s.files       = Dir['lib/*.rb'] + Dir['bin/*'] + %W(README.md LICENCE)
   s.homepage    = "https://github.com/jasonm23/pivotal-story-branch"
   s.license     = "MIT"
 
