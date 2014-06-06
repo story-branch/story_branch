@@ -63,6 +63,17 @@ Follow the directions on screen. When the process is finished, you'll
 be switched automatically to the newly created branch. If you aren't
 checked out on **master** `story_branch` will throw an error.
 
+## Aliases
+
+You can also run story branch using the following aliases.
+
+    git story
+
+    git story-branch
+
+    story-branch
+
+
 ## Roadmap
 
 * Allow usage of both `.story_branch` and `~/.story_branch` to store
