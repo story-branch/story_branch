@@ -60,8 +60,7 @@ While checked out at your master branch, and located in the git root.
     story_branch
 
 Follow the directions on screen. When the process is finished, you'll
-be switched automatically to the newly created branch. If you aren't
-checked out on **master** `story_branch` will throw an error.
+be switched automatically to the newly created branch.
 
 ## Aliases
 
@@ -78,13 +77,10 @@ You can also run story branch using the following aliases.
 
 * Allow usage of both `.story_branch` and `~/.story_branch` to store
   different keys, favor local root `.story_branch` for values
-* Interactive checkout to `master` if in another branch
-* Optional pivotal story type Prefix for branch
-  name. `["feature/", "bugfix/", "chore/"]` set by config.
-* More advanced sanitization of branch names (TBC)
 
 ## Changelog
 
+* Banish constraint of master as parent branch
 * Verify API key / Project ID
 * Update config method to use YAML .story_branch files (in git root or $HOME) see above.
 * Build/Publish as Ruby gem
