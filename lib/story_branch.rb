@@ -195,19 +195,15 @@ class StoryBranch
     dashed_story_name = simple_sanitize((dashed story.name).downcase).squeeze("-")
     feature_branch_name = nil
     puts "You are checked out at: #{current_branch}"
-    if current_branch == "master"
-      while feature_branch_name == nil or feature_branch_name == ""
-        puts "Provide a new branch name..." if [nil, ""].include? feature_branch_name
-        feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
-      end
-      feature_branch_name.chomp!
-      validate_branch_name feature_branch_name
-      feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-      puts "Creating: #{feature_branch_name_with_story_id}"
-      git_create_branch feature_branch_name_with_story_id
-    else
-      puts "Feature branches must be created from 'master'"
+    while feature_branch_name == nil or feature_branch_name == ""
+      puts "Provide a new branch name..." if [nil, ""].include? feature_branch_name
+      feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
     end
+    feature_branch_name.chomp!
+    validate_branch_name feature_branch_name
+    feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+    puts "Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent"
+    git_create_branch feature_branch_name_with_story_id
   end
 
   def pivotal_story_branch api_key, project_id
