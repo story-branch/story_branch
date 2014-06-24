@@ -75,8 +75,7 @@ You can also run story branch using the following aliases.
 
 ## Roadmap
 
-* Allow usage of both `.story_branch` and `~/.story_branch` to store
-  different keys, favor local root `.story_branch` for values
+Prepare a v1.0 release
 
 ## Changelog
 
