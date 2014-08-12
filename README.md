@@ -2,113 +2,63 @@
 
 # Story Branch
 
-Create a git feature branch with automatic reference to a Pivotal Tracker Story
+## Description
 
-By default `story_branch` will present a list of started stories from
-your Pivotal Tracker project, you select one and then provide
-a feature branch name for that story. The branch will be created and
-the name will include the selected `story_id` as a suffix.
+A small collection of tools for working with git branches for
+Pivotal Tracker stories. Story branch, story start, story finish
 
-When picking a story, enter the selection number on the left, using the up
-arrow (or C-p) will scroll through the selection numbers.
+### Commentary
 
-Once a story is selected, a feature branch name can be entered, a
-suggestion is provided (press the up arrow (or C-p) to see it)
+**git story**: Create a git branch with automatic reference to a
+Pivotal Tracker Story, it will present a list of started stories
+from your active project.  Select a story, and it will suggest a
+feature branch name for that story, which you can edit or
+accept. The branch will be created (the story_id will automatically
+be used as a suffix in the branch name)
 
-The feature branch name input has full
-[Readline](http://tiswww.case.edu/php/chet/readline/rluserman.html#SEC5)
-capability, to make it easy and pleasant to edit.
+**git start**: Start a story in Pivotal Tracker from the terminal.
+List all unstarted stories in your current project. Entering a
+partial string will fuzzy match against the list.
 
-## Setup
+**git finish**: Create a finishing commit + message, for example:
+"[Finishes #1234567] My Story Title" - optionally Finishes the story
+via pivotal tracker's api.
+
+### Installing
 
 Install the gem:
 
     gem install story_branch
 
-Config the Pivotal API key and Project ID, either in the environment
-or using a config YAML file. (`.story_branch` in the git root, or
-`~/.story_branch`)
+You must have a `PIVOTAL_API_KEY` environment variable set to your
+Pivotal api key, plus either a `.story_branch` file or
+`PIVOTAL_PROJECT_ID` environment variable set. Note, values in
+`.story_branch` will override environment variable settings.
 
-The environment variables to set are `PIVOTAL_API_KEY` and `PIVOTAL_PROJECT_ID`
+### Usage
 
-The **Pivotal API** key is visble at the bottom of your Pivotal Tracker
-Profile page when you're logged in. the **Project ID** is in the URL for
-your pivotal project.
+Note: Run story_branch from the project root folder.
 
-If you decide to use the `.story_branch` config file, it should look
-something like:
+`start`, `story`, are run interactively and will display a
+list of stories to work with.
 
-    project: 123456
-    api: REHTKHMYKEYISM328974Y32487AND_SO_ON
+`finish` will scan the current branch name for a story id (as its
+suffix) and if a valid, active story is found on pivotal tracker it
+will create a commit with a message to trigger pivotal's git
+integraton features.
 
-Or just:
+### Command names
 
-    project: 123456
+It's possible to the commands in a few ways, we have deprecated the
+old commmand names, and now encourage only the use of the `git`
+style usage.
 
-Replace the values with your own. Any value not found in the config
-will attempt to be set from the environment. An error is thrown for a
-value that cannot be found anywhere.
-
-Note, that only one config file will be used at the moment, values
-**CANNOT** currently be split over `.story_branch` in the git root and
-`~/.story_branch`
-
-## Usage
-
-While checked out at your master branch, and located in the git root.
-
-    story_branch
-
-Follow the directions on screen. When the process is finished, you'll
-be switched automatically to the newly created branch.
-
-## Aliases
-
-You can also run story branch using the following aliases.
-
-    git story
-
-    git story-branch
-
-    story-branch
-
-
-## Roadmap
-
-Prepare a v1.0 release
-
-## Changelog
-
-* Banish constraint of master as parent branch
-* Verify API key / Project ID
-* Update config method to use YAML .story_branch files (in git root or $HOME) see above.
-* Build/Publish as Ruby gem
-* Simple sanitization
-* Begin test coverage
-* Refactor to class
-* Provide readline editing for inputs
-* Present safe version of story name (dash-cased) for editing
-* Readline history injection for story selection & branch name suggestion
-* Validate that branchname is 'legal'
-* Validate that branchname doesn't already exist (strip pivotal
-  tracker ids suffix from existing names when present)
-* Use Levenshtein Distance to determine if name is (very) similar to
-  existing branch names
-* Use Git gem
-* Use ActiveSupport gem
-* Use Levenschtein-ffi gem
-* ~~Look for pivotal project id (.pivotal-id) in repo root (we assume
-  we're in project root.) fallback to `PIVOTAL_PROJECT_ID` environment
-  var~~ **PLEASE NOTE:** Now uses `.story_branch` or `~/.story_branch`
-  as config file, containing YAML. Only one is used, the local root
-  `.story_branch` is favoured.
+      git style  | deprecated
+     ------------+--------------+--------------
+      git story  | story_branch | story-branch
+      git start  | story_start  | story-start
+      git finish | story_finish | story-finish
 
 ## Contributing
 
-If you'd like to contribute to `story_branch` please follow the steps below.
-
-* Fork, start a feature branch and check it out
-* Write tests / Pass them
-* Send a pull request
-
-**Note:** Pull requests require full test coverage to be accepted.
+All pull requests are welcome and will be reviewed.
