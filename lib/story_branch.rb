@@ -176,14 +176,19 @@ class StoryBranch
     project = PivotalTracker::Project.find(project_id.to_i)
     stories = project.stories.all({current_state: :started})
     stories.each_with_index{|s,i| puts "[#{i+1}] ##{s.id} : #{s.name}"}
+    puts '[0] Exit'
     stories
   end
 
   def select_story stories
     story_selection = nil
-    while story_selection == nil or story_selection == 0 or story_selection > stories.length + 1
+    while story_selection == nil or story_selection > stories.length + 1
       puts "invalid selection" if story_selection != nil
       story_selection = readline("Select a story: ", Range.new(1,stories.length).to_a.map(&:to_s)).to_i
+    end
+    if story_selection == 0
+      puts 'Exiting...'
+      exit
     end
     story = stories[story_selection - 1]
     puts "Selected : ##{story.id} : #{story.name}"
