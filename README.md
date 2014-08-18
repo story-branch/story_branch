@@ -17,8 +17,8 @@ accept. The branch will be created (the story_id will automatically
 be used as a suffix in the branch name)
 
 **git start**: Start a story in Pivotal Tracker from the terminal.
-List all unstarted stories in your current project. Entering a
-partial string will fuzzy match against the list.
+Lists all unstarted stories in your current project. Select a story 
+from the displayed list, and it will tell Pivotal Tracker to start it.
 
 **git finish**: Create a finishing commit + message, for example:
 "[Finishes #1234567] My Story Title" - optionally Finishes the story
