@@ -5,7 +5,7 @@
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.0
+# Version: 0.2.1
 #
 # ## Description
 #
@@ -77,9 +77,16 @@ require 'git'
 require 'active_support/core_ext/string/inflections'
 require 'levenshtein'
 
+trap('INT') {exit}
+
 module StoryBranch
 
   class Main
+
+    ERRORS = {
+      "Stories in the started state must be estimated." =>
+      "Error: Pivotal won't allow you to start an unestimated story"
+    }
 
     PIVOTAL_CONFIG_FILES = ['.story_branch',"#{ENV['HOME']}/.story_branch"]
 
@@ -97,13 +104,14 @@ module StoryBranch
 
     def create_story_branch
       begin
+        puts "Connecting with Pivotal Tracker"
         @p.get_project
-        stories = @p.display_stories :started
+        puts "Getting stories..."
+        stories = @p.display_stories :started, false
         if stories.length < 1
-          puts "No stories started... exiting"
+          puts "No stories started, exiting"
           exit
         end
-        puts "[0] Exit"
         story   = @p.select_story stories
         if story
           @p.create_feature_branch story
@@ -114,16 +122,20 @@ module StoryBranch
       end
     end
 
-    def story_start
+    def pick_and_update filter, hash, msg, is_estimated
       begin
+        puts "Connecting with Pivotal Tracker"
         @p.get_project
-        # TODO: Use a predicate for Estimated and Backlog'ed stories
-        stories = @p.display_stories :unstarted
-        puts "[0] Exit"
+        puts "Getting stories..."
+        stories = @p.filtered_stories_list filter, is_estimated
         story = @p.select_story stories
         if story
-          story.update :current_state => "started"
-          puts "#{story.id} started"
+          result = story.update hash
+          if result.errors.count > 0
+            puts result.errors.to_a.uniq.map{|e| ERRORS[e] }
+            return nil
+          end
+          puts "#{story.id} #{msg}"
         end
       rescue RestClient::Unauthorized
         puts "Pivotal API key or Project ID invalid"
@@ -131,16 +143,24 @@ module StoryBranch
       end
     end
 
+    def story_start
+      pick_and_update(:unstarted, {:current_state => "started"}, "started", true)
+    end
+
     def story_unstart
-      # TODO: unstart a started story.
+      pick_and_update(:started, {:current_state => "unstarted"}, "unstarted", false)
+    end
+
+    def story_estimate
+      # TODO: estimate a story
     end
 
     def story_finish
       begin
+        puts "Connecting with Pivotal Tracker"
         @p.get_project
         unless @p.is_current_branch_a_story?
-          puts "Your current branch: #{GitUtils.current_branch}"
-          puts "is not linked to a started story."
+          puts "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
           return
         end
 
@@ -201,10 +221,10 @@ module StoryBranch
     def self.simple_sanitize s
       s.tr '\'"%!@#$(){}[]*\\?', ''
     end
-    
+
     def self.undashed s
       s.underscore.humanize
-    end  
+    end
 
   end
 
@@ -301,8 +321,9 @@ module StoryBranch
     end
 
     def is_current_branch_a_story?
+      GitUtils.current_story and
       GitUtils.current_story.length == 3 and
-        filtered_stories_list(:started).map(&:id).include? GitUtils.current_story[2].to_i
+        filtered_stories_list(:started, true).map(&:id).include? GitUtils.current_story[2].to_i
     end
 
     def story_from_current_branch
@@ -314,32 +335,46 @@ module StoryBranch
     # Filtering on tags/labels
     # Filtering on estimation (estimated?, 0 point, 1 point etc.)
 
-    def filtered_stories_list state
+    def filtered_stories_list state, estimated
       project = get_project
-      project.stories.all({current_state: state})
+      stories = project.stories.all({current_state: state})
+      if estimated
+        stories.select{|s| s.estimate and s.estimate > 1 }
+      else
+        stories
+      end
     end
 
-    def display_stories state
-      filtered_stories_list(state).each_with_index {|s,i| puts one_line_story s, i}
+    def display_stories state, estimated
+      filtered_stories_list(state, estimated).each {|s| puts one_line_story s }
     end
 
-    def one_line_story s, i
-      "[#{i+1}] ##{s.id} : #{s.name}"
+    def one_line_story s
+      "#{s.id} - #{s.name}"
     end
 
     def select_story stories
-      story_selection = nil
-      while story_selection == nil or story_selection.to_i > stories.length + 1
-        puts "invalid selection" if story_selection != nil
-        story_texts = Range.new(1,stories.length).to_a.map(&:to_s)
-        story_selection = readline("Select a story: ", story_texts)
-      end
-      if story_selection.to_i == 0
+      story_texts = stories.map{|s| one_line_story s }
+      puts "Leave blank to exit, use <up>/<down> to scroll through stories, TAB to list all and auto-complete"
+      story_selection = readline("Select a story: ", story_texts)
+      if story_selection == "" or story_selection.nil?
         return nil
       end
-      story = stories[story_selection.to_i - 1]
-      puts "Selected : ##{story.id} : #{story.name}"
-      return story
+      story = stories.select{|s| story_matcher s, story_selection }.first
+      if story.nil?
+        puts "Not found: #{story_selection}"
+        return nil
+      else
+        puts "Selected : #{one_line_story story}"
+        return story
+      end
+    end
+
+    def story_matcher story, selection
+      m = selection.match(/^(\d*) /)
+      return false unless m
+      id = m.captures.first
+      return story.id.to_s == id
     end
 
     def create_feature_branch story
@@ -347,7 +382,7 @@ module StoryBranch
       feature_branch_name = nil
       puts "You are checked out at: #{GitUtils.current_branch}"
       while feature_branch_name == nil or feature_branch_name == ""
-        puts "Provide a new branch name... (C-p or <up> for suggested name)" if [nil, ""].include? feature_branch_name
+        puts "Provide a new branch name... (TAB for suggested name)" if [nil, ""].include? feature_branch_name
         feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
       end
       feature_branch_name.chomp!
@@ -365,14 +400,14 @@ module StoryBranch
       end
       existing_name_score = GitUtils.is_existing_branch?(name)
       unless existing_name_score == -1
-        puts <<-END.strip_heredoc
+        puts <<-EOD.strip_heredoc
         Name Collision Error:
 
         #{name}
 
         This is too similar to the name of an existing
         branch, a more unique name is required
-      END
+      EOD
       end
     end
 
@@ -383,15 +418,16 @@ module StoryBranch
       name.match valid
     end
 
-    def readline prompt, history=[]
-      if history.length > 0
-        history.each {|i| Readline::HISTORY.push i}
+    def readline prompt, completions=[]
+      # Store the state of the terminal
+      Readline::HISTORY.clear
+      if completions.length > 0
+        completions.each {|i| Readline::HISTORY.push i}
+        Readline.special_prefixes = " .{}()[]!?\"'_-#@$%^&*"
+        Readline.completion_proc = proc {|s| completions.grep(/#{Regexp.escape(s)}/) }
+        Readline.completion_append_character = ""
       end
-      begin
-        Readline.readline(prompt, false)
-      rescue Interrupt
-      end
+      Readline.readline(prompt, false)
     end
-
   end
 end
