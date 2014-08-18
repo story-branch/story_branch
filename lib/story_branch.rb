@@ -158,7 +158,7 @@ module StoryBranch
         end
 
         puts "Use standard finishing commit message: [y/N]?"
-        commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{GitUtils.current_branch_story_parts[:description]}"
+        commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{GitUtils.current_branch_story_parts[:description].StringUtils.undashed}"
         puts commit_message
 
         if gets.chomp!.downcase == "y"
@@ -201,6 +201,10 @@ module StoryBranch
     def self.simple_sanitize s
       s.tr '\'"%!@#$(){}[]*\\?', ''
     end
+    
+    def self.undashed s
+      s.underscore.humanize
+    end  
 
   end
 
