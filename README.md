@@ -2,27 +2,27 @@
 
 # Story Branch
 
-## Description
-
 A small collection of tools for working with git branches for
-Pivotal Tracker stories. Story branch, story start, story finish
+Pivotal Tracker stories. Story branch, start, finish
 
 ### Commentary
 
-**git story**: Create a git branch with automatic reference to a
-Pivotal Tracker Story, it will present a list of started stories
-from your active project.  Select a story, and it will suggest a
-feature branch name for that story, which you can edit or
-accept. The branch will be created (the story_id will automatically
-be used as a suffix in the branch name)
+`git story`: Create a git branch with automatic reference to a
+Pivotal Tracker Story. It will get started stories from your active
+project.  You can enter text and press TAB to search for a story
+name, or TAB to show the full list. It will then suggest an editable
+branch name. When the branch is created the `story_id` will
+be appended to it.
 
-**git start**: Start a story in Pivotal Tracker from the terminal.
-Lists all unstarted stories in your current project. Select a story 
-from the displayed list, and it will tell Pivotal Tracker to start it.
+`git start`: Start a story in Pivotal Tracker from the terminal.
+It'll get all unstarted stories in your current project.  You can
+enter text and press TAB to search for a story name, or TAB to show
+the full list.
 
-**git finish**: Create a finishing commit + message, for example:
+`git finish`: Create commit/message for the staged changes, e.g:
 "[Finishes #1234567] My Story Title" - optionally Finishes the story
-via pivotal tracker's api.
+via pivotal tracker's api. You must stage all changes (or stash
+them) first.
 
 ### Installing
 
@@ -30,16 +30,25 @@ Install the gem:
 
     gem install story_branch
 
-You must have a `PIVOTAL_API_KEY` environment variable set to your
-Pivotal api key, plus either a `.story_branch` file or
+**Settings:** You must have a `PIVOTAL_API_KEY` environment variable set
+to your Pivotal api key, plus either a `.story_branch` file or
 `PIVOTAL_PROJECT_ID` environment variable set. Note, values in
 `.story_branch` will override environment variable settings.
 
+**.story_branch file**
+
+A YAML file with either/both of:
+
+   api: YOUR.PIVOTAL.API.KEY.STRING
+   project: YOUR.PROJECT.ID.NUMBER
+
+Can be saved to `~/` or `./`
+
 ### Usage
 
-Note: Run story_branch from the project root folder.
+You run story_branch from the git/project root folder.
 
-`start`, `story`, are run interactively and will display a
+`start`, `branch`, are run interactively and will display a
 list of stories to work with.
 
 `finish` will scan the current branch name for a story id (as its

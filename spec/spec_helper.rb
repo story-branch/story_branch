@@ -1,11 +1,8 @@
 require_relative '../lib/story_branch'
+require 'pry'
 
 RSpec.configure do |config|
   # some (optional) config here
-  config.after(:each) do
-    clear_config_file
-    clear_env_variables
-  end
 end
 
 def copy_config_file(filename, empty_contents=false)
