@@ -39,8 +39,8 @@ to your Pivotal api key, plus either a `.story_branch` file or
 
 A YAML file with either/both of:
 
-   api: YOUR.PIVOTAL.API.KEY.STRING
-   project: YOUR.PROJECT.ID.NUMBER
+    api: YOUR.PIVOTAL.API.KEY.STRING
+    project: YOUR.PROJECT.ID.NUMBER
 
 Can be saved to `~/` or `./`
 
