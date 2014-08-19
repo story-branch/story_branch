@@ -5,7 +5,7 @@
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.1
+# Version: 0.2.2
 #
 # ## Description
 #
@@ -14,20 +14,22 @@
 #
 # ### Commentary
 #
-# **branch**: Create a git branch with automatic reference to a
-# Pivotal Tracker Story, it will present a list of started stories
-# from your active project.  Select a story, and it will suggest a
-# feature branch name for that story, which you can edit or
-# accept. The branch will be created (the story_id will automatically
-# be used as a suffix in the branch name)
+# `git story`: Create a git branch with automatic reference to a
+# Pivotal Tracker Story. It will get started stories from your active
+# project.  You can enter text and press TAB to search for a story
+# name, or TAB to show the full list. It will then suggest an editable
+# branch name. When the branch is created the `story_id` will
+# be appended to it.
 #
-# **start**: Start a story in Pivotal Tracker from the terminal.
-# List all unstarted stories in your current project. Entering a
-# partial string will fuzzy match against the list.
-#
-# **finish**: Create a finishing commit + message, for example:
+# `git start`: Start a story in Pivotal Tracker from the terminal.
+# It'll get all unstarted stories in your current project.  You can
+# enter text and press TAB to search for a story name, or TAB to show
+# the full list.
+
+# `git finish`: Create commit/message for the staged changes, e.g:
 # "[Finishes #1234567] My Story Title" - optionally Finishes the story
-# via pivotal tracker's api.
+# via pivotal tracker's api. You must stage all changes (or stash
+# them) first.
 #
 # ### Installing
 #
@@ -35,14 +37,23 @@
 #
 #     gem install story_branch
 #
-# You must have a `PIVOTAL_API_KEY` environment variable set to your
-# Pivotal api key, plus either a `.story_branch` file or
+# **Settings:** You must have a `PIVOTAL_API_KEY` environment variable set
+# to your Pivotal api key, plus either a `.story_branch` file or
 # `PIVOTAL_PROJECT_ID` environment variable set. Note, values in
 # `.story_branch` will override environment variable settings.
 #
+# **.story_branch file**
+#
+# A YAML file with either/both of:
+#
+#    api: YOUR.PIVOTAL.API.KEY.STRING
+#    project: YOUR.PROJECT.ID.NUMBER
+#
+# Can be saved to `~/` or `./`
+#
 # ### Usage
 #
-# Note: Run story_branch from the project root folder.
+# You run story_branch from the git/project root folder.
 #
 # `start`, `branch`, are run interactively and will display a
 # list of stories to work with.
@@ -72,6 +83,7 @@
 
 require 'yaml'
 require 'pivotal-tracker'
+require 'rb-readline'
 require 'readline'
 require 'git'
 require 'active_support/core_ext/string/inflections'
@@ -117,7 +129,7 @@ module StoryBranch
           @p.create_feature_branch story
         end
       rescue RestClient::Unauthorized
-        puts "Pivotal API key or Project ID invalid"
+        $stderr.puts "Pivotal API key or Project ID invalid"
         return nil
       end
     end
@@ -138,7 +150,7 @@ module StoryBranch
           puts "#{story.id} #{msg}"
         end
       rescue RestClient::Unauthorized
-        puts "Pivotal API key or Project ID invalid"
+        $stderr.puts "Pivotal API key or Project ID invalid"
         return nil
       end
     end
@@ -187,7 +199,7 @@ module StoryBranch
           puts "Aborted"
         end
       rescue RestClient::Unauthorized
-        puts "Pivotal API key or Project ID invalid"
+        $stderr.puts "Pivotal API key or Project ID invalid"
         return nil
       end
     end
@@ -204,7 +216,7 @@ module StoryBranch
 
     def env_required var_name
       if ENV[var_name].nil?
-        puts "$#{var_name} must be set or in .story_branch file"
+        $stderr.puts "$#{var_name} must be set or in .story_branch file"
         return nil
       end
       ENV[var_name]
@@ -333,7 +345,6 @@ module StoryBranch
     # TODO: Add some other predicates as we need them...
     # Filtering on where a story lives (Backlog, IceBox)
     # Filtering on tags/labels
-    # Filtering on estimation (estimated?, 0 point, 1 point etc.)
 
     def filtered_stories_list state, estimated
       project = get_project
@@ -420,10 +431,10 @@ module StoryBranch
 
     def readline prompt, completions=[]
       # Store the state of the terminal
-      Readline::HISTORY.clear
+      RbReadline.clear_history
       if completions.length > 0
         completions.each {|i| Readline::HISTORY.push i}
-        Readline.special_prefixes = " .{}()[]!?\"'_-#@$%^&*"
+        RbReadline.rl_completer_word_break_characters = ""
         Readline.completion_proc = proc {|s| completions.grep(/#{Regexp.escape(s)}/) }
         Readline.completion_append_character = ""
       end

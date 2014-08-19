@@ -10,6 +10,10 @@ describe StoryBranch do
     clear_config_file
   end
 
+  after :all do
+    clear_config_file
+  end
+
   let(:project_id_error_message_rx) { Regexp.new(/\$PIVOTAL_PROJECT_ID must be set or in \.story_branch/) }
   let(:api_key_error_message_rx)    { Regexp.new(/\$PIVOTAL_API_KEY must be set or in \.story_branch/) }
 
@@ -19,8 +23,8 @@ describe StoryBranch do
 
       context "environment variable PIVOTAL_API_KEY not set" do
         it "should exit with error message if no config file is found in the current path" do
-          expect{StoryBranch::Main.new}.to output(project_id_error_message_rx).to_stderr
-          # expect{begin StoryBranch::Main.new; rescue SystemExit; end}.to output(api_key_error_message_rx).to_stderr
+          expect{begin StoryBranch::Main.new; rescue SystemExit; end}.to output(project_id_error_message_rx).to_stderr
+          expect{begin StoryBranch::Main.new; rescue SystemExit; end}.to output(api_key_error_message_rx).to_stderr
         end
 
         it "should exit with error message config file found in path is empty" do
