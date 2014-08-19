@@ -46,8 +46,8 @@
 #
 # A YAML file with either/both of:
 #
-#    api: YOUR.PIVOTAL.API.KEY.STRING
-#    project: YOUR.PROJECT.ID.NUMBER
+#     api: YOUR.PIVOTAL.API.KEY.STRING
+#     project: YOUR.PROJECT.ID.NUMBER
 #
 # Can be saved to `~/` or `./`
 #
