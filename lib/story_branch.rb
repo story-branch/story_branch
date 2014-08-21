@@ -5,7 +5,7 @@
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.2
+# Version: 0.2.3
 #
 # ## Description
 #
