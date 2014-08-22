@@ -5,7 +5,7 @@
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.3
+# Version: 0.2.4
 #
 # ## Description
 #
@@ -171,6 +171,7 @@ module StoryBranch
       begin
         puts "Connecting with Pivotal Tracker"
         @p.get_project
+
         unless @p.is_current_branch_a_story?
           puts "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
           return
@@ -335,7 +336,9 @@ module StoryBranch
     def is_current_branch_a_story?
       GitUtils.current_story and
       GitUtils.current_story.length == 3 and
-        filtered_stories_list(:started, true).map(&:id).include? GitUtils.current_story[2].to_i
+      filtered_stories_list(:started, true).
+        map(&:id).
+          include? GitUtils.current_story[2].to_i
     end
 
     def story_from_current_branch
@@ -350,7 +353,10 @@ module StoryBranch
       project = get_project
       stories = project.stories.all({current_state: state})
       if estimated
-        stories.select{|s| s.estimate and s.estimate > 1 }
+        stories.select{|s|
+          s.story_type == "bug" or
+          s.story_type == "chore" or
+          (s.story_type == "feature" and s.estimate and s.estimate >= 0)}
       else
         stories
       end
