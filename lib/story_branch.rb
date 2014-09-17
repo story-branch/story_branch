@@ -5,7 +5,7 @@
 #          Dominic Wong <dominic.wong.617@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.4
+# Version: 0.2.5
 #
 # ## Description
 #
@@ -191,7 +191,7 @@ module StoryBranch
         end
 
         puts "Use standard finishing commit message: [y/N]?"
-        commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{GitUtils.current_branch_story_parts[:description].StringUtils.undashed}"
+        commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
         puts commit_message
 
         if gets.chomp!.downcase == "y"
@@ -228,11 +228,19 @@ module StoryBranch
   class StringUtils
 
     def self.dashed s
-      s.tr(' _,./:;', '-')
+      s.tr(' _,./:;+&', '-')
     end
 
     def self.simple_sanitize s
-      s.tr '\'"%!@#$(){}[]*\\?', ''
+      strip_newlines (s.tr '\'"%!@#$(){}[]*\\?', '')
+    end
+
+    def self.normalised_branch_name s
+      StringUtils.simple_sanitize((StringUtils.dashed s).downcase).squeeze("-")
+    end
+
+    def self.strip_newlines s
+      s.tr "\n", "-"
     end
 
     def self.undashed s
@@ -248,16 +256,31 @@ module StoryBranch
     end
 
     def self.is_existing_branch? name
-      # we don't use the Git gem's is_local_branch? because we want to
-      # ignore the id suffix while still avoiding name collisions
       branch_names.each do |n|
-        normalised_branch_name = StringUtils.simple_sanitize(StringUtils.dashed(n.match(/(^.*)(-[1-9][0-9]+$)?/)[1]))
-        levenshtein_distance = Levenshtein.distance normalised_branch_name, name
-        if levenshtein_distance < 2
-          return levenshtein_distance
+        if Levenshtein.distance(n, name) < 3
+          return true
+        end
+        existing_branch_name = n.match(/(.*)(-[1-9][0-9]+$)/)
+        if existing_branch_name
+          levenshtein_distance = Levenshtein.distance existing_branch_name[1], name
+          if levenshtein_distance < 3
+            return true
+          end
         end
       end
-      return -1
+      return false
+    end
+
+    def self.is_existing_story? id
+      branch_names.each do |n|
+        branch_id = n.match(/-[1-9][0-9]+$/)
+        if branch_id
+          if branch_id.to_s == "-#{id}"
+            return true
+          end
+        end
+      end
+      false
     end
 
     def self.branch_names
@@ -275,7 +298,7 @@ module StoryBranch
     def self.current_branch_story_parts
       matches = current_branch.match(/(.*)-(\d+$)/)
       if matches.length == 3
-        { description: matches[1], id: matches[2] }
+        { title: matches[1], id: matches[2] }
       else
         nil
       end
@@ -395,7 +418,7 @@ module StoryBranch
     end
 
     def create_feature_branch story
-      dashed_story_name = StringUtils.simple_sanitize((StringUtils.dashed story.name).downcase).squeeze("-")
+      dashed_story_name = StringUtils.normalised_branch_name story.name
       feature_branch_name = nil
       puts "You are checked out at: #{GitUtils.current_branch}"
       while feature_branch_name == nil or feature_branch_name == ""
@@ -403,29 +426,28 @@ module StoryBranch
         feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
       end
       feature_branch_name.chomp!
-      validate_branch_name feature_branch_name
-      feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-      puts "Creating: #{feature_branch_name_with_story_id} with #{GitUtils.current_branch} as parent"
-      GitUtils.create_branch feature_branch_name_with_story_id
+      if validate_branch_name feature_branch_name, story.id
+        feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+        puts "Creating: #{feature_branch_name_with_story_id} with #{GitUtils.current_branch} as parent"
+        GitUtils.create_branch feature_branch_name_with_story_id
+      end
     end
 
     # Branch name validation
-    def validate_branch_name name
+    def validate_branch_name name, id
+      if GitUtils.is_existing_story? id
+        puts "Error: An existing branch has the same story id: #{id}"
+        return false
+      end
+      if GitUtils.is_existing_branch? name
+        puts "Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name."
+        return false
+      end
       unless valid_branch_name? name
         puts "Error: #{name}\nis an invalid name."
         return false
       end
-      existing_name_score = GitUtils.is_existing_branch?(name)
-      unless existing_name_score == -1
-        puts <<-EOD.strip_heredoc
-        Name Collision Error:
-
-        #{name}
-
-        This is too similar to the name of an existing
-        branch, a more unique name is required
-      EOD
-      end
+      true
     end
 
     def valid_branch_name? name

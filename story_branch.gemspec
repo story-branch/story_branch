@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   #Scripts available after instalation
   s.executables  = %w(
                       story_start story-start git-start git-story-start
+                      story_unstart story-unstart git-unstart git-story-unstart
                       story_branch story-branch git-story git-story-branch git-pivotal-story
                       story_finish story-finish git-finish git-story-finish
                      )
