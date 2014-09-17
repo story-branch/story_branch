@@ -12,12 +12,17 @@ Pivotal Tracker Story. It will get started stories from your active
 project.  You can enter text and press TAB to search for a story
 name, or TAB to show the full list. It will then suggest an editable
 branch name. When the branch is created the `story_id` will
-be appended to it.
+be appended to it. Enter a blank to exit.
 
 `git start`: Start a story in Pivotal Tracker from the terminal.
 It'll get all unstarted stories in your current project.  You can
 enter text and press TAB to search for a story name, or TAB to show
-the full list.
+the full list. Enter blank to exit.
+
+`git unstart`: Unstart a started story in Pivotal Tracker from the terminal.
+It'll get all started stories in your current project.  You can
+enter text and press TAB to search for a story name, or TAB to show
+the full list. Enter blank to exit.
 
 `git finish`: Create commit/message for the staged changes, e.g:
 "[Finishes #1234567] My Story Title" - optionally Finishes the story
@@ -48,13 +53,15 @@ Can be saved to `~/` or `./`
 
 You run story_branch from the git/project root folder.
 
-`start`, `branch`, are run interactively and will display a
+`start`, `unstart` and `story`, are run interactively and will display a
 list of stories to work with.
 
 `finish` will scan the current branch name for a story id (as its
 suffix) and if a valid, active story is found on pivotal tracker it
 will create a commit with a message to trigger pivotal's git
 integraton features.
+
+All text entry supports Readline keyboard shortcuts / bindings, (word fwd/back, undo etc.)
 
 ### Command names
 
@@ -63,10 +70,11 @@ old commmand names, and now encourage only the use of the `git`
 style usage.
 
       git style  | deprecated
-     ------------+--------------+--------------
-      git story  | story_branch | story-branch
-      git start  | story_start  | story-start
-      git finish | story_finish | story-finish
+     ------------+---------------+--------------
+      git story  | story_branch  | story-branch
+      git start  | story_start   | story-start
+      git unstart| story_unstart | story-unstart
+      git finish | story_finish  | story-finish
 
 ## Contributing
 
