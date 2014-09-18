@@ -25,7 +25,7 @@ enter text and press TAB to search for a story name, or TAB to show
 the full list. Enter blank to exit.
 
 `git finish`: Create commit/message for the staged changes, e.g:
-"[Finishes #1234567] My Story Title" - optionally Finishes the story
+`"[Finishes #1234567] My Story Title"` - optionally Finishes the story
 via pivotal tracker's api. You must stage all changes (or stash
 them) first.
 
@@ -69,12 +69,12 @@ It's possible to the commands in a few ways, we have deprecated the
 old commmand names, and now encourage only the use of the `git`
 style usage.
 
-      git style  | deprecated
-     ------------+---------------+--------------
-      git story  | story_branch  | story-branch
-      git start  | story_start   | story-start
-      git unstart| story_unstart | story-unstart
-      git finish | story_finish  | story-finish
+git style  | deprecated    | deprecated
+---------- | ------------- | -------------
+git story  | story_branch  | story-branch
+git start  | story_start   | story-start
+git unstart| story_unstart | story-unstart
+git finish | story_finish  | story-finish
 
 ## Contributing
 
