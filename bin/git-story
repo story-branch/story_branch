@@ -1,1 +1,4 @@
-story_branch
+#!/usr/bin/env ruby
+require 'story_branch'
+sb = StoryBranch::Main.new()
+sb.create_story_branch
