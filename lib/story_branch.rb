@@ -29,7 +29,7 @@
 # e.g: `[Finishes #1234567] My story name`
 #
 # You must stage all changes (or stash them) first. Note the commit will not
-# be pushed.  Note: You'll be able to bail out before.
+# be pushed.  Note: You'll be able to bail out of the commit.
 #
 # `git start`: Start a story in Pivotal Tracker from the terminal.
 # It'll get all unstarted stories in your current project.  You can
