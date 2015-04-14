@@ -19,7 +19,7 @@ e.g. `my-story-name-1234567`
 
 `git finish`: Creates a git commit message for the staged changes.
 
-e.g: `[Finishes #1234567] My Story Title`
+e.g: `[Finishes #1234567] My story name`
 
 You must stage all changes (or stash them) first. Note the commit will not
 be pushed.  Note: You'll be able to bail out before.
