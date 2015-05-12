@@ -6,7 +6,7 @@
 #          Ranhiru Cooray <ranhiru@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.7
+# Version: 0.2.8
 #
 # ## Description
 # A small collection of tools for working with git branches and Pivotal
@@ -81,85 +81,86 @@
 #
 # Code:
 
+require 'byebug'
 require 'yaml'
-require 'pivotal-tracker'
+require 'blanket'
 require 'rb-readline'
 require 'readline'
 require 'git'
 require 'levenshtein'
 
-trap('INT') {exit}
+trap('INT') { exit }
 
 module StoryBranch
-
   class Main
-
     ERRORS = {
-      "Stories in the started state must be estimated." =>
+      'Stories in the started state must be estimated.' =>
       "Error: Pivotal won't allow you to start an unestimated story"
     }
 
-    PIVOTAL_CONFIG_FILES = ['.story_branch',"#{ENV['HOME']}/.story_branch"]
+    PIVOTAL_CONFIG_FILES = ['.story_branch', "#{ENV['HOME']}/.story_branch"]
 
     attr_accessor :p
 
     def initialize
-      if config_file
-        @pivotal_info = YAML.load_file config_file
-      end
-      @p            = PivotalUtils.new
-      @p.api_key    = config_value "api", 'PIVOTAL_API_KEY'
-      @p.project_id = config_value "project", 'PIVOTAL_PROJECT_ID'
+      @pivotal_info = YAML.load_file config_file if config_file
+      @p = PivotalUtils.new
+      @p.api_key = config_value 'api', 'PIVOTAL_API_KEY'
+      @p.project_id = config_value 'project', 'PIVOTAL_PROJECT_ID'
       exit unless @p.valid?
+    end
+
+    def unauthorised_message
+      $stderr.puts 'Pivotal API key or Project ID invalid'
     end
 
     def create_story_branch
       begin
-        puts "Connecting with Pivotal Tracker"
+        puts 'Connecting with Pivotal Tracker'
         @p.get_project
-        puts "Getting stories..."
+        puts 'Getting stories...'
         stories = @p.display_stories :started, false
         if stories.length < 1
-          puts "No stories started, exiting"
+          puts 'No stories started, exiting'
           exit
         end
         story = @p.select_story stories
         if story
           @p.create_feature_branch story
         end
-      rescue RestClient::Unauthorized
-        $stderr.puts "Pivotal API key or Project ID invalid"
+      rescue Blanket::Unauthorized
+        unauthorised_message
         return nil
       end
     end
 
     def pick_and_update filter, hash, msg, is_estimated
       begin
-        puts "Connecting with Pivotal Tracker"
+        puts 'Connecting with Pivotal Tracker'
         @p.get_project
-        puts "Getting stories..."
+        puts 'Getting stories...'
         stories = @p.filtered_stories_list filter, is_estimated
         story = @p.select_story stories
         if story
-          result = story.update hash
-          if result.errors.count > 0
+          result = @p.story_update story, hash
+          if result.try(:errors).try(:count) > 0
             puts result.errors.to_a.uniq.map{|e| ERRORS[e] }
             return nil
           end
           puts "#{story.id} #{msg}"
         end
-      rescue RestClient::Unauthorized
-        $stderr.puts "Pivotal API key or Project ID invalid"
+      rescue Blanket::Unauthorized
+        unauthorised_message
         return nil
       end
     end
 
     def story_start
-      pick_and_update(:unstarted, {:current_state => "started"}, "started", true)
+      pick_and_update(:unstarted, {:current_state => 'started'}, 'started', true)
     end
 
     def story_unstart
-      pick_and_update(:started, {:current_state => "unstarted"}, "unstarted", false)
+      pick_and_update(:started, {:current_state => 'unstarted'}, 'unstarted', false)
     end
 
     def story_estimate
@@ -168,7 +169,7 @@ module StoryBranch
 
     def story_finish
       begin
-        puts "Connecting with Pivotal Tracker"
+        puts 'Connecting with Pivotal Tracker'
         @p.get_project
 
         unless @p.is_current_branch_a_story?
@@ -177,29 +178,29 @@ module StoryBranch
         end
 
         if GitUtils.has_status? :untracked or GitUtils.has_status? :modified
-          puts "There are unstaged changes"
-          puts "Use git add to stage changes before running git finish"
-          puts "Use git stash if you want to hide changes for this commit"
+          puts 'There are unstaged changes'
+          puts 'Use git add to stage changes before running git finish'
+          puts 'Use git stash if you want to hide changes for this commit'
           return nil
         end
 
         unless GitUtils.has_status? :added or GitUtils.has_status? :staged
-          puts "There are no staged changes."
-          puts "Nothing to do"
+          puts 'There are no staged changes.'
+          puts 'Nothing to do'
           return nil
         end
 
-        puts "Use standard finishing commit message: [y/N]?"
+        puts 'Use standard finishing commit message: [y/N]?'
         commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
         puts commit_message
 
-        if gets.chomp!.downcase == "y"
+        if gets.chomp!.downcase == 'y'
           GitUtils.commit commit_message
         else
-          puts "Aborted"
+          puts 'Aborted'
         end
-      rescue RestClient::Unauthorized
-        $stderr.puts "Pivotal API key or Project ID invalid"
+      rescue Blanket::Unauthorized
+        unauthorised_message
         return nil
       end
     end
@@ -235,23 +236,22 @@ module StoryBranch
     end
 
     def self.normalised_branch_name s
-      simple_sanitize((dashed s).downcase).squeeze("-")
+      simple_sanitize((dashed s).downcase).squeeze('-')
     end
 
     def self.strip_newlines s
-      s.tr "\n", "-"
+      s.tr '\n', '-'
     end
 
     def self.undashed s
-      s.gsub(/-/, " ").capitalize
+      s.gsub(/-/, ' ').capitalize
     end
 
   end
 
   class GitUtils
-
     def self.g
-      Git.open "."
+      Git.open '.'
     end
 
     def self.is_existing_branch? name
@@ -321,7 +321,7 @@ module StoryBranch
       untracked_rx = /^\?\? (.*)/
       staged_rx    = /^M  (.*)/
       added_rx     = /^A  (.*)/
-      status = g.lib.send(:command, "status", "-s").lines
+      status = g.lib.send(:command, 'status', '-s').lines
       return nil if status.length == 0
       {
         modified:  status_collect(status, modified_rx),
@@ -343,16 +343,25 @@ module StoryBranch
   end
 
   class PivotalUtils
-
-    attr_accessor :api_key, :project_id, :project
+    API_URL = 'https://www.pivotaltracker.com/services/v5/'
+    attr_accessor :api_key, :project_id
 
     def valid?
-      return (not @api_key.nil? and not @project_id.nil?)
+      !@api_key.nil? && !@project_id.nil?
+    end
+
+    def api
+      fail 'API key must be specified' unless @api_key
+      Blanket.wrap API_URL, headers: { 'X-TrackerToken' => @api_key }
     end
 
     def get_project
-      PivotalTracker::Client.token = @api_key
-      @project = PivotalTracker::Project.find @project_id.to_i
+      fail 'Project ID must be set' unless @project_id
+      api.projects(@project_id.to_i)
+    end
+
+    def story_accessor
+      get_project.stories
     end
 
     def is_current_branch_a_story?
@@ -364,21 +373,22 @@ module StoryBranch
     end
 
     def story_from_current_branch
-      get_project.stories.find(GitUtils.current_story[2].to_i) if GitUtils.current_story.length == 3
+      story_accessor.get(GitUtils.current_story[2].to_i) if GitUtils.current_story.length == 3
     end
 
-    # TODO: Add some other predicates as we need them...
-    # Filtering on where a story lives (Backlog, IceBox)
-    # Filtering on tags/labels
-
+    # TODO: Maybe add some other predicates
+    # - Filtering on where a story lives (Backlog, IceBox)
+    # - Filtering on labels
+    # as the need arises...
+    #
     def filtered_stories_list state, estimated
-      project = get_project
-      stories = project.stories.all({current_state: state})
+      options = { with_state: state.to_s }
+      stories = [* story_accessor.get(params: options).payload]
       if estimated
-        stories.select{|s|
-          s.story_type == "bug" or
-          s.story_type == "chore" or
-          (s.story_type == "feature" and s.estimate and s.estimate >= 0)}
+        stories.select do |s|
+          s.story_type == 'bug' || s.story_type == 'chore' ||
+            (s.story_type == 'feature' && s.estimate && s.estimate >= 0)
+        end
       else
         stories
       end
@@ -394,11 +404,9 @@ module StoryBranch
 
     def select_story stories
       story_texts = stories.map{|s| one_line_story s }
-      puts "Leave blank to exit, use <up>/<down> to scroll through stories, TAB to list all and auto-complete"
-      story_selection = readline("Select a story: ", story_texts)
-      if story_selection == "" or story_selection.nil?
-        return nil
-      end
+      puts 'Leave blank to exit, use <up>/<down> to scroll through stories, TAB to list all and auto-complete'
+      story_selection = readline('Select a story: ', story_texts)
+      return nil if story_selection == '' or story_selection.nil?
       story = stories.select{|s| story_matcher s, story_selection }.first
       if story.nil?
         puts "Not found: #{story_selection}"
@@ -407,6 +415,10 @@ module StoryBranch
         puts "Selected : #{one_line_story story}"
         return story
       end
+    end
+
+    def story_update story, hash
+      get_project.stories(story.id).put(body: hash)
     end
 
     def story_matcher story, selection
@@ -420,9 +432,9 @@ module StoryBranch
       dashed_story_name = StringUtils.normalised_branch_name story.name
       feature_branch_name = nil
       puts "You are checked out at: #{GitUtils.current_branch}"
-      while feature_branch_name == nil or feature_branch_name == ""
-        puts "Provide a new branch name... (TAB for suggested name)" if [nil, ""].include? feature_branch_name
-        feature_branch_name = readline("Name of feature branch: ", [dashed_story_name])
+      while feature_branch_name == nil or feature_branch_name == ''
+        puts 'Provide a new branch name... (TAB for suggested name)' if [nil, ''].include? feature_branch_name
+        feature_branch_name = readline('Name of feature branch: ', [dashed_story_name])
       end
       feature_branch_name.chomp!
       if validate_branch_name feature_branch_name, story.id
@@ -439,7 +451,7 @@ module StoryBranch
         return false
       end
       if GitUtils.is_existing_branch? name
-        puts "Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name."
+        puts 'Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
         return false
       end
       unless valid_branch_name? name
@@ -461,9 +473,9 @@ module StoryBranch
       RbReadline.clear_history
       if completions.length > 0
         completions.each {|i| Readline::HISTORY.push i}
-        RbReadline.rl_completer_word_break_characters = ""
-        Readline.completion_proc = proc {|s| completions.grep(/#{Regexp.escape(s)}/) }
-        Readline.completion_append_character = ""
+        RbReadline.rl_completer_word_break_characters = ''
+        Readline.completion_proc = proc { |s| completions.grep(/#{Regexp.escape(s)}/) }
+        Readline.completion_append_character = ''
       end
       Readline.readline(prompt, false)
     end

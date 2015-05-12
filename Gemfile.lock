@@ -1,43 +1,25 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    builder (3.2.2)
-    coderay (1.1.0)
-    crack (0.4.1)
-      safe_yaml (~> 0.9.0)
+    blanket_wrapper (3.0.1)
+      httparty
+      recursive-open-struct
+    byebug (4.0.5)
+      columnize (= 0.9.0)
+    columnize (0.9.0)
     diff-lcs (1.2.5)
     ffi (1.1.5)
     git (1.2.6)
-    happymapper (0.4.1)
-      libxml-ruby (~> 2.0)
+    httparty (0.13.3)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    json (1.8.2)
     levenshtein-ffi (1.0.3)
       ffi
       ffi (~> 1.1.5)
-    libxml-ruby (2.7.0)
-    method_source (0.8.2)
-    mime-types (2.0)
-    mini_portile (0.5.2)
-    nokogiri (1.6.1)
-      mini_portile (~> 0.5.0)
-    nokogiri-happymapper (0.5.8)
-      nokogiri (~> 1.5)
-    pivotal-tracker (0.5.12)
-      builder
-      builder
-      crack
-      happymapper (>= 0.3.2)
-      nokogiri (>= 1.4.3)
-      nokogiri (>= 1.5.5)
-      nokogiri-happymapper (>= 0.5.4)
-      rest-client (~> 1.6.0)
-      rest-client (~> 1.6.0)
-    pry (0.10.1)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
-      slop (~> 3.4)
+    multi_xml (0.5.5)
     rb-readline (0.5.1)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    recursive-open-struct (0.6.3)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -50,16 +32,14 @@ GEM
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
-    safe_yaml (0.9.7)
-    slop (3.6.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  blanket_wrapper
+  byebug
   git
   levenshtein-ffi
-  pivotal-tracker
-  pry
   rb-readline
   rspec

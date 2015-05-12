@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'pivotal-tracker'
+gem 'blanket_wrapper'
 gem 'git'
 gem 'levenshtein-ffi'
 gem 'rspec'
 gem 'rb-readline'
-gem 'pry'
+gem 'byebug'
