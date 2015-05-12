@@ -143,10 +143,7 @@ module StoryBranch
         story = @p.select_story stories
         if story
           result = @p.story_update story, hash
-          if result.try(:errors).try(:count) > 0
-            puts result.errors.to_a.uniq.map{|e| ERRORS[e] }
-            return nil
-          end
+          fail result.error if result.error
           puts "#{story.id} #{msg}"
         end
       rescue Blanket::Unauthorized
@@ -156,11 +153,11 @@ module StoryBranch
     end
 
     def story_start
-      pick_and_update(:unstarted, {:current_state => 'started'}, 'started', true)
+      pick_and_update(:unstarted, { current_state: 'started' }, 'started', true)
     end
 
     def story_unstart
-      pick_and_update(:started, {:current_state => 'unstarted'}, 'unstarted', false)
+      pick_and_update(:started, { current_state: 'unstarted' }, 'unstarted', false)
     end
 
     def story_estimate
@@ -418,7 +415,7 @@ module StoryBranch
     end
 
     def story_update story, hash
-      get_project.stories(story.id).put(body: hash)
+      get_project.stories(story.id).put(body: hash).payload
     end
 
     def story_matcher story, selection
