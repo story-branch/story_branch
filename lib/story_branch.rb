@@ -6,7 +6,7 @@
 #          Ranhiru Cooray <ranhiru@gmail.com>
 #          Gabe Hollombe <gabe@neo.com>
 #
-# Version: 0.2.8
+# Version: 0.2.9
 #
 # ## Description
 # A small collection of tools for working with git branches and Pivotal
@@ -237,7 +237,7 @@ module StoryBranch
     end
 
     def self.strip_newlines s
-      s.tr '\n', '-'
+      s.tr "\n", '-'
     end
 
     def self.undashed s
