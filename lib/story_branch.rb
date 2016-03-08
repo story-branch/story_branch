@@ -103,7 +103,6 @@ module StoryBranch
     attr_accessor :p
 
     def initialize
-      @pivotal_info = YAML.load_file config_file if config_file
       @p = PivotalUtils.new
       @p.api_key = config_value 'api', 'PIVOTAL_API_KEY'
       @p.project_id = config_value 'project', 'PIVOTAL_PROJECT_ID'
@@ -202,12 +201,11 @@ module StoryBranch
       end
     end
 
-    def config_file
-      PIVOTAL_CONFIG_FILES.select{|conf| File.exists? conf}.first
-    end
-
     def config_value key, env
-      value = @pivotal_info[key] if @pivotal_info and @pivotal_info[key]
+      PIVOTAL_CONFIG_FILES.each do |config_file|
+        pivotal_info = YAML.load_file config_file
+        return pivotal_info[key] if pivotal_info[key]
+      end
       value ||= env_required env
       value
     end
