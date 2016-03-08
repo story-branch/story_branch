@@ -42,10 +42,32 @@ Install the gem:
 
 #### Settings
 
-You must have a `PIVOTAL_API_KEY` environment variable set
-to your Pivotal api key, plus either a `.story_branch` file or
-`PIVOTAL_PROJECT_ID` environment variable set. Note, values in
-`.story_branch` will override environment variable settings.
+You can have your settings set either on a `.story_branch` file
+or in environment variables.
+
+The `.story_branch` files have priority over environment variables so if you set both,
+the configuration within `.story_branch` will be the one used.
+Also, the `.story_branch` file inside a project directory has priority over the global one.
+
+The settings will be loaded firstly from local config file, if not found then from global
+config file and ultimately from the environment variables. If none are found, an error
+will be thrown.
+
+This means that you can have a globally set api key and for each project using Pivotal Tracker
+have a local config inside the project folder.
+E.g.
+
+```
+$ cat ~/.story_branch
+api: your_API_key_that_you_get_from_pivotal_tracker
+
+$ cat ~/your_project_dir/.story_branch
+project: 123123
+```
+
+In case you prefer to use environment variables, you can set
+`PIVOTAL_API_KEY` to your pivotal tracker api key and set
+`PIVOTAL_PROJECT_ID` to your project id.
 
 #### .story_branch file
 
