@@ -7,7 +7,7 @@ require 'story_branch/version'
 Gem::Specification.new do |s|
   s.name        = 'story_branch'
   s.version     = StoryBranch::VERSION
-  s.date        = '2015-05-12'
+  s.date        = Date.today.to_s
   s.summary     = 'Story Branch - create git branches based on pivotal tracker stories'
   s.description = 'Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story'
   s.authors     = ['Jason Milkins', 'Rui Baltazar', 'Dominic Wong', 'Ranhiru Cooray', 'Gabe Hollombe']
