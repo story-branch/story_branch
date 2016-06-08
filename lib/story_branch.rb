@@ -81,7 +81,6 @@
 #
 # Code:
 
-require 'byebug'
 require 'yaml'
 require 'blanket'
 require 'rb-readline'
