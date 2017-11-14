@@ -1,4 +1,7 @@
 class StoryBranch::Main
+
+  include StoryBranch
+
   ERRORS = {
     'Stories in the started state must be estimated.' =>
     "Error: Pivotal won't allow you to start an unestimated story"
@@ -111,7 +114,7 @@ class StoryBranch::Main
     PIVOTAL_CONFIG_FILES.each do |config_file|
       if File.exists? config_file
         pivotal_info = YAML.load_file config_file
-        return pivotal_info[key] if pivotal_info[key]
+        return pivotal_info[key] if pivotal_info && pivotal_info[key]
       end
     end
     value ||= env_required env
