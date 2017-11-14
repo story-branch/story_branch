@@ -105,6 +105,7 @@ module StoryBranch
       @p = PivotalUtils.new
       @p.api_key = config_value 'api', 'PIVOTAL_API_KEY'
       @p.project_id = config_value 'project', 'PIVOTAL_PROJECT_ID'
+      @p.finish_tag = config_value 'finish_tag', 'PIVOTAL_FINISH_TAG', 'Finishes'
       exit unless @p.valid?
     end
 
@@ -186,7 +187,7 @@ module StoryBranch
         end
 
         puts 'Use standard finishing commit message: [y/N]?'
-        commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
+        commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
         puts commit_message
 
         if gets.chomp!.downcase == 'y'
@@ -200,7 +201,7 @@ module StoryBranch
       end
     end
 
-    def config_value key, env
+    def config_value key, env, default_value = nil
       PIVOTAL_CONFIG_FILES.each do |config_file|
         if File.exists? config_file
           pivotal_info = YAML.load_file config_file
@@ -208,7 +209,7 @@ module StoryBranch
         end
       end
       value ||= env_required env
-      value
+      value || default_value
     end
 
     def env_required var_name
@@ -340,7 +341,7 @@ module StoryBranch
 
   class PivotalUtils
     API_URL = 'https://www.pivotaltracker.com/services/v5/'
-    attr_accessor :api_key, :project_id
+    attr_accessor :api_key, :project_id, :finish_tag
 
     def valid?
       !@api_key.nil? && !@project_id.nil?
