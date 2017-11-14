@@ -204,7 +204,7 @@ module StoryBranch
       PIVOTAL_CONFIG_FILES.each do |config_file|
         if File.exists? config_file
           pivotal_info = YAML.load_file config_file
-          return pivotal_info[key] if pivotal_info[key]
+          return pivotal_info[key] if pivotal_info && pivotal_info[key]
         end
       end
       value ||= env_required env
