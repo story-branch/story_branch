@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    docker:
+       - image: circleci/ruby:2.4.1-node-browsers
+    working_directory: ~/story_branch
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: run tests
+          command: |
+            mkdir -p /tmp/test-results
+
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format documentation \
+                              --format RspecJunitFormatter \
+                              --out /tmp/test-results/rspec.xml \
+                              -- $(sed -e 's/\n/\\n/' -e 's/ /\ /' <<< "${TEST_FILES}")
+
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
