@@ -15,14 +15,18 @@ module StoryBranch
 
       def execute(output: $stdout, **)
         output.puts 'Looking for existing config file'
-        if File.exist? "#{@config_file_path}/#{@config_file_name}"
+        if File.exist? "#{@config_file_path}/#{@config_file_name}.yml"
           output.puts 'Config file exists. Override?'
         else
           config = ::TTY::Config.new
           config.filename = @config_file_name
           config.append_path @config_file_path
-          config.set('first_touch', :api_key, value: 'MAGICAPIKEY')
-          config.set('first_touch', :project_id, value: '123456')
+          prompt = ::TTY::Prompt.new
+          project_name = prompt.ask "What should be this project's name?"
+          api_key = prompt.ask 'Please provide the api key:'
+          project_id = prompt.ask "Please provide this project's id:"
+          config.set(project_name, :api_key, value: api_key)
+          config.set(project_name, :project_id, value: project_id)
           config.write
         end
       end

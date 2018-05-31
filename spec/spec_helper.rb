@@ -16,7 +16,6 @@ RSpec.configure do |config|
 
   config.before do
     FakeFS.activate!
-    FileUtils.mkdir_p Dir.home
   end
 
   config.after do
