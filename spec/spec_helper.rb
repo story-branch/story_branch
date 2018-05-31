@@ -1,21 +1,25 @@
-require_relative '../lib/story_branch'
+require 'bundler/setup'
+require 'fileutils'
+require 'fakefs/safe'
+require 'story_branch'
 
 RSpec.configure do |config|
-  # some (optional) config here
-end
+  # Enable flags like --only-failures and --next-failure
+  # config.example_status_persistence_file_path = ".rspec_status"
 
-def copy_config_file(filename, empty_contents=false)
-  FileUtils.cp filename, '.'
-  if empty_contents
-    File.open("./#{File.basename(filename)}", 'w') {|file| file.truncate(0) }
+  # Disable RSpec exposing methods globally on `Module` and `main`
+  config.disable_monkey_patching!
+
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
   end
-end
 
-def clear_env_variables
-  ENV.delete("PIVOTAL_API_KEY")
-  ENV.delete("PIVOTAL_PROJECT_ID")
-end
+  config.before do
+    FakeFS.activate!
+    FileUtils.mkdir_p Dir.home
+  end
 
-def clear_config_file
-  FileUtils.rm '.story_branch' rescue "File not found"
+  config.after do
+    FakeFS.deactivate!
+  end
 end
