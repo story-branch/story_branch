@@ -1,4 +1,4 @@
-require 'fakefs/spec_helpers'
+require 'spec_helper'
 require 'story_branch/commands/config'
 
 RSpec.describe StoryBranch::Commands::Config do
