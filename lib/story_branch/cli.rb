@@ -16,7 +16,19 @@ module StoryBranch
       require_relative 'version'
       puts "v#{StoryBranch::VERSION}"
     end
-    map %w(--version -v) => :version
+    map %w[--version -v] => :version
+
+    desc 'add', 'Command description...'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def add(*)
+      if options[:help]
+        invoke :help, ['add']
+      else
+        require_relative 'commands/add'
+        StoryBranch::Commands::Add.new(options).execute
+      end
+    end
 
     desc 'migrate', 'Migrate old story branch configuration to the new format'
     method_option :help, aliases: '-h', type: :boolean,
