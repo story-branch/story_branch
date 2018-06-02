@@ -6,7 +6,6 @@ RSpec.describe StoryBranch::Commands::Add do
 
   before do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
-    prompt.output << nil
     prompt.input << "amazingkey\r123456\rtest-project"
     prompt.input.rewind
 
@@ -19,8 +18,22 @@ RSpec.describe StoryBranch::Commands::Add do
 
   describe 'when there is no config file' do
     it 'creates a new config in home directory' do
-      home_dir_config = "#{Dir.home}/.story_branch.yml"
-      expect(File.exist?(home_dir_config)).to eq true
+      config = TTY::Config.new
+      config.append_path(Dir.home)
+      config.filename = '.story_branch'
+      expect(config.persisted?).to eq true
+      config.read
+      expect(config.fetch('test-project', :api_key)).to eq 'amazingkey'
+      expect(config.fetch('test-project', :project_id)).to eq '123456'
+    end
+
+    it 'creates a new local config file' do
+      config = TTY::Config.new
+      config.append_path('.')
+      config.filename = '.story_branch'
+      expect(config.persisted?).to eq true
+      config.read
+      expect(config.fetch(:project_name)).to eq 'test-project'
     end
 
     describe 'prompting the user' do
