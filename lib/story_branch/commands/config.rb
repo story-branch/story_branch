@@ -12,15 +12,15 @@ module StoryBranch
         @config = init_config
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute(_input: $stdin, _output: $stdout)
         return if config_exist?
         prompt = ::TTY::Prompt.new
         project_name = prompt.ask "What should be this project's name?"
         api_key = prompt.ask 'Please provide the api key:'
         project_id = prompt.ask "Please provide this project's id:"
-        config.set(project_name, :api_key, value: api_key)
-        config.set(project_name, :project_id, value: project_id)
-        config.write
+        @config.set(project_name, :api_key, value: api_key)
+        @config.set(project_name, :project_id, value: project_id)
+        @config.write
       end
 
       private
