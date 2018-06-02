@@ -9,7 +9,8 @@ require 'fileutils'
 module StoryBranch
   module Commands
     class Migrate < StoryBranch::Command
-      CONFIG_FILE = "#{ENV['HOME']}/.story_branch"
+      GLOBAL_CONFIG_FILE = "#{ENV['HOME']}/.story_branch".freeze
+      LOCAL_CONFIG_FILE = '.story_branch'.freeze
 
       def initialize(options)
         @options = options
@@ -18,18 +19,35 @@ module StoryBranch
         @project_name = nil
       end
 
-      def execute(_input: $stdin, _output: $stdout)
+      def execute(_input: $stdin, output: $stdout)
         return unless old_config_exists?
-        @config = init_config
+        @config = init_config(ENV['HOME'])
         return if config_exist?
-        migrate_key('api', 'PIVOTAL_API_KEY', :api_key)
-        migrate_key('project_id', 'PIVOTAL_PROJECT_ID', :project_id)
-        @config.write
-        FileUtils.rm CONFIG_FILE
-        puts 'Migration complete'
+        migrate_keys
+        create_local_config
+        clean_old_config_files
+        output.puts 'Migration complete'
       end
 
       private
+
+      def clean_old_config_files
+        [GLOBAL_CONFIG_FILE, LOCAL_CONFIG_FILE].each do |file|
+          FileUtils.rm file
+        end
+      end
+
+      def migrate_keys
+        migrate_key('api', 'PIVOTAL_API_KEY', :api_key)
+        migrate_key('project_id', 'PIVOTAL_PROJECT_ID', :project_id)
+        @config.write
+      end
+
+      def create_local_config
+        local_config = init_config('.')
+        local_config.set(:project_name, project_name)
+        local_config.write
+      end
 
       # TODO: Move this somewhere else as it is the same as config command
       def config_exist?
@@ -63,8 +81,8 @@ module StoryBranch
 
       # TODO: Probably makes sense to move this to a common tty config
       # utils file kind of thing as it will be shared by some commands.
-      def init_config
-        config_file_path = Dir.home
+      def init_config(path)
+        config_file_path = path
         config_file_name = '.story_branch'
         config = ::TTY::Config.new
         config.filename = config_file_name
@@ -73,27 +91,27 @@ module StoryBranch
       end
 
       def old_config_exists?
-        return true if File.exist? CONFIG_FILE
+        return true if File.exist? GLOBAL_CONFIG_FILE
         puts old_config_file_not_found
         false
       end
 
       def old_config_file_not_found
         <<-MESSAGE
-          Old configuration file not found in #{CONFIG_FILE}
+          Old configuration file not found in #{GLOBAL_CONFIG_FILE}
           Trying to start from scratch? Use story_branch config
         MESSAGE
       end
 
       def cant_migrate_missing_value
         <<-MESSAGE
-          Old configuration file not found in #{CONFIG_FILE}
+          Old configuration file not found in #{GLOBAL_CONFIG_FILE}
           Trying to start from scratch? Use story_branch config
         MESSAGE
       end
 
       def config_value(key, env)
-        @old_config ||= ::YAML.load_file CONFIG_FILE
+        @old_config ||= ::YAML.load_file GLOBAL_CONFIG_FILE
         return @old_config[key] if @old_config[key]
         ENV[env]
       end
