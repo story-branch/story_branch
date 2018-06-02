@@ -50,14 +50,6 @@ module StoryBranch
         config.read if config.persisted?
         config
       end
-
-      def config_missing_message
-        <<-MESSAGE
-          Configuration file is missing.
-          Trying to start a new project? Use story_branch add
-          Migrating from old version? Use story_branch migrate
-        MESSAGE
-      end
     end
   end
 end
