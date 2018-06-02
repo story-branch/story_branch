@@ -53,17 +53,5 @@ module StoryBranch
         StoryBranch::Commands::Migrate.new(options).execute
       end
     end
-
-    desc 'config', 'Creates the initial config file'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    def config(*)
-      if options[:help]
-        invoke :help, ['config']
-      else
-        require_relative 'commands/config'
-        StoryBranch::Commands::Config.new(options).execute
-      end
-    end
   end
 end
