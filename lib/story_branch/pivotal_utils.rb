@@ -37,7 +37,7 @@ class StoryBranch::PivotalUtils
   # - Filtering on labels
   # as the need arises...
   #
-  def filtered_stories_list state, estimated
+  def filtered_stories_list(state, estimated)
     options = { with_state: state.to_s }
     stories = [* story_accessor.get(params: options).payload]
     if estimated
@@ -50,20 +50,21 @@ class StoryBranch::PivotalUtils
     end
   end
 
-  def display_stories state, estimated
+  def display_stories(state, estimated)
     filtered_stories_list(state, estimated).each {|s| puts one_line_story s }
   end
 
-  def one_line_story s
+  def one_line_story(s)
     "#{s.id} - #{s.name}"
   end
 
-  def select_story stories
-    story_texts = stories.map{|s| one_line_story s }
+  # TODO: Use TTY prompt with pagination
+  def select_story(stories)
+    story_texts = stories.map { |s| one_line_story s }
     puts 'Leave blank to exit, use <up>/<down> to scroll through stories, TAB to list all and auto-complete'
     story_selection = readline('Select a story: ', story_texts)
-    return nil if story_selection == '' or story_selection.nil?
-    story = stories.select{|s| story_matcher s, story_selection }.first
+    return nil if story_selection == '' || story_selection.nil?
+    story = stories.select { |s| story_matcher s, story_selection }.first
     if story.nil?
       puts "Not found: #{story_selection}"
       return nil
@@ -73,31 +74,30 @@ class StoryBranch::PivotalUtils
     end
   end
 
-  def story_update story, hash
+  def story_update(story, hash)
     get_project.stories(story.id).put(body: hash).payload
   end
 
-  def story_matcher story, selection
+  def story_matcher(story, selection)
     m = selection.match(/^(\d*) /)
     return false unless m
     id = m.captures.first
-    return story.id.to_s == id
+    story.id.to_s == id
   end
 
-  def create_feature_branch story
+  def create_feature_branch(story)
     dashed_story_name = StringUtils.normalised_branch_name story.name
     feature_branch_name = nil
     puts "You are checked out at: #{GitUtils.current_branch}"
-    while feature_branch_name == nil or feature_branch_name == ''
+    while feature_branch_name.nil? || feature_branch_name == ''
       puts 'Provide a new branch name... (TAB for suggested name)' if [nil, ''].include? feature_branch_name
       feature_branch_name = readline('Name of feature branch: ', [dashed_story_name])
     end
     feature_branch_name.chomp!
-    if validate_branch_name feature_branch_name, story.id
-      feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-      puts "Creating: #{feature_branch_name_with_story_id} with #{GitUtils.current_branch} as parent"
-      GitUtils.create_branch feature_branch_name_with_story_id
-    end
+    return unless validate_branch_name(feature_branch_name, story.id)
+    feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+    puts "Creating: #{feature_branch_name_with_story_id} with #{GitUtils.current_branch} as parent"
+    GitUtils.create_branch feature_branch_name_with_story_id
   end
 
   # Branch name validation

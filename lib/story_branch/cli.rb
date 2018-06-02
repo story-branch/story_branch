@@ -18,6 +18,18 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
+    desc 'create', 'Create branch from estimated stories in pivotal tracker'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def create(*)
+      if options[:help]
+        invoke :help, ['create']
+      else
+        require_relative 'commands/create'
+        StoryBranch::Commands::Create.new(options).execute
+      end
+    end
+
     desc 'add', 'Add a new story branch configuration'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
