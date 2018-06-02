@@ -24,7 +24,7 @@ class StoryBranch::Main
     @p.get_project
     puts 'Getting stories...'
     stories = @p.display_stories :started, false
-    if stories.length < 1
+    if stories.empty?
       puts 'No stories started, exiting'
       exit
     end
