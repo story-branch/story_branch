@@ -20,23 +20,20 @@ class StoryBranch::Main
   end
 
   def create_story_branch
-    begin
-      puts 'Connecting with Pivotal Tracker'
-      @p.get_project
-      puts 'Getting stories...'
-      stories = @p.display_stories :started, false
-      if stories.length < 1
-        puts 'No stories started, exiting'
-        exit
-      end
-      story = @p.select_story stories
-      if story
-        @p.create_feature_branch story
-      end
-    rescue Blanket::Unauthorized
-      unauthorised_message
-      return nil
+    puts 'Connecting with Pivotal Tracker'
+    @p.get_project
+    puts 'Getting stories...'
+    stories = @p.display_stories :started, false
+    if stories.length < 1
+      puts 'No stories started, exiting'
+      exit
     end
+    story = @p.select_story stories
+    return unless story
+    @p.create_feature_branch story
+  rescue Blanket::Unauthorized
+    unauthorised_message
+    return nil
   end
 
   private
