@@ -18,7 +18,7 @@ module StoryBranch
     end
     map %w(--version -v) => :version
 
-    desc 'migrate', 'Command description...'
+    desc 'migrate', 'Migrate old story branch configuration to the new format'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def migrate(*)
@@ -30,7 +30,7 @@ module StoryBranch
       end
     end
 
-    desc 'config', 'Command description...'
+    desc 'config', 'Creates the initial config file'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def config(*)
