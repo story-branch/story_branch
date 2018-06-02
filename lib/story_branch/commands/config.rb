@@ -25,7 +25,7 @@ module StoryBranch
 
       def create_local_config
         local_config = init_config('.')
-        local_config.set(:project_name, project_name)
+        local_config.set(:project_name, value: project_name)
         local_config.write
       end
 

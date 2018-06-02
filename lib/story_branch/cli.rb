@@ -11,7 +11,7 @@ module StoryBranch
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc 'version', 'story_branch version'
+    desc 'version', 'story_branch gem version'
     def version
       require_relative 'version'
       puts "v#{StoryBranch::VERSION}"
