@@ -1,5 +1,4 @@
 class StoryBranch::Main
-
   include StoryBranch
 
   ERRORS = {
