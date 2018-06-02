@@ -18,7 +18,7 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
-    desc 'add', 'Command description...'
+    desc 'add', 'Add a new story branch configuration'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def add(*)
