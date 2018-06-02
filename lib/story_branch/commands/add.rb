@@ -31,7 +31,7 @@ module StoryBranch
         project_id = prompt.ask "Please provide this project's id:"
         @config.set(project_name, :api_key, value: api_key)
         @config.set(project_name, :project_id, value: project_id)
-        @config.write
+        @config.write(force: true)
       end
 
       def project_name
