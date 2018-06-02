@@ -1,4 +1,6 @@
 require 'blanket'
+require 'rb-readline'
+require_relative './git_utils'
 
 class StoryBranch::PivotalUtils
   API_URL = 'https://www.pivotaltracker.com/services/v5/'
@@ -23,15 +25,15 @@ class StoryBranch::PivotalUtils
   end
 
   def is_current_branch_a_story?
-    GitUtils.current_story and
-      GitUtils.current_story.length == 3 and
+    StoryBranch::GitUtils.current_story and
+      StoryBranch::GitUtils.current_story.length == 3 and
       filtered_stories_list(:started, true)
         .map(&:id)
-        .include? GitUtils.current_story[2].to_i
+        .include? StoryBranch::GitUtils.current_story[2].to_i
   end
 
   def story_from_current_branch
-    story_accessor.get(GitUtils.current_story[2].to_i) if GitUtils.current_story.length == 3
+    story_accessor.get(StoryBranch::GitUtils.current_story[2].to_i) if StoryBranch::GitUtils.current_story.length == 3
   end
 
   # TODO: Maybe add some other predicates
@@ -88,9 +90,9 @@ class StoryBranch::PivotalUtils
   end
 
   def create_feature_branch(story)
-    dashed_story_name = StringUtils.normalised_branch_name story.name
+    dashed_story_name = StoryBranch::StringUtils.normalised_branch_name story.name
     feature_branch_name = nil
-    puts "You are checked out at: #{GitUtils.current_branch}"
+    puts "You are checked out at: #{StoryBranch::GitUtils.current_branch}"
     while feature_branch_name.nil? || feature_branch_name == ''
       puts 'Provide a new branch name... (TAB for suggested name)' if [nil, ''].include? feature_branch_name
       feature_branch_name = readline('Name of feature branch: ', [dashed_story_name])
@@ -98,17 +100,17 @@ class StoryBranch::PivotalUtils
     feature_branch_name.chomp!
     return unless validate_branch_name(feature_branch_name, story.id)
     feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-    puts "Creating: #{feature_branch_name_with_story_id} with #{GitUtils.current_branch} as parent"
-    GitUtils.create_branch feature_branch_name_with_story_id
+    puts "Creating: #{feature_branch_name_with_story_id} with #{StoryBranch::GitUtils.current_branch} as parent"
+    StoryBranch::GitUtils.create_branch feature_branch_name_with_story_id
   end
 
   # Branch name validation
   def validate_branch_name name, id
-    if GitUtils.is_existing_story? id
+    if StoryBranch::GitUtils.is_existing_story? id
       puts "Error: An existing branch has the same story id: #{id}"
       return false
     end
-    if GitUtils.is_existing_branch? name
+    if StoryBranch::GitUtils.is_existing_branch? name
       puts 'Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
       return false
     end

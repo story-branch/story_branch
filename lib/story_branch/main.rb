@@ -1,3 +1,4 @@
+require_relative './string_utils'
 require_relative './pivotal_utils'
 require 'tty-config'
 
@@ -110,6 +111,7 @@ class StoryBranch::Main
     end
 
     puts 'Use standard finishing commit message: [y/N]?'
+
     commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
     puts commit_message
 

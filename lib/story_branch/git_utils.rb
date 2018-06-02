@@ -1,6 +1,9 @@
+require 'git'
+require 'levenshtein'
+
 class StoryBranch::GitUtils
   def self.g
-    Git.open '.'
+    ::Git.open '.'
   end
 
   def self.is_existing_branch? name
