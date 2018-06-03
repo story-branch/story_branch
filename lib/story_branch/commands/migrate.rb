@@ -2,7 +2,6 @@
 
 require_relative '../command'
 require 'tty-config'
-require 'tty-prompt'
 require 'yaml'
 require 'fileutils'
 

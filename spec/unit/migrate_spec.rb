@@ -26,10 +26,7 @@ Trying to start from scratch? Use story_branch add
   end
 
   describe 'when configuration is all defined in home dir' do
-    let(:prompt) { TTY::TestPrompt.new }
-
     before do
-      allow(::TTY::Prompt).to receive(:new).and_return(prompt)
       ENV['PIVOTAL_API_KEY'] = ''
       ENV['PIVOTAL_PROJECT_ID'] = ''
       FakeFS.with_fresh do
@@ -55,10 +52,7 @@ Trying to start from scratch? Use story_branch add
   end
 
   describe 'when configuration is all defined in ENV vars' do
-    let(:prompt) { TTY::TestPrompt.new }
-
     before do
-      allow(::TTY::Prompt).to receive(:new).and_return(prompt)
       ENV['PIVOTAL_API_KEY'] = 'DUMMYKEY'
       ENV['PIVOTAL_PROJECT_ID'] = '123456'
       FakeFS.with_fresh do
@@ -79,10 +73,7 @@ Trying to start from scratch? Use story_branch add
   end
 
   describe 'when configuration is shared between ENV vars and config file' do
-    let(:prompt) { TTY::TestPrompt.new }
-
     before do
-      allow(::TTY::Prompt).to receive(:new).and_return(prompt)
       ENV['PIVOTAL_API_KEY'] = 'DUMMYKEY'
       ENV['PIVOTAL_PROJECT_ID'] = ''
       FakeFS.with_fresh do
@@ -113,10 +104,7 @@ Trying to start from scratch? Use story_branch add
   end
 
   describe 'running the migration tool in different existing projects' do
-    let(:prompt) { TTY::TestPrompt.new }
-
     before do
-      allow(::TTY::Prompt).to receive(:new).and_return(prompt)
       ENV['PIVOTAL_API_KEY'] = 'DUMMYKEY'
       ENV['PIVOTAL_PROJECT_ID'] = ''
       FakeFS.with_fresh do
