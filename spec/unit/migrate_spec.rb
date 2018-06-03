@@ -2,16 +2,15 @@ require 'spec_helper'
 require 'story_branch/commands/migrate'
 
 RSpec.describe StoryBranch::Commands::Migrate do
-  describe 'when no configuration is found in any of the possibilities' do
-    let(:config_directory) { FileUtils.mkdir_p Dir.home }
-    let(:command) { StoryBranch::Commands::Migrate.new({}) }
-    let(:output) { ::StringIO.new }
+  let(:output) { ::StringIO.new }
 
+  describe 'when no configuration is found in any of the possibilities' do
     before do
       ENV['PIVOTAL_API_KEY'] = ''
       ENV['PIVOTAL_PROJECT_ID'] = ''
       FakeFS.with_fresh do
-        config_directory
+        FileUtils.mkdir_p Dir.home
+        command = StoryBranch::Commands::Migrate.new({})
         command.execute(output: output)
       end
     end
@@ -25,11 +24,45 @@ Trying to start from scratch? Use story_branch add
       expect(output.string).to eq expected_message
     end
   end
-  # TODO:
-  # - When no configuration is found
-  # - it should output a message telling them what to do - aka run add
 
+  describe 'when configuration is all defined in home dir' do
+    let(:prompt) { TTY::TestPrompt.new }
+
+    before do
+      allow(::TTY::Prompt).to receive(:new).and_return(prompt)
+      ENV['PIVOTAL_API_KEY'] = ''
+      ENV['PIVOTAL_PROJECT_ID'] = ''
+      FakeFS.with_fresh do
+        FileUtils.mkdir_p Dir.home
+        create_old_file
+        prompt.input << "my-test-project\r"
+        prompt.input.rewind
+        command = StoryBranch::Commands::Migrate.new({})
+        command.execute(output: output)
+      end
+    end
+
+    it 'asks for the project name' do
+      question = "What should be this project's name\?"
+      expect(prompt.output.string).to match(question)
+    end
+
+    it 'creates a config file in home folder in the new format' do
+      config = TTY::Config.new
+      config.append_path(Dir.home)
+      config.filename = '.story_branch'
+      expect(config.persisted?).to eq true
+      config.read
+      expect(config.fetch('my-test-project', :api_key)).to eq 'DUMMYVALUE'
+      expect(config.fetch('my-test-project', :project_id)).to eq 213_976
+    end
+
+    it 'removes the old config file' do
+      expect(File.exist?("#{Dir.home}/.story_branch")).to eq false
+    end
+  end
+
+  # TODO:
   # - When the user has configuration in env vars
   # - When the user has configuration in local folder and home folder
-  # - When the user has configuration in home folder only
 end

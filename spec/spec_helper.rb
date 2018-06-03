@@ -22,3 +22,10 @@ RSpec.configure do |config|
     FakeFS.deactivate!
   end
 end
+
+def create_old_file
+  File.open("#{Dir.home}/.story_branch", 'w') do |file|
+    file.write("api: DUMMYVALUE\n")
+    file.write("project: 213976\n")
+  end
+end
