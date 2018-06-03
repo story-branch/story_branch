@@ -48,14 +48,14 @@ module StoryBranch
         return nil
       end
 
-      if GitUtils.has_status? :untracked or GitUtils.has_status? :modified
+      if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
         puts 'There are unstaged changes'
         puts 'Use git add to stage changes before running git finish'
         puts 'Use git stash if you want to hide changes for this commit'
         return nil
       end
 
-      unless GitUtils.has_status? :added or GitUtils.has_status? :staged
+      unless GitUtils.status?(:added) || GitUtils.status?(:staged)
         puts 'There are no staged changes.'
         puts 'Nothing to do'
         return nil

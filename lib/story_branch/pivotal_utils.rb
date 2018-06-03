@@ -108,12 +108,12 @@ module StoryBranch
     end
 
     # Branch name validation
-    def validate_branch_name name, id
-      if StoryBranch::GitUtils.is_existing_story? id
+    def validate_branch_name(name, id)
+      if StoryBranch::GitUtils.existing_story? id
         puts "Error: An existing branch has the same story id: #{id}"
         return false
       end
-      if StoryBranch::GitUtils.is_existing_branch? name
+      if StoryBranch::GitUtils.existing_branch? name
         puts 'Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
         return false
       end
