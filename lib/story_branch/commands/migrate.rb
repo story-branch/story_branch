@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../config_manager'
 require_relative '../command'
-require 'tty-config'
 require 'yaml'
 require 'fileutils'
 
@@ -14,7 +14,7 @@ module StoryBranch
 
       def initialize(options)
         @options = options
-        @config = init_config(Dir.home)
+        @config = ConfigManager.init_config(Dir.home)
       end
 
       def execute(_input: $stdin, output: $stdout)
@@ -69,7 +69,7 @@ module StoryBranch
       end
 
       def create_local_config
-        local_config = init_config('.')
+        local_config = ConfigManager.init_config('.')
         local_config.set(:project_id, value: project_id)
         local_config.write
       end
@@ -78,16 +78,6 @@ module StoryBranch
         [GLOBAL_CONFIG_FILE, LOCAL_CONFIG_FILE].each do |file|
           FileUtils.rm file if File.exist? file
         end
-      end
-
-      # TODO: Probably makes sense to move this to a common tty config
-      # utils file kind of thing as it will be shared by some commands.
-      def init_config(path)
-        config = ::TTY::Config.new
-        config.filename = '.story_branch'
-        config.append_path path
-        config.read if config.persisted?
-        config
       end
 
       def old_config_file_not_found
