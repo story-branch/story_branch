@@ -18,6 +18,18 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
+    desc 'start', 'Mark an estimated story as started in Pivotal Tracker'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def start(*)
+      if options[:help]
+        invoke :help, ['start']
+      else
+        require_relative 'commands/start'
+        StoryBranch::Commands::Start.new(options).execute
+      end
+    end
+
     desc 'finish', 'Creates a git commit message for the staged changes with a [Finishes] tag'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
