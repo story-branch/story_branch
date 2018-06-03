@@ -27,19 +27,18 @@ $ story_branch -h
 Commands:
   story_branch add             # Add a new story branch configuration
   story_branch create          # Create branch from estimated stories in pivotal tracker
+  story_branch finish          # Creates a git commit message for the staged changes with a [Finishes] tag
   story_branch help [COMMAND]  # Describe available commands or one specific command
   story_branch migrate         # Migrate old story branch configuration to the new format
+  story_branch start           # Mark an estimated story as started in Pivotal Tracker
+  story_branch unstart         # Mark a started story as un-started in Pivotal Tracker
   story_branch version         # story_branch gem version
 ```
 
 ## Settings
 
 Story branch has a command available that will help you creating the configurations
-for the projects, but essentially you'll be asked for a project name, the pivotal
-tracker project id and your api key.
-
-The project name is just a reference so story branch knows which pair project id
-api key to use and you can name it anything you want.
+for the projects, but essentially you'll be asked for the pivotal tracker project id and your api key.
 
 The project id you can get it easily from the url when viewing the project.
 
@@ -50,8 +49,13 @@ The api key you can get it from your account settings.
 When configuring story branch, it will create two .story_branch.yml files: one in
 your home folder (`~/`) and one in your project's root (`./`).
 The one in your home folder will be used to store the different project's configurations
-such as project id and api key.
+such as which api key to use. This is done so you don't need to commit your
+api key to the repository but still be able to use different keys in case you
+have different accounts.
+
 The one in your project root will keep a reference to the project configuration.
+For now, this reference is the project id. This file can be safely committed to
+the repository and shared amongst your co-workers.
 
 ## Migrating
 
@@ -68,8 +72,14 @@ thing you'll need to provide is the project name reference.
 
 ### Old commands
 
-Story branch was built providing a set of bin commands such as `git story`, `git finish`, `git start` and `git unstart`. These will be available still but are nothing
-more than an alias for the CLI commands.
+Story branch was built providing a set of bin commands such as `git-story`, `git-finish`, `git-start` and `git-unstart`. These will be available still as
+we try as much as possible to keep the updates retro-compatible, but are nothing
+more than an alias for the CLI commands as follow:
+
+- `git-story` runs `story_branch create`
+- `git-finish` runs `story_branch finish`
+- `git-start` runs `story_branch start`
+- `git-unstart` runs `story_branch unstart`
 
 ## Commentary
 
