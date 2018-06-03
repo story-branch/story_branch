@@ -1,4 +1,1 @@
-#!/usr/bin/env ruby
-require 'story_branch'
-sb = StoryBranch::Main.new()
-sb.story_finish
+`story_branch finish`
