@@ -13,11 +13,6 @@ module StoryBranch
       LOCAL_CONFIG_FILE = '.story_branch'.freeze
       OLD_CONFIG_FILES = [LOCAL_CONFIG_FILE, GLOBAL_CONFIG_FILE].freeze
 
-      # TODO: Think how to migrate multiple configured projects locally
-      # Scenario:
-      # - ENV var/home config file with api key
-      # - project directory with project id
-
       def initialize(options)
         @options = options
         @config = nil
@@ -40,7 +35,7 @@ module StoryBranch
           error_migrating(output, cant_migrate_missing_value)
           return
         end
-        @config.write
+        @config.write(force: true)
         create_local_config
         clean_old_config_files
         output.puts 'Migration complete'
@@ -61,12 +56,6 @@ module StoryBranch
       def env_set?
         ENV['PIVOTAL_API_KEY'].length.positive? ||
           ENV['PIVOTAL_PROJECT_ID'].length.positive?
-      end
-
-      def migrate_keys
-        migrate_key('api', 'PIVOTAL_API_KEY', :api_key)
-        migrate_key('project_id', 'PIVOTAL_PROJECT_ID', :project_id)
-        @config.write
       end
 
       def migrate_key(old_key, env, new_key)
@@ -97,20 +86,6 @@ module StoryBranch
         end
       end
 
-  #     # TODO: Move this somewhere else as it is the same as config command
-  #     def config_exist?
-  #       return unless @config.persisted?
-  #       puts config_exist_message
-  #       true
-  #     end
-
-  #     def config_exist_message
-  #       <<-MESSAGE
-  #         Configuration file already exists. Have you migrated already?
-  #         Trying to add a new project? Use story_branch add
-  #       MESSAGE
-  #     end
-
       def project_name
         return @project_name if @project_name
         prompt = ::TTY::Prompt.new
@@ -124,6 +99,7 @@ module StoryBranch
         config = ::TTY::Config.new
         config.filename = '.story_branch'
         config.append_path path
+        config.read if config.persisted?
         config
       end
 

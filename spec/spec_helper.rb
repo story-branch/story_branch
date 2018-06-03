@@ -23,8 +23,8 @@ RSpec.configure do |config|
   end
 end
 
-def create_old_file(full = true)
-  File.open("#{Dir.home}/.story_branch", 'w') do |file|
+def create_old_file(path = Dir.home, full = true)
+  File.open("#{path}/.story_branch", 'w') do |file|
     file.write("api: DUMMYVALUE\n") if full
     file.write("project: 213976\n")
   end
