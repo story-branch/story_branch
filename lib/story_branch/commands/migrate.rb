@@ -15,8 +15,7 @@ module StoryBranch
 
       def initialize(options)
         @options = options
-        @config = nil
-        @project_name = nil
+        @config = init_config(Dir.home)
       end
 
       def execute(_input: $stdin, output: $stdout)
@@ -24,17 +23,7 @@ module StoryBranch
           error_migrating(output, old_config_file_not_found)
           return
         end
-
-        @config = init_config(Dir.home)
-        # return if config_exist?
-        unless migrate_key('api', 'PIVOTAL_API_KEY', :api_key)
-          error_migrating(output, cant_migrate_missing_value)
-          return
-        end
-        unless migrate_key('project', 'PIVOTAL_PROJECT_ID', :project_id)
-          error_migrating(output, cant_migrate_missing_value)
-          return
-        end
+        @config.set(project_id, :api_key, value: api_key)
         @config.write(force: true)
         create_local_config
         clean_old_config_files
@@ -42,6 +31,18 @@ module StoryBranch
       end
 
       private
+
+      def project_id
+        return @project_id if @project_id
+        @project_id = old_config_value('project', 'PIVOTAL_PROJECT_ID')
+        @project_id
+      end
+
+      def api_key
+        return @api_key if @api_key
+        @api_key = old_config_value('api', 'PIVOTAL_API_KEY')
+        @api_key
+      end
 
       def error_migrating(output, error_message)
         output.puts error_message
@@ -58,17 +59,11 @@ module StoryBranch
           ENV['PIVOTAL_PROJECT_ID'].length.positive?
       end
 
-      def migrate_key(old_key, env, new_key)
-        value = config_value(old_key, env)
-        return false if value.nil?
-        @config.set(project_name, new_key, value: value.to_s)
-      end
-
-      def config_value(key, env)
+      def old_config_value(key, env)
         OLD_CONFIG_FILES.each do |config_file|
           if File.exist? config_file
             old_config = YAML.load_file config_file
-            return old_config[key] if old_config && old_config[key]
+            return old_config[key].to_s if old_config && old_config[key]
           end
         end
         ENV[env]
@@ -76,7 +71,7 @@ module StoryBranch
 
       def create_local_config
         local_config = init_config('.')
-        local_config.set(:project_name, value: project_name)
+        local_config.set(:project_id, value: project_id)
         local_config.write
       end
 
@@ -84,13 +79,6 @@ module StoryBranch
         [GLOBAL_CONFIG_FILE, LOCAL_CONFIG_FILE].each do |file|
           FileUtils.rm file if File.exist? file
         end
-      end
-
-      def project_name
-        return @project_name if @project_name
-        prompt = ::TTY::Prompt.new
-        @project_name = prompt.ask "What should be this project's name?"
-        @project_name
       end
 
       # TODO: Probably makes sense to move this to a common tty config
