@@ -1,13 +1,16 @@
 require 'story_branch/commands/create'
+require 'story_branch/main'
 
 RSpec.describe StoryBranch::Commands::Create do
-  it "executes `create` command successfully" do
-    output = StringIO.new
-    options = {}
-    command = StoryBranch::Commands::Create.new(options)
+  let(:sb) { instance_double(::StoryBranch::Main, create_story_branch: true) }
 
-    command.execute(output: output)
+  before do
+    allow(::StoryBranch::Main).to receive(:new).and_return(sb)
+  end
 
-    expect(output.string).to eq("OK\n")
+  it 'invokes story branch main create method' do
+    command = StoryBranch::Commands::Create.new({})
+    command.execute
+    expect(sb.create_story_branch).to have_received(:create_story_branch)
   end
 end
