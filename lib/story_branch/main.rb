@@ -37,6 +37,42 @@ class StoryBranch::Main
     return nil
   end
 
+  def story_finish
+    puts 'Connecting with Pivotal Tracker'
+    @p.get_project
+    unless @p.is_current_branch_a_story?
+      puts "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
+      return nil
+    end
+
+    if GitUtils.has_status? :untracked or GitUtils.has_status? :modified
+      puts 'There are unstaged changes'
+      puts 'Use git add to stage changes before running git finish'
+      puts 'Use git stash if you want to hide changes for this commit'
+      return nil
+    end
+
+    unless GitUtils.has_status? :added or GitUtils.has_status? :staged
+      puts 'There are no staged changes.'
+      puts 'Nothing to do'
+      return nil
+    end
+
+    puts 'Use standard finishing commit message: [y/N]?'
+
+    commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
+    puts commit_message
+
+    if gets.chomp!.downcase == 'y'
+      GitUtils.commit commit_message
+    else
+      puts 'Aborted'
+    end
+  rescue Blanket::Unauthorized
+    unauthorised_message
+    return nil
+  end
+
   private
 
   def config
@@ -87,41 +123,5 @@ class StoryBranch::Main
 
   def story_estimate
     # TODO: estimate a story
-  end
-
-  def story_finish
-    puts 'Connecting with Pivotal Tracker'
-    @p.get_project
-    unless @p.is_current_branch_a_story?
-      puts "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
-      return nil
-    end
-
-    if GitUtils.has_status? :untracked or GitUtils.has_status? :modified
-      puts 'There are unstaged changes'
-      puts 'Use git add to stage changes before running git finish'
-      puts 'Use git stash if you want to hide changes for this commit'
-      return nil
-    end
-
-    unless GitUtils.has_status? :added or GitUtils.has_status? :staged
-      puts 'There are no staged changes.'
-      puts 'Nothing to do'
-      return nil
-    end
-
-    puts 'Use standard finishing commit message: [y/N]?'
-
-    commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
-    puts commit_message
-
-    if gets.chomp!.downcase == 'y'
-      GitUtils.commit commit_message
-    else
-      puts 'Aborted'
-    end
-  rescue Blanket::Unauthorized
-    unauthorised_message
-    return nil
   end
 end

@@ -18,6 +18,18 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
+    desc 'finish', 'Creates a git commit message for the staged changes with a [Finishes] tag'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def finish(*)
+      if options[:help]
+        invoke :help, ['finish']
+      else
+        require_relative 'commands/finish'
+        StoryBranch::Commands::Finish.new(options).execute
+      end
+    end
+
     desc 'create', 'Create branch from estimated stories in pivotal tracker'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
