@@ -1,6 +1,6 @@
 RSpec.describe "`story_branch finish` command", type: :cli do
   it "executes `story_branch help finish` command successfully" do
-    output = `story_branch help finish`
+    output = `exe/story_branch help finish`
     expected_output = <<-OUT
 Usage:
   story_branch finish

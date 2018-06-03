@@ -1,6 +1,6 @@
 RSpec.describe "`story_branch migrate` command", type: :cli do
   it "executes `story_branch help migrate` command successfully" do
-    output = `story_branch help migrate`
+    output = `exe/story_branch help migrate`
     expected_output = <<-OUT
 Usage:
   story_branch migrate
