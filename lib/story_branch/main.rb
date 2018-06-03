@@ -8,7 +8,7 @@ class StoryBranch::Main
   ERRORS = {
     'Stories in the started state must be estimated.' =>
     "Error: Pivotal won't allow you to start an unestimated story"
-  }
+  }.freeze
 
   attr_accessor :p
 
@@ -66,7 +66,7 @@ class StoryBranch::Main
     commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
     puts commit_message
 
-    if gets.chomp!.downcase == 'y'
+    if gets.chomp!.casecmp('y').zero?
       GitUtils.commit commit_message
     else
       puts 'Aborted'
