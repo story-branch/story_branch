@@ -8,7 +8,7 @@ Usage:
 Options:
   -h, [--help], [--no-help]  # Display usage information
 
-Command description...
+Migrate old story branch configuration to the new format
     OUT
 
     expect(output).to eq(expected_output)
