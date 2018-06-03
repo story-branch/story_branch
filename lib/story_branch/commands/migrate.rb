@@ -134,12 +134,12 @@ Trying to start from scratch? Use story_branch add
         MESSAGE
       end
 
-  #     def cant_migrate_missing_value
-  #       <<-MESSAGE
-  #         Old configuration file not found in #{GLOBAL_CONFIG_FILE}
-  #         Trying to start from scratch? Use story_branch add
-  #       MESSAGE
-  #     end
+      def cant_migrate_missing_value
+        <<-MESSAGE
+          Old configuration not found. Nothing has been migrated
+          Trying to start from scratch? Use story_branch add
+        MESSAGE
+      end
     end
   end
 end
