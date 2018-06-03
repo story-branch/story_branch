@@ -39,11 +39,9 @@ module StoryBranch
       end
 
       def init_config(path)
-        config_file_path = path
-        config_file_name = '.story_branch'
         config = ::TTY::Config.new
-        config.filename = config_file_name
-        config.append_path config_file_path
+        config.filename = '.story_branch'
+        config.append_path path
         config.read if config.persisted?
         config
       end
