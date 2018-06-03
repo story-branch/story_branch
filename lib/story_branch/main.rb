@@ -1,6 +1,6 @@
 require_relative './string_utils'
 require_relative './pivotal_utils'
-require 'tty-config'
+require_relative './config_manager'
 
 module StoryBranch
   class Main
@@ -21,7 +21,6 @@ module StoryBranch
 
     # TODO:
     # Move these methods to the command logic.
-    # Create a config manager that will be responsible for loading the attributes
     def create_story_branch
       puts 'Connecting with Pivotal Tracker'
       @p.project
@@ -87,20 +86,15 @@ module StoryBranch
 
     def config
       return @config if @config
-      @config = TTY::Config.new
-      @config.append_path(ENV['HOME'])
-      @config.filename = '.story_branch'
-      @config.read
+      @config = ConfigManager.init_config(Dir.home)
       @config
     end
 
     def project_name
       return @project_name if @project_name
-      local_config = TTY::Config.new
-      local_config.append_path('.')
-      local_config.filename = '.story_branch'
-      local_config.read
+      local_config = ConfigManager.init_config('.')
       @project_name = local_config.fetch(:project_name)
+      @project_name
     end
 
     def unauthorised_message
