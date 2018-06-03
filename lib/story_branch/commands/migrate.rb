@@ -72,7 +72,7 @@ module StoryBranch
       def migrate_key(old_key, env, new_key)
         value = config_value(old_key, env)
         return false if value.nil?
-        @config.set(project_name, new_key, value: value)
+        @config.set(project_name, new_key, value: value.to_s)
       end
 
       def config_value(key, env)
