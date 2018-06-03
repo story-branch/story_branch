@@ -68,8 +68,8 @@ thing you'll need to provide is the project name reference.
 
 ### Old commands
 
-Story branch was built providing a set of bin commands such as `git story`, `git finish`, `git start` and `git unstart`. These will be available still but their use
-is discouraged as the intention is to provide a CLI.
+Story branch was built providing a set of bin commands such as `git story`, `git finish`, `git start` and `git unstart`. These will be available still but are nothing
+more than an alias for the CLI commands.
 
 ## Commentary
 
