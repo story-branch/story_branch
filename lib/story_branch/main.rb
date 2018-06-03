@@ -20,6 +20,9 @@ class StoryBranch::Main
     exit unless @p.valid?
   end
 
+  # TODO:
+  # Move these methods to the command logic.
+  # Create a config manager that will be responsible for loading the attributes
   def create_story_branch
     puts 'Connecting with Pivotal Tracker'
     @p.get_project
@@ -73,6 +76,14 @@ class StoryBranch::Main
     return nil
   end
 
+  def story_start
+    pick_and_update(:unstarted, { current_state: 'started' }, 'started', true)
+  end
+
+  def story_unstart
+    pick_and_update(:started, { current_state: 'unstarted' }, 'unstarted', false)
+  end
+
   private
 
   def config
@@ -111,14 +122,6 @@ class StoryBranch::Main
   rescue Blanket::Unauthorized
     unauthorised_message
     return nil
-  end
-
-  def story_start
-    pick_and_update(:unstarted, { current_state: 'started' }, 'started', true)
-  end
-
-  def story_unstart
-    pick_and_update(:started, { current_state: 'unstarted' }, 'unstarted', false)
   end
 
   def story_estimate
