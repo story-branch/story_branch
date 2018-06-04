@@ -1,6 +1,6 @@
 class StoryBranch::PivotalUtils
   API_URL = 'https://www.pivotaltracker.com/services/v5/'
-  attr_accessor :api_key, :project_id
+  attr_accessor :api_key, :project_id, :finish_tag
 
   def valid?
     !@api_key.nil? && !@project_id.nil?
