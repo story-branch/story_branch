@@ -77,5 +77,20 @@ describe StoryBranch do
       end
     end
 
+    describe 'Finishes keyword' do
+      it 'is read from environment (overrides file config) when available' do
+        ENV['PIVOTAL_FINISH_TAG'] = 'Done'
+        ENV['PIVOTAL_PROJECT_ID'] = 'FAKE'
+        ENV['PIVOTAL_API_KEY'] = 'FAKE'
+        main = StoryBranch::Main.new
+        expect(main.p.finish_tag).to eq 'Done'
+      end
+
+      it 'is read from config file when available' do
+        copy_config_file "spec/files/.story_branch"
+        main = StoryBranch::Main.new
+        expect(main.p.finish_tag).to eq 'Resolves'
+      end
+    end
   end
 end

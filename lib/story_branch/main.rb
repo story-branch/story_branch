@@ -15,6 +15,7 @@ class StoryBranch::Main
     @p = PivotalUtils.new
     @p.api_key = config_value 'api', 'PIVOTAL_API_KEY'
     @p.project_id = config_value 'project', 'PIVOTAL_PROJECT_ID'
+    @p.finish_tag = config_value 'finish_tag', 'PIVOTAL_FINISH_TAG', 'Finishes'
     exit unless @p.valid?
   end
 
@@ -96,7 +97,7 @@ class StoryBranch::Main
       end
 
       puts 'Use standard finishing commit message: [y/N]?'
-      commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
+      commit_message = "[#{@p.finish_tag} ##{GitUtils.current_branch_story_parts[:id]}] #{StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
       puts commit_message
 
       if gets.chomp!.downcase == 'y'
@@ -110,22 +111,21 @@ class StoryBranch::Main
     end
   end
 
-  def config_value key, env
+  def config_value(key, env, default_value = nil)
     PIVOTAL_CONFIG_FILES.each do |config_file|
-      if File.exists? config_file
+      if File.exist? config_file
         pivotal_info = YAML.load_file config_file
         return pivotal_info[key] if pivotal_info && pivotal_info[key]
       end
     end
-    value ||= env_required env
+    value ||= env_required(env, default_value)
     value
   end
 
-  def env_required var_name
-    if ENV[var_name].nil?
-      $stderr.puts "$#{var_name} must be set or in .story_branch file"
-      return nil
-    end
-    ENV[var_name]
+  def env_required(var_name, default_value)
+    return ENV[var_name] if ENV[var_name]
+    return default_value if default_value
+    $stderr.puts "$#{var_name} must be set or in .story_branch file"
+    return nil
   end
 end
