@@ -7,6 +7,8 @@ require 'fileutils'
 
 module StoryBranch
   module Commands
+    # Migrate command is intended to make the migration from old version
+    # of story branch to the latest one easier.
     class Migrate < StoryBranch::Command
       GLOBAL_CONFIG_FILE = "#{Dir.home}/.story_branch".freeze
       LOCAL_CONFIG_FILE = '.story_branch'.freeze

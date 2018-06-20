@@ -7,13 +7,18 @@ require 'tty-prompt'
 
 module StoryBranch
   module Commands
+    # Command responsible for adding a new configuration to
+    # the available configurations
+    #
+    # It will try to load the existing global story branch config
+    # and then add the project id specified by the user.
     class Add < StoryBranch::Command
       def initialize(options)
         @options = options
         @config = ConfigManager.init_config(ENV['HOME'])
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute(_input: $stdin, output: $stdout)
         create_global_config
         create_local_config
         output.puts 'Configuration added successfully'

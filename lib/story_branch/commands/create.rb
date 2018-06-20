@@ -4,12 +4,13 @@ require_relative '../command'
 
 module StoryBranch
   module Commands
+    # Create commant triggers the story branch logic.
     class Create < StoryBranch::Command
       def initialize(options)
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute(_input: $stdin, _output: $stdout)
         require_relative '../main'
         sb = StoryBranch::Main.new
         sb.create_story_branch

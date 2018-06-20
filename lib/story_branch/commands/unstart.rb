@@ -4,12 +4,13 @@ require_relative '../command'
 
 module StoryBranch
   module Commands
+    # Command to unstart a previously started story
     class Unstart < StoryBranch::Command
       def initialize(options)
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute(_input: $stdin, _output: $stdout)
         require_relative '../main'
         sb = StoryBranch::Main.new
         sb.story_unstart
