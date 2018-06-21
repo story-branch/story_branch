@@ -43,7 +43,7 @@ module StoryBranch
       @p.project
 
       unless @p.is_current_branch_a_story?
-        puts "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
+        warn "Your current branch: '#{GitUtils.current_branch}' is not linked to a Pivotal Tracker story."
         return nil
       end
 
@@ -98,7 +98,7 @@ module StoryBranch
     end
 
     def unauthorised_message
-      $stderr.puts 'Pivotal API key or Project ID invalid'
+      warn 'Pivotal API key or Project ID invalid'
     end
 
     def pick_and_update(filter, hash, msg, is_estimated)
@@ -109,7 +109,7 @@ module StoryBranch
       story = @p.select_story stories
       if story
         result = @p.story_update story, hash
-        fail result.error if result.error
+        raise result.error if result.error
         puts "#{story.id} #{msg}"
       end
     rescue Blanket::Unauthorized

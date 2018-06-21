@@ -4,7 +4,8 @@ require_relative '../command'
 
 module StoryBranch
   module Commands
-    # Create commant triggers the story branch logic.
+    # Create command is used to create a branch from
+    # started stories in the tracker
     class Create < StoryBranch::Command
       def initialize(options)
         @options = options
