@@ -16,6 +16,7 @@ module StoryBranch
       def initialize(options)
         @options = options
         @config = ConfigManager.init_config(ENV['HOME'])
+        @local_config = ConfigManager.init_config('.')
       end
 
       def execute(_input: $stdin, output: $stdout)
@@ -27,9 +28,8 @@ module StoryBranch
       private
 
       def create_local_config
-        local_config = ConfigManager.init_config('.')
-        local_config.set(:project_id, value: project_id)
-        local_config.write
+        @local_config.set(:project_id, value: project_id)
+        @local_config.write(force: true)
       end
 
       def create_global_config

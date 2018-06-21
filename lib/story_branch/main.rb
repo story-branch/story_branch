@@ -13,9 +13,9 @@ module StoryBranch
 
     def initialize
       @p = PivotalUtils.new
-      @p.api_key = config.fetch(project_name, :api_key)
-      @p.project_id = config.fetch(project_name, :project_id)
-      @p.finish_tag = config.fetch(project_name, :finish_tag, default: 'Finishes')
+      @p.project_id = project_id
+      @p.api_key = config.fetch(project_id, :api_key)
+      @p.finish_tag = config.fetch(project_id, :finish_tag, default: 'Finishes')
       exit unless @p.valid?
     end
 
@@ -90,11 +90,11 @@ module StoryBranch
       @config
     end
 
-    def project_name
-      return @project_name if @project_name
+    def project_id
+      return @project_id if @project_id
       local_config = ConfigManager.init_config('.')
-      @project_name = local_config.fetch(:project_name)
-      @project_name
+      @project_id = local_config.fetch(:project_id)
+      @project_id
     end
 
     def unauthorised_message
