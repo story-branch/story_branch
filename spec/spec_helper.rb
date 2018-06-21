@@ -1,21 +1,40 @@
-require_relative '../lib/story_branch'
+require 'bundler/setup'
+require 'fileutils'
+require 'fakefs/safe'
+require 'story_branch'
 
 RSpec.configure do |config|
-  # some (optional) config here
-end
+  # Enable flags like --only-failures and --next-failure
+  # config.example_status_persistence_file_path = ".rspec_status"
 
-def copy_config_file(filename, empty_contents=false)
-  FileUtils.cp filename, '.'
-  if empty_contents
-    File.open("./#{File.basename(filename)}", 'w') {|file| file.truncate(0) }
+  # Disable RSpec exposing methods globally on `Module` and `main`
+  config.disable_monkey_patching!
+
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
+  config.before do
+    FakeFS.activate!
+  end
+
+  config.after do
+    FakeFS.deactivate!
   end
 end
 
-def clear_env_variables
-  ENV.delete("PIVOTAL_API_KEY")
-  ENV.delete("PIVOTAL_PROJECT_ID")
-end
+def create_old_file(options = {})
+  path = options[:path] || Dir.home
+  full = if options[:full].nil?
+           true
+         else
+           options[:full]
+         end
+  api_key = options[:api_key] || 'DUMMYVALUE'
+  project_id = options[:project_id] || '213976'
 
-def clear_config_file
-  FileUtils.rm '.story_branch' rescue "File not found"
+  File.open("#{path}/.story_branch", 'w') do |file|
+    file.write("api: #{api_key}\n") if full
+    file.write("project: #{project_id}\n")
+  end
 end

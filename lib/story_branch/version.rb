@@ -1,3 +1,3 @@
 module StoryBranch
-  VERSION = "0.2.13"
+  VERSION = '0.3.0'.freeze
 end
