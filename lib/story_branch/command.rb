@@ -3,6 +3,8 @@
 require 'forwardable'
 
 module StoryBranch
+  # TTY Command base class. All commands available for the gem will be based
+  # of this class.
   class Command
     extend Forwardable
 

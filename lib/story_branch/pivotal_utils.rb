@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 require 'blanket'
 require 'rb-readline'
 require_relative './git_utils'
 
 module StoryBranch
+  # Utility class for integration with PivotalTracker. It relies on Blanket
+  # wrapper to communicate with pivotal tracker's api.
   class PivotalUtils
     API_URL = 'https://www.pivotaltracker.com/services/v5/'.freeze
     attr_accessor :api_key, :project_id, :finish_tag
