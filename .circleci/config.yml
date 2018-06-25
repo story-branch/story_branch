@@ -28,6 +28,8 @@ jobs:
             bundle install --jobs=4 --retry=3 --path vendor/bundle
 
       - save_cache:
+          paths:
+            - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
       # run tests!
