@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'story_branch/version'
 
+# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name = 'story_branch'
   spec.license = 'MIT'
@@ -22,14 +25,22 @@ Gem::Specification.new do |spec|
   ]
 
   spec.summary = 'Create git branches based on pivotal tracker stories'
-  spec.description = 'Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story'
+  spec.description = <<-DESCRIPTION
+    Simple gem that fetches the available stories in your PivotalTracker
+    project and allows you to create a git branch with the name based
+    on the selected story
+  DESCRIPTION
+
   spec.homepage = 'https://github.com/story-branch/story_branch'
   spec.required_ruby_version = '>= 2.3'
 
   # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  # The `git ls-files -z` loads the files in the RubyGem that have been
+  # added into git.
   spec.files = Dir.chdir(File.expand_path('..', __FILE__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+    `git ls-files -z`.split("\x0").reject do |f|
+      f.match(%r{^(test|spec|features)/})
+    end
   end
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }

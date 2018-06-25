@@ -10,8 +10,8 @@ module StoryBranch
     # Migrate command is intended to make the migration from old version
     # of story branch to the latest one easier.
     class Migrate < StoryBranch::Command
-      GLOBAL_CONFIG_FILE = "#{Dir.home}/.story_branch".freeze
-      LOCAL_CONFIG_FILE = '.story_branch'.freeze
+      GLOBAL_CONFIG_FILE = "#{Dir.home}/.story_branch"
+      LOCAL_CONFIG_FILE = '.story_branch'
       OLD_CONFIG_FILES = [LOCAL_CONFIG_FILE, GLOBAL_CONFIG_FILE].freeze
 
       def initialize(options)
@@ -84,8 +84,8 @@ module StoryBranch
 
       def old_config_file_not_found
         <<-MESSAGE
-Old configuration not found.
-Trying to start from scratch? Use story_branch add
+          Old configuration not found.
+          Trying to start from scratch? Use story_branch add
         MESSAGE
       end
 
