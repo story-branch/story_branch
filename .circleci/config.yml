@@ -26,7 +26,6 @@ jobs:
             TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
 
             bundle exec rspec --format documentation \
-                              --format RspecJunitFormatter \
                               --out /tmp/test-results/rspec.xml \
                               -- $(sed -e 's/\n/\\n/' -e 's/ /\ /' <<< "${TEST_FILES}")
 
