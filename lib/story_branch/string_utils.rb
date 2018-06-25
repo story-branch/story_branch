@@ -4,7 +4,7 @@ module StoryBranch
   # Utility class for string manipulation
   class StringUtils
     def self.dashed(s)
-      s.tr(" _,./:;+&'\"?", '-')
+      s.tr(" _,./:;+&'\"?", '-').squeeze
     end
 
     def self.simple_sanitize(s)
