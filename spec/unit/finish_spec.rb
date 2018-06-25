@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'story_branch/commands/finish'
 require 'story_branch/main'
 
