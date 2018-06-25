@@ -22,10 +22,9 @@ Gem::Specification.new do |spec|
   ]
 
   spec.summary = 'Create git branches based on pivotal tracker stories'
-  spec.description = 'Simple gem that fetches the available stories in your \
-  pivotaltracker project and allows you to create a git branch with the name \
-  based on the selected story'
+  spec.description = 'Simple gem that fetches the available stories in your pivotaltracker project and allows you to create a git branch with the name based on the selected story'
   spec.homepage = 'https://github.com/story-branch/story_branch'
+  spec.required_ruby_version = '>= 2.3'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
