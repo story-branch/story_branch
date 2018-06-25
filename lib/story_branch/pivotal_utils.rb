@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 require 'blanket'
 require 'rb-readline'
 require_relative './git_utils'
 
 module StoryBranch
+  # Utility class for integration with PivotalTracker. It relies on Blanket
+  # wrapper to communicate with pivotal tracker's api.
   class PivotalUtils
-    API_URL = 'https://www.pivotaltracker.com/services/v5/'.freeze
+    API_URL = 'https://www.pivotaltracker.com/services/v5/'
     attr_accessor :api_key, :project_id, :finish_tag
 
     def valid?
@@ -36,7 +40,8 @@ module StoryBranch
     end
 
     def story_from_current_branch
-      story_accessor.get(StoryBranch::GitUtils.current_story[2].to_i) if StoryBranch::GitUtils.current_story.length == 3
+      return unless StoryBranch::GitUtils.current_story.length == 3
+      story_accessor.get(StoryBranch::GitUtils.current_story[2].to_i)
     end
 
     # TODO: Maybe add some other predicates

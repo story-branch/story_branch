@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'story_branch/commands/start'
 
 RSpec.describe StoryBranch::Commands::Start do

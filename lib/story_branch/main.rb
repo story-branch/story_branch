@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 require_relative './string_utils'
 require_relative './pivotal_utils'
 require_relative './config_manager'
 
 module StoryBranch
+  # Main story branch class. It is resposnible for the main interaction between
+  # the user and Pivotal Tracker. It is also responsible for config init.
   class Main
     ERRORS = {
       'Stories in the started state must be estimated.' =>

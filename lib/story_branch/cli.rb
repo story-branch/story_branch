@@ -42,7 +42,8 @@ module StoryBranch
       end
     end
 
-    desc 'finish', 'Creates a git commit message for the staged changes with a [Finishes] tag'
+    desc 'finish',
+         'Creates a commit message for the staged changes with the finish tag'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def finish(*)

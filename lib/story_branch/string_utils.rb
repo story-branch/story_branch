@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module StoryBranch
+  # Utility class for string manipulation
   class StringUtils
     def self.dashed(s)
       s.tr(' _,./:;+&', '-')

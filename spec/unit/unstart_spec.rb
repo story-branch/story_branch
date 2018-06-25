@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'story_branch/commands/unstart'
 
 RSpec.describe StoryBranch::Commands::Unstart do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 require 'fileutils'
 require 'fakefs/safe'
@@ -23,6 +25,7 @@ RSpec.configure do |config|
   end
 end
 
+# TODO: Migrate this to use TTY::Config instead
 def create_old_file(options = {})
   path = options[:path] || Dir.home
   full = if options[:full].nil?
@@ -32,7 +35,10 @@ def create_old_file(options = {})
          end
   api_key = options[:api_key] || 'DUMMYVALUE'
   project_id = options[:project_id] || '213976'
+  write_configs(path, api_key, project_id, full)
+end
 
+def write_configs(path, api_key, project_id, full = true)
   File.open("#{path}/.story_branch", 'w') do |file|
     file.write("api: #{api_key}\n") if full
     file.write("project: #{project_id}\n")

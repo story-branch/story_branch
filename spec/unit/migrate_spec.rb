@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'story_branch/commands/migrate'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Migrate do
   let(:output) { ::StringIO.new }
 
@@ -16,9 +19,9 @@ RSpec.describe StoryBranch::Commands::Migrate do
     end
 
     it 'should print an informative error message' do
-      expected_message = <<-MESSAGE
-Old configuration not found.
-Trying to start from scratch? Use story_branch add
+      expected_message = <<~MESSAGE
+        Old configuration not found.
+        Trying to start from scratch? Use story_branch add
       MESSAGE
 
       expect(output.string).to eq expected_message
@@ -138,3 +141,4 @@ Trying to start from scratch? Use story_branch add
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
