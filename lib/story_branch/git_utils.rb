@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 require 'git'
 require 'levenshtein'
 
 module StoryBranch
+  # Class used to interact with git. It relies on git gem as the wrapper
+  # and levenshtein algo to determine branch name proximity
   class GitUtils
     def self.g
       ::Git.open '.'
@@ -10,9 +14,9 @@ module StoryBranch
     def self.existing_branch?(name)
       branch_names.each do |n|
         return true if Levenshtein.distance(n, name) < 3
-        existing_branch_name = n.match(/(.*)(-[1-9][0-9]+$)/)
-        next unless existing_branch_name
-        levenshtein_distance = Levenshtein.distance existing_branch_name[1], name
+        branch_name_match = n.match(/(.*)(-[1-9][0-9]+$)/)
+        next unless branch_name_match
+        levenshtein_distance = Levenshtein.distance branch_name_match[1], name
         return true if levenshtein_distance < 3
       end
       false
@@ -51,11 +55,8 @@ module StoryBranch
     end
 
     def self.status_collect(status, regex)
-      status.select{|e|
-        e.match(regex)
-      }.map{ |e|
-        e.match(regex)[1]
-      }
+      chosen_stati = status.select { |e| e.match(regex) }
+      chosen_stati.map { |e| e.match(regex)[1] }
     end
 
     def self.status
