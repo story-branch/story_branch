@@ -10,7 +10,7 @@ RSpec.describe '`story_branch finish` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Creates a git commit message for the staged changes with a [Finishes] tag
+      Creates a commit message for the staged changes with the finish tag
     OUT
 
     expect(output).to eq(expected_output)
