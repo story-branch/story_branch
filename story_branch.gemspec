@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   ]
 
   spec.summary = 'Create git branches based on pivotal tracker stories'
-  spec.description = <<-DESCRIPTION
+  spec.description = <<~DESCRIPTION
     Simple gem that fetches the available stories in your PivotalTracker
     project and allows you to create a git branch with the name based
     on the selected story

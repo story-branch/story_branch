@@ -19,7 +19,7 @@ RSpec.describe StoryBranch::Commands::Migrate do
     end
 
     it 'should print an informative error message' do
-      expected_message = <<-MESSAGE
+      expected_message = <<~MESSAGE
         Old configuration not found.
         Trying to start from scratch? Use story_branch add
       MESSAGE

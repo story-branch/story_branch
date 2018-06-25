@@ -83,14 +83,14 @@ module StoryBranch
       end
 
       def old_config_file_not_found
-        <<-MESSAGE
+        <<~MESSAGE
           Old configuration not found.
           Trying to start from scratch? Use story_branch add
         MESSAGE
       end
 
       def cant_migrate_missing_value
-        <<-MESSAGE
+        <<~MESSAGE
           Old configuration not found. Nothing has been migrated
           Trying to start from scratch? Use story_branch add
         MESSAGE
