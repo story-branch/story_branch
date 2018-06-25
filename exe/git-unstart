@@ -1,3 +1,4 @@
+# rubocop:disable Style/FrozenStringLiteralComment
 #!/usr/bin/env ruby
 
 `story_branch unstart`
