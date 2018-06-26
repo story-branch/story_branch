@@ -40,13 +40,13 @@ module StoryBranch
     end
 
     def self.current_story
-      current_branch.match(/(.*)-(\d+$)/)
+      /(.*)-(\d+$)/.match current_branch
     end
 
     def self.current_branch_story_parts
       matches = current_story
       return unless matches.length == 3
-      { title: matches[1], id: matches[2] }
+      { title: matches[1], id: matches[2].to_i }
     end
 
     def self.create_branch(name)

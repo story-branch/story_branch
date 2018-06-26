@@ -49,6 +49,8 @@ GEM
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     strings (0.1.1)
       unicode-display_width (~> 1.3.0)
       unicode_utils (~> 1.4.0)
@@ -88,6 +90,7 @@ DEPENDENCIES
   fakefs (~> 0.14)
   rake (~> 10.0)
   rspec (~> 3.0)
+  rspec_junit_formatter
   story_branch!
 
 BUNDLED WITH

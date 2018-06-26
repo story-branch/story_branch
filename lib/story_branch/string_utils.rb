@@ -3,24 +3,27 @@
 module StoryBranch
   # Utility class for string manipulation
   class StringUtils
-    def self.dashed(s)
-      s.tr(' _,./:;+&', '-')
+    def self.sanitize(s)
+      res = s.strip
+      res.tr!("\n", '-')
+      encoding_options = {
+        invalid: :replace, # Replace invalid byte sequences
+        undef: :replace, # Replace anything not defined in ASCII
+        replace: '-' # Use a dash for those replacements
+      }
+      res.encode(Encoding.find('ASCII'), encoding_options)
     end
 
-    def self.simple_sanitize(s)
-      strip_newlines(s.tr('\'"%!@#$(){}[]*\\?', ''))
+    def self.dashed(s)
+      sanitize(s).tr(" _,./:;+&'\"?", '-').squeeze('-')
     end
 
     def self.normalised_branch_name(s)
-      simple_sanitize((dashed s).downcase).squeeze('-')
-    end
-
-    def self.strip_newlines(s)
-      s.tr "\n", '-'
+      dashed(s).downcase
     end
 
     def self.undashed(s)
-      s.tr(/-/, ' ').capitalize
+      s.tr('-', ' ').squeeze(' ').strip.capitalize
     end
   end
 end
