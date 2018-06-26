@@ -32,11 +32,9 @@ module StoryBranch
     end
 
     def is_current_branch_a_story?
-      StoryBranch::GitUtils.current_story and
-        StoryBranch::GitUtils.current_story.length == 3 and
-        filtered_stories_list(:started, true)
-          .map(&:id)
-          .include? StoryBranch::GitUtils.current_story[2].to_i
+      current_story = StoryBranch::GitUtils.current_branch_story_parts
+      return unless current_story
+      filtered_stories_list(:started, true).map(&:id).include? current_story[:id]
     end
 
     def story_from_current_branch

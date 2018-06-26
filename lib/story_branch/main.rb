@@ -3,6 +3,7 @@
 require_relative './string_utils'
 require_relative './pivotal_utils'
 require_relative './config_manager'
+require 'tty-prompt'
 
 module StoryBranch
   # Main story branch class. It is resposnible for the main interaction between
@@ -26,12 +27,12 @@ module StoryBranch
     # TODO:
     # Move these methods to the command logic.
     def create_story_branch
-      puts 'Connecting with Pivotal Tracker'
+      prompt.say 'Connecting with Pivotal Tracker'
       @p.project
-      puts 'Getting stories...'
+      prompt.say 'Getting stories...'
       stories = @p.display_stories :started, false
       if stories.empty?
-        puts 'No stories started, exiting'
+        prompt.say 'No stories started, exiting'
         exit
       end
       story = @p.select_story stories
@@ -43,7 +44,7 @@ module StoryBranch
     end
 
     def story_finish
-      puts 'Connecting with Pivotal Tracker'
+      prompt.say 'Connecting with Pivotal Tracker'
       @p.project
 
       unless @p.is_current_branch_a_story?
@@ -52,26 +53,28 @@ module StoryBranch
       end
 
       if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
-        puts 'There are unstaged changes'
-        puts 'Use git add to stage changes before running git finish'
-        puts 'Use git stash if you want to hide changes for this commit'
+        prompt.say 'There are unstaged changes'
+        prompt.say 'Use git add to stage changes before running git finish'
+        prompt.say 'Use git stash if you want to hide changes for this commit'
         return nil
       end
 
       unless GitUtils.status?(:added) || GitUtils.status?(:staged)
-        puts 'There are no staged changes.'
-        puts 'Nothing to do'
+        prompt.say 'There are no staged changes.'
+        prompt.say 'Nothing to do'
         return nil
       end
 
-      puts 'Use standard finishing commit message: [y/N]?'
-      commit_message = "[Finishes ##{GitUtils.current_branch_story_parts[:id]}] #{StoryBranch::StringUtils.undashed GitUtils.current_branch_story_parts[:title]}"
-      puts commit_message
+      current_story = GitUtils.current_branch_story_parts
+      commit_message = "[#{@p.finish_tag} ##{current_story[:id]}] "\
+        "#{StoryBranch::StringUtils.undashed(current_story[:title])}"
 
-      if gets.chomp!.casecmp('y').zero?
-        GitUtils.commit commit_message
+      prompt.say(commit_message)
+      abort_commit = prompt.no?('Use standard finishing commit message?')
+      if abort_commit
+        prompt.say 'Aborted'
       else
-        puts 'Aborted'
+        GitUtils.commit commit_message
       end
     rescue Blanket::Unauthorized
       unauthorised_message
@@ -87,6 +90,11 @@ module StoryBranch
     end
 
     private
+
+    def prompt
+      return @prompt if @prompt
+      @prompt = TTY::Prompt.new
+    end
 
     def config
       return @config if @config
