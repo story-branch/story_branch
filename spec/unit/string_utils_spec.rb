@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'story_branch/string_utils'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::StringUtils do
   let(:simple_string) { "H_e,l l::o.W;h+o&?'Are'" }
 
@@ -33,4 +34,16 @@ RSpec.describe StoryBranch::StringUtils do
       expect(res).to eq 'h-e-l-l-o-w-h-o-are-'
     end
   end
+
+  describe 'undashed' do
+    it 'converts dashed string into human readable' do
+      str = 'abc---e-----------123ABC'
+      res = StoryBranch::StringUtils.undashed(str)
+      expect(res).to eq 'Abc e 123abc'
+      str = 'h-e-l-l-o-w-h-o-are-'
+      res = StoryBranch::StringUtils.undashed(str)
+      expect(res).to eq 'H e l l o w h o are'
+    end
+  end
 end
+# rubocop:enable Metrics/BlockLength

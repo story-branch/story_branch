@@ -23,7 +23,7 @@ module StoryBranch
     end
 
     def self.undashed(s)
-      s.tr('-', ' ').capitalize
+      s.tr('-', ' ').squeeze(' ').strip.capitalize
     end
   end
 end
