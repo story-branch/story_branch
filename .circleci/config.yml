@@ -72,6 +72,12 @@ jobs:
       - run:
           name: Publish to Rubygems
           command: |
+            echo "-------- 8< --------"
+            ls ~/.gem/
+
+            cat ~/.gem/credentials
+            echo "-------- >8 --------"
+
             CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
             CURRENT_TAG=$(git tag --points-at HEAD)
 
