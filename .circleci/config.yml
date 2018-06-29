@@ -77,7 +77,7 @@ jobs:
 
             if [[ "$CURRENT_TAG" == "$CURRENT_VERSION" ]]; then
               gem build story_branch.gemspec
-              gem push "story_branch-${CIRCLE_TAG}.gem"
+              gem push "story_branch-${CURRENT_VERSION}.gem"
             else
               echo "Not a version tagged commit..."
             fi
