@@ -74,6 +74,7 @@ jobs:
           command: |
             gem build story_branch.gemspec
             gem push "story_branch-$()"
+            shred -u ~/.gem/credentials
 
 workflows:
   version: 2
