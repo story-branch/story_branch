@@ -5,23 +5,6 @@ defaults: &defaults
     - image: circleci/ruby:2.4.1-node-browsers
   working_directory: ~/repo
 
-workflows:
-  version: 2
-  jobs:
-    - test:
-        filters:
-          branches:
-            only: /.*/
-
-    - publish:
-        requires:
-          - test
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v\d+\.\d+\.\d+/
-
 jobs:
   test:
     <<: *defaults
@@ -64,6 +47,24 @@ jobs:
   publish:
     <<: *defaults
     steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            gem install bundler
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
       - run:
           name: Setup Rubygems
           command: bash .circleci/setup-rubygems.sh
@@ -73,3 +74,20 @@ jobs:
           command: |
             gem build story_branch.gemspec
             gem push "story_branch-$()"
+
+            workflows:
+  version: 2
+  jobs:
+    - test:
+        filters:
+          branches:
+            only: /.*/
+
+    - publish:
+        requires:
+          - test
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v\d+\.\d+\.\d+/
