@@ -6,11 +6,10 @@ Tue Jun 26 15:18:37 2018 +0800
 # 0.3.1
 Tue Jun 26 15:18:37 2018 +0800
 
-[Resolves #44] Story branch finish is broken
-[Resolves #30] Update to use Ruby 2.3.0 minimum
-[Resolves #32] Support multiple configurations
-[Resolves #27] Allow config finish tag
-
+- Fixed Story branch finish is broken
+- Update to use Ruby 2.3.0 minimum
+- Support multiple configurations
+- Allow configuration of finish keyword
 - Making use of TTY Prompt to collect input from the user
 - Cleaned up some code on PivotalUtils to simplify logic
 - Improved test coverage
