@@ -6,6 +6,7 @@ defaults: &defaults
   working_directory: ~/repo
 
 workflows:
+  version: 2
   jobs:
     - test:
         filters:
