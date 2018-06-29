@@ -1,0 +1,341 @@
+    v0.3.1
+
+commit 0b230a3a5f7c2da70c42867d9b9c9dac30e7cf90
+Author: Rui <rui.p.baltazar@gmail.com>
+Date:   Tue Jun 26 15:18:37 2018 +0800
+
+    [Resolves #44] Story branch finish is broken
+
+    Changes made:
+
+    - Making use of TTY Prompt to collect input from the user
+    - Cleaned up some code on PivotalUtils to simplify logic
+    - Improved test coverage on String Utils
+
+commit 52d3fbf34d1b7016d6e5ecc8a62b5fba1469c2d1
+Author: Rui <rui.p.baltazar@gmail.com>
+Date:   Mon Jun 25 18:37:25 2018 +0800
+
+    [Resolves #30] Update to use Ruby 2.3.0 minimum
+
+    # Changes made
+
+    - Added minimum version to gemspec
+    - Added .ruby-version file with ruby 2.3.1.
+    - Cleanup a lot of the rubocop warnings
+
+    # How does this address the issue reported?
+
+    Adding the minimum version to the gemspec, naturally solves the issue reported.
+    The addition of ruby-version file allows us to run rubocop with a higher ruby version specified (and that matches our gemspec requirements). Consequently, I tried to cleanup most of the warnings. I didn't clean up all of them because they are in files that I'd like to refactor soon, so I'm avoiding spending time in rubocopying things that will be touched soon.
+
+    Ultimately, our CI should also check for rubocop rule breaking and warn us/stop the merging in case they fail.
+
+commit 0677d23de228d2d7731891b66b73868c8c54fca2
+Author: Rui <rui.p.baltazar@gmail.com>
+Date:   Thu Jun 21 13:21:57 2018 +0800
+
+    [Resolves #32] Support multiple configurations
+
+    - Added TTY functionalities
+    - Running the commands using TTY::Command
+    - Added Migrate command to upgrade current public version to new version
+    - Updated dependencies
+    - Updated readme for a more comprehensive usage
+    - Increased test coverage
+
+commit aa7fde748d08a80f1a613734251cc4dc6d967224
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Mon Jun 4 14:47:53 2018 +0800
+
+    [Finishes #27] Allow config finish tag
+
+commit d077666f5ac15f1f96ed7f78679ba1e98148c1c8
+Author: Jasonm23 <jasonm23@gmail.com>
+Date:   Tue Nov 14 15:12:58 2017 +0800
+
+    0.2.13 - fix bail on empty config file
+
+commit 9728b89400c524863af643b5a663982e9e4aa988
+Author: Lincoln Lee <git@lincoln.hk>
+Date:   Wed Jun 8 11:07:06 2016 +0800
+
+    Bump version to 0.2.12
+
+commit 34c0a8d0fd54a7f8e8c2e1df1b4351e7e99cd7b5
+Author: Lincoln Lee <git@lincoln.hk>
+Date:   Tue Jun 7 17:03:00 2016 +0800
+
+    Remove byebug since it is not in dependency
+
+commit e98cf44342018f0a64de3bc0d012bd10a9c7b465
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Thu Mar 31 12:37:05 2016 +0800
+
+    [Hotfix] If there is no config file it crashes
+
+commit 217b5fd6a695d02ca77dbe572e6ab823011121e7
+Author: Rui Baltazar <rui@opsmanager.com>
+Date:   Tue Mar 8 12:13:15 2016 +0800
+
+    Load config from different files
+
+    Allow one of the configs to be loaded from a global config file
+    (~/.story_branch)
+    while others from the project root config file
+    (.story_branch)
+
+commit f8e2d62def48414c4f8695085410d813cf9ce1c2
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Fri May 15 14:03:00 2015 +0800
+
+    Fix strip newlines - bump to 0.2.9
+
+commit 0bfff93a6cd1cb5e1eb8d53be50a0b28627320c2
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Tue May 12 17:47:22 2015 +0800
+
+    Removed pivotal-tracker gem dependency,
+
+    - Now using Blanket Wrapper to access Pivotal API
+    - Cleaned up
+    - Bumped version to 0.2.8
+
+commit 24a5b8a8fad6630a40947923f9fcca91a3627710
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Tue Apr 14 18:57:34 2015 +0800
+
+    Update to 0.2.7 remove deprecated cli bins
+
+commit 8186f0672b5dba135c36f08b048330fe59046180
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Wed Sep 17 11:20:20 2014 +0800
+
+    Update to 0.2.5
+
+    - Fix error story_branch/issues/15 on git finish
+    - Fix error story_branch/issues/16 newlines in story names
+    - Fix existing branch / story validation
+    - Improve / simplify error messages
+    - Improve name sanitisation
+    - Added story unstart
+
+commit 96a280c6c76485dc3e9442ee41cd3bb203508df7
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Fri Aug 22 14:27:47 2014 +0800
+
+    0.2.4 - Fixes problem with story finish
+
+commit dc6d423d36466a78c7bf9391e18079a44f3c3c26
+Author: Jason Milkins <pair+jason@neo.com>
+Date:   Thu Aug 21 10:53:21 2014 +0800
+
+    Bump to 0.2.3 fix rb-readline dependency
+
+commit d7329f94d4cb8030f2eb34c24b67b3173c85bfd2
+Author: Jason Milkins <pair+jason@neo.com>
+Date:   Tue Aug 19 10:35:43 2014 +0800
+
+    Bump to 0.2.2
+
+    - update to 0.2.2
+    - fix specs and rspec reporter
+    - use rb-readline
+    - fix Readline completion, using rb-readline
+    - add pry for debugging support
+    - output errors to stderr
+    - update readme
+
+commit 9fb4edef8376f609ecb041b454a5670eea82c15f
+Author: Jason Milkins <pair+jason@neo.com>
+Date:   Mon Aug 18 17:44:40 2014 +0800
+
+    Modify completion system, general improvements
+
+commit 5592b17c53eb9e45f35e55127799e538d40784e2
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Mon Aug 18 10:55:50 2014 +0800
+
+    Humanize / undash the commit message description (from the branch name)
+
+commit 7e839ac031cbc86e233181a74b83ab8338c6dca4
+Author: Jason Milkins <pair+jason@neo.com>
+Date:   Tue Aug 12 17:43:30 2014 +0800
+
+    0.2.0 add start and finish stories.
+
+commit 94e5c307069962411f24c6b1646d5ea478b48866
+Author: Anton Kolomiychuk <kolomiychuk.anton@gmail.com>
+Date:   Sun Aug 10 21:40:30 2014 +0700
+
+    Fix path in symlinks
+
+commit b652aedf78869e77aae5ee972889ab8f7a0ae1f4
+Author: Dominic Wong and Jason Milkins <pair+dominic+jason@opsmanager.com>
+Date:   Tue Jun 24 11:09:32 2014 +0800
+
+    Bump Version, 0.1.8 and update README
+
+commit eca913b83bdeda6d837a935676da3c8061937f06
+Author: Dominic Wong and Jason Milkins <pair+dominic+jason@opsmanager.com>
+Date:   Tue Jun 24 11:05:51 2014 +0800
+
+    Remove constraint to master as feature parent.
+
+commit f8ba04eeeff8162283bb0cb85473e351bddbb2b1
+Author: Dominic Wong and Jason Milkins <pair+dominic+jason@opsmanager.com>
+Date:   Fri Jun 6 12:07:56 2014 +0800
+
+    Add aliases for story_branch executable
+
+commit 7c10b0aa3e9f0cb347ba8904a8d022969079e15e
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Mon May 26 10:34:12 2014 +0800
+
+    0.1.5 - tidy up output and add LICENCE
+
+commit 3acd7d23f2dda9c831567c32ff01bc35951ad5d9
+Author: Dominic Wong and Jason Milkins <pair+dominic+jason@opsmanager.com>
+Date:   Thu May 15 09:58:03 2014 +0800
+
+    0.1.4 update name generation / translation rules
+
+commit b1ff6e11618c14516f80ca80f2673db3d9a84018
+Author: Jason Milkins and Rui Baltazar <pair+jason+rui@opsmanager.com>
+Date:   Wed May 14 09:33:06 2014 +0800
+
+    Squeeze multiple dashes in suggested branch name
+
+commit 6bba372627b53bb7ed618ca90ec86e441c9b45de
+Author: Jason Milkins and Rui Baltazar <pair+jason+rui@opsmanager.com>
+Date:   Mon Apr 21 11:58:56 2014 +0800
+
+    remove logging
+
+commit 388e3826cd6dd1c58f24c46f9d2c869e0077210a
+Author: Jason Milkins and Rui Baltazar <pair+jason+rui@opsmanager.com>
+Date:   Mon Apr 21 11:57:23 2014 +0800
+
+    bug fix
+
+commit 73e1ce430fa35370b9cfe167a7ae40a7b0207222
+Author: Jason Milkins and Rui Baltazar <pair+jason+rui@opsmanager.com>
+Date:   Mon Apr 21 11:52:43 2014 +0800
+
+    ignore .pairs
+
+commit df1a4ab804ab9349f1c1036fd0657246775ee192
+Merge: cfab909 ab7da6c
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Mon Apr 21 11:44:22 2014 +0800
+
+    0.1.1 release
+
+commit ab7da6cd1f123702c7bf177f5d7469e1b5e77097
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Sun Apr 20 13:57:48 2014 +0800
+
+    updated code to require gem instead of relative paths
+
+commit 4f0b5f99f1e20e87011dc1d432a9e4a48b72eea5
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Sun Apr 20 13:53:40 2014 +0800
+
+    Finishes #4 test definition
+
+commit 82b0d9553d4538cd88b663ceb68c4d757b9ffcb1
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Sun Apr 20 13:53:04 2014 +0800
+
+    clear test files for tests specifications
+
+commit 19b0fcbd99ec169ebdadee623188cf666832a297
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Sun Apr 20 13:52:10 2014 +0800
+
+    searches for existing file or environment set variable. Existing file overrides the env var
+
+commit 2d28244cafc326b695e5f59402a6351574d19e22
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Sat Apr 19 15:43:03 2014 +0800
+
+    Raise PIVOTAL_API_KEY exception if api key not found in env. added method to check if object is set with api_key and project_id
+
+commit cfab9094c935da17b3dcabdcec4cc232686e49e0
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Sat Apr 19 02:08:21 2014 +0800
+
+    0.0.1 gem release
+
+commit 7b0e45ef6869ed17e1b359db437703192de7720f
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Sat Apr 19 00:24:41 2014 +0800
+
+    Milestone 'twiddly-winks'
+
+    * Add usage info (draft) to file header
+    * Add simple_sanitize method to remove common punctuation from story
+      names / existing branch names
+    * Remove arbitrary 50 char limit on branch names
+
+    This milestone also merges in work by Rui Baltazar, to convert to a
+    command utility gem + refactoring into a class
+
+commit 47eabe38e57521b6ae668c84831c8cd8f8ed6a51
+Author: Rui Baltazar <rui.p.baltazar@gmail.com>
+Date:   Fri Apr 18 12:22:01 2014 +0800
+
+    removed levenshtein dependency. added ruby min version
+
+commit b4453e894ace22b061c5f518a069e57054aa7633
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Sat Jan 25 20:04:57 2014 +0800
+
+    Milestone 'tequila-grizzly' DONE
+
+    * Look for pivotal project id (.pivotal-id) in repo root (we assume
+      we're in project root.) (we do this and fallback to checking
+      environment var)
+
+commit b7033645dd857b81406415481ffc939a324ca9af
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Sat Jan 25 19:04:01 2014 +0800
+
+    Added Levenshtein Distance checking to branch names, to avoid names
+    which are too close together (and straight-up duplicates)
+
+commit 892456299d5a3e2a5501b381e0d9da796fe2785d
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Sat Jan 25 10:00:12 2014 +0800
+
+    Added read-line support and re-factored
+
+    Read-line support (to use instead of gets)
+
+    Allow injection of history into read-line invocations
+
+    Injected selection numbers into story selection read-line history
+
+    Dashed / down-cased story name as a suggestion for the new feature
+    branch name
+
+    Injected dash/down-cased story name into new feature branch name
+    read-line history (move up to get it)
+
+commit ebc55b1f401eba050fb2d4b0ff8a669260eca100
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Fri Jan 24 18:31:56 2014 +0800
+
+    Fix error testing PIVOTAL_PROJECT_ID
+
+commit 909e04d979091446fb04eb29891027bc2befc9f6
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Fri Jan 24 18:22:32 2014 +0800
+
+    rename ptrak to story_branch
+
+commit 4bc107eadffa534fe1e2e659638654a7bee9ff57
+Author: jasonm23 <jasonm23@gmail.com>
+Date:   Fri Jan 24 17:53:38 2014 +0800
+
+    Basic version passing
