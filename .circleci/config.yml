@@ -73,7 +73,9 @@ jobs:
           name: Publish to Rubygems
           command: |
             gem build story_branch.gemspec
+            # Set to fail until config is working.
             gem push "story_branch-$()"
+
             shred -u ~/.gem/credentials
 
 workflows:
