@@ -73,10 +73,13 @@ jobs:
           name: Publish to Rubygems
           command: |
             CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
+            CURRENT_TAG=$(git tag --points-at HEAD)
 
-            if [[ "$CIRCLE_TAG" == "$CURRENT_VERSION" ]]; then
+            if [[ $CURRENT_TAG" == "$CURRENT_VERSION" ]]; then
               gem build story_branch.gemspec
               gem push "story_branch-${CIRCLE_TAG}.gem"
+            else
+              echo "Not a version tagged commit..."
             fi
 
             shred -u ~/.gem/credentials
@@ -94,7 +97,5 @@ workflows:
           requires:
             - test
           filters:
-            tags:
-              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
               only: master
