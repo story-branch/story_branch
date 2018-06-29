@@ -72,20 +72,14 @@ jobs:
       - run:
           name: Publish to Rubygems
           command: |
-            echo "-------- 8< --------"
-            ls ~/.gem/
-
-            cat ~/.gem/credentials
-            echo "-------- >8 --------"
-
             CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
             CURRENT_TAG=$(git tag --points-at HEAD)
 
-            if [[ "$CURRENT_TAG" == "$CURRENT_VERSION" ]]; then
+            if [[ "${CURRENT_TAG}" == "${CURRENT_VERSION}" ]]; then
               gem build story_branch.gemspec
-              gem push --backtrace --debug --verbose "story_branch-${CURRENT_VERSION}.gem"
+              gem push "story_branch-${CURRENT_VERSION}.gem"
             else
-              echo "Not a version tagged commit..."
+              echo "Not tagged as a new version - skipping gem push"
             fi
 
             shred -u ~/.gem/credentials
