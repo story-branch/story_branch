@@ -75,7 +75,7 @@ jobs:
             CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
             CURRENT_TAG=$(git tag --points-at HEAD)
 
-            if [[ $CURRENT_TAG" == "$CURRENT_VERSION" ]]; then
+            if [[ "$CURRENT_TAG" == "$CURRENT_VERSION" ]]; then
               gem build story_branch.gemspec
               gem push "story_branch-${CIRCLE_TAG}.gem"
             else
