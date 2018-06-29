@@ -89,5 +89,7 @@ workflows:
           requires:
             - test
           filters:
+            branches:
+              ignore: /.*/
             tags:
-              only: /^v\d+\.\d+\.\d+/
+              only: /^v[0-9]+(\.[0-9]+)*$/
