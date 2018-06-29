@@ -1,14 +1,14 @@
 [![Gem Version](https://badge.fury.io/rb/story_branch.png)](http://badge.fury.io/rb/story_branch)
 [![CircleCI](https://circleci.com/gh/story-branch/story_branch/tree/master.svg?style=svg)](https://circleci.com/gh/story-branch/story_branch/tree/master)
 
-[Changelog](Changelog.md)
-
 # Story Branch
 
 Story branch is a CLI application that interacts with Pivotal Tracker at the
 at the moment. It allows you to start and un-start stories as well as creating
 branches based on the story name and id and have a final commit message marking
 the story as Finished.
+
+[Changelog](Changelog.md)
 
 ## Installing
 
