@@ -8,7 +8,7 @@ at the moment. It allows you to start and un-start stories as well as creating
 branches based on the story name and id and have a final commit message marking
 the story as Finished.
 
-[Changelog](Changelog.md)
+[View Changelog](Changelog.md)
 
 ## Installing
 
