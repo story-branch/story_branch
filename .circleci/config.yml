@@ -75,7 +75,7 @@ jobs:
             gem build story_branch.gemspec
             gem push "story_branch-$()"
 
-            workflows:
+workflows:
   version: 2
   jobs:
     - test:
