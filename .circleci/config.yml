@@ -77,17 +77,18 @@ jobs:
 
 workflows:
   version: 2
-  jobs:
-    - test:
-        filters:
-          branches:
-            only: /.*/
+  test-and-publish:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
 
-    - publish:
-        requires:
-          - test
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v\d+\.\d+\.\d+/
+      - publish:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+\.\d+\.\d+/
