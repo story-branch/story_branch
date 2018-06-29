@@ -74,7 +74,7 @@ jobs:
           command: |
             gem build story_branch.gemspec
             # Set to fail until config is working.
-            gem push "story_branch-$()"
+            gem push "story_branch-*.gem"
 
             shred -u ~/.gem/credentials
 
