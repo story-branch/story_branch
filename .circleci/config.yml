@@ -72,9 +72,12 @@ jobs:
       - run:
           name: Publish to Rubygems
           command: |
-            gem build story_branch.gemspec
-            # Set to fail until config is working.
-            gem push "story_branch-*.gem"
+            CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
+
+            if [[ "$CIRCLE_TAG" == "$CURRENT_VERSION" ]]; then
+              gem build story_branch.gemspec
+              gem push "story_branch-${CIRCLE_TAG}.gem"
+            fi
 
             shred -u ~/.gem/credentials
 
@@ -92,6 +95,6 @@ workflows:
             - test
           filters:
             tags:
-              only: /^v[0-9]+(\.[0-9]+)*$/
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
               only: master
