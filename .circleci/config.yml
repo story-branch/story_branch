@@ -5,6 +5,22 @@ defaults: &defaults
     - image: circleci/ruby:2.4.1-node-browsers
   working_directory: ~/repo
 
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
+
+      - publish:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+
 jobs:
   test:
     <<: *defaults
@@ -83,19 +99,3 @@ jobs:
             fi
 
             shred -u ~/.gem/credentials
-
-workflows:
-  version: 2
-  test-and-publish:
-    jobs:
-      - test:
-          filters:
-            branches:
-              only: /.*/
-
-      - publish:
-          requires:
-            - test
-          filters:
-            branches:
-              only: master
