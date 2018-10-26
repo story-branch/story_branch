@@ -97,7 +97,6 @@ RSpec.describe StoryBranch::Main do
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
         it 'creates the branch for the feature based on the feature name' do
-
           expect(StoryBranch::GitUtils).to have_received(:create_branch).with(branch_name_with_id)
         end
       end
@@ -105,12 +104,26 @@ RSpec.describe StoryBranch::Main do
       describe 'when the story id already has a branch' do
         let(:branch_exists) { true }
 
-        it 'does not create a new branch for the feature based on the feature name' do
+        it 'does not create a new branch' do
           expect(StoryBranch::GitUtils).to_not have_received(:create_branch)
         end
 
         it 'shows an informative message' do
           expect(prompt).to have_received(:error).with("An existing branch has the same story id: #{story.id}")
+        end
+      end
+
+      describe 'when branch name is very similar to an exsiting one' do
+        let(:similar_branch) { true }
+
+        it 'does not create a new branch' do
+          expect(StoryBranch::GitUtils).to_not have_received(:create_branch)
+        end
+
+        it 'shows an informative message' do
+          expect(prompt).to have_received(:error).with(
+            'This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
+          )
         end
       end
     end
