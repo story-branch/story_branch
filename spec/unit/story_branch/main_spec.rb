@@ -12,14 +12,18 @@ RSpec.describe StoryBranch::Main do
   let(:current_branch_name) { 'rspec-testing' }
   let(:branch_exists) { false }
   let(:similar_branch) { false }
+  let(:branch_name) { '' }
 
   before do
     allow(StoryBranch::GitUtils).to receive(:current_branch).and_return current_branch_name
     allow(StoryBranch::GitUtils).to receive(:branch_for_story_exists?).and_return branch_exists
     allow(StoryBranch::GitUtils).to receive(:existing_branch?).and_return similar_branch
-    allow(StoryBranch::GitUtils).to receive(:create_branch?).and_return true
+    allow(StoryBranch::GitUtils).to receive(:create_branch).and_return true
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
     allow(prompt).to receive(:select).and_call_original
+    allow(prompt).to receive(:error)
+    allow(prompt).to receive(:say)
+    allow(prompt).to receive(:ask).and_return branch_name
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
       conf = ::TTY::Config.new
       if arg == '.'
@@ -29,6 +33,8 @@ RSpec.describe StoryBranch::Main do
       end
       conf
     end
+    prompt.input << "\r"
+    prompt.input.rewind
     sb
   end
 
@@ -57,19 +63,18 @@ RSpec.describe StoryBranch::Main do
       let(:stories) { [] }
 
       it 'prints message informing the user' do
-        expect(prompt.output.string).to match('No stories started, exiting')
+        expect(prompt).to have_received(:say).with('No stories started, exiting')
       end
     end
 
     describe 'when there are features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        story = StoryBranch::Story.new(fake_story)
-        prompt.input << story.to_s
-        prompt.input.rewind
-        [story]
+        [StoryBranch::Story.new(fake_story)]
       end
       let(:story) { stories[0] }
+      let(:branch_name) { story.dashed_title }
+      let(:branch_name_with_id) { "#{branch_name}-#{story.id}" }
 
       it 'passes an structure to prompt select with story and text' do
         expected_select = {
@@ -82,11 +87,30 @@ RSpec.describe StoryBranch::Main do
         )
       end
 
+      it 'asks for the branch name' do
+        expect(prompt).to have_received(:ask).with(
+          'Provide a new branch name',
+          default: branch_name
+        )
+      end
+
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
         it 'creates the branch for the feature based on the feature name' do
-          branch_name = "#{story.dashed_title} - #{story.id}"
-          expect(GitUtils).to have_received(:create_branch).with(branch_name)
+
+          expect(StoryBranch::GitUtils).to have_received(:create_branch).with(branch_name_with_id)
+        end
+      end
+
+      describe 'when the story id already has a branch' do
+        let(:branch_exists) { true }
+
+        it 'does not create a new branch for the feature based on the feature name' do
+          expect(StoryBranch::GitUtils).to_not have_received(:create_branch)
+        end
+
+        it 'shows an informative message' do
+          expect(prompt).to have_received(:error).with("An existing branch has the same story id: #{story.id}")
         end
       end
     end

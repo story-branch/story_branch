@@ -113,9 +113,9 @@ module StoryBranch
       return if story.nil?
       current_branch = GitUtils.current_branch
       prompt.say "You are checked out at: #{current_branch}"
-      feature_branch_name = prompt.ask('Provide a new branch name',
-                                       default: story.dashed_title)
-      feature_branch_name.chomp!
+      branch_name = prompt.ask('Provide a new branch name',
+                               default: story.dashed_title)
+      feature_branch_name = branch_name.chomp
       return unless validate_branch_name(feature_branch_name, story.id)
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
