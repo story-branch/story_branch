@@ -68,6 +68,10 @@ module StoryBranch
     # TODO: Refactor story start and unstart due to similarities
     def story_start
       stories = @tracker.get_stories('unstarted')
+      if stories.empty?
+        prompt.say 'No unstarted stories, exiting'
+        return
+      end
       options = {}
       stories.each do |s|
         options[s.to_s] = s

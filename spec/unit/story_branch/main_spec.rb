@@ -13,6 +13,7 @@ RSpec.describe StoryBranch::Main do
   let(:branch_exists) { false }
   let(:similar_branch) { false }
   let(:branch_name) { '' }
+  let(:stories) { [] }
 
   before do
     allow(StoryBranch::GitUtils).to receive(:current_branch).and_return current_branch_name
@@ -24,6 +25,7 @@ RSpec.describe StoryBranch::Main do
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:say)
     allow(prompt).to receive(:ask).and_return branch_name
+    allow(sb.tracker).to receive(:get_stories).and_return stories
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
       conf = ::TTY::Config.new
       if arg == '.'
@@ -48,10 +50,7 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'create_story_branch' do
-    let(:stories) { [] }
-
     before do
-      allow(sb.tracker).to receive(:get_stories).and_return stories
       sb.create_story_branch
     end
 
@@ -125,6 +124,24 @@ RSpec.describe StoryBranch::Main do
             'This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
           )
         end
+      end
+    end
+  end
+
+  describe 'story_start' do
+    before do
+      sb.story_start
+    end
+
+    it 'fetches the stories from the tracker' do
+      expect(sb.tracker).to have_received(:get_stories).with('unstarted')
+    end
+
+    describe 'when there are no unstarted features' do
+      let(:stories) { [] }
+
+      it 'prints message informing the user' do
+        expect(prompt).to have_received(:say).with('No unstarted stories, exiting')
       end
     end
   end
