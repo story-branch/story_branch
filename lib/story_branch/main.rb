@@ -124,7 +124,7 @@ module StoryBranch
 
     # Branch name validation
     def validate_branch_name(name, id)
-      if GitUtils.existing_story? id
+      if GitUtils.branch_for_story_exists? id
         prompt.error("An existing branch has the same story id: #{id}")
         return false
       end

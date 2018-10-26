@@ -10,12 +10,12 @@ RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::TestPrompt.new }
   let(:sb) { StoryBranch::Main.new }
   let(:current_branch_name) { 'rspec-testing' }
-  let(:story_exists) { true }
+  let(:branch_exists) { false }
   let(:similar_branch) { false }
 
   before do
     allow(StoryBranch::GitUtils).to receive(:current_branch).and_return current_branch_name
-    allow(StoryBranch::GitUtils).to receive(:existing_story?).and_return story_exists
+    allow(StoryBranch::GitUtils).to receive(:branch_for_story_exists?).and_return branch_exists
     allow(StoryBranch::GitUtils).to receive(:existing_branch?).and_return similar_branch
     allow(StoryBranch::GitUtils).to receive(:create_branch?).and_return true
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
@@ -80,6 +80,14 @@ RSpec.describe StoryBranch::Main do
           expected_select,
           filter: true
         )
+      end
+
+      describe 'when the story id doesnt have a branch yet' do
+        let(:branch_exists) { false }
+        it 'creates the branch for the feature based on the feature name' do
+          branch_name = "#{story.dashed_title} - #{story.id}"
+          expect(GitUtils).to have_received(:create_branch).with(branch_name)
+        end
       end
     end
   end
