@@ -13,9 +13,9 @@ module StoryBranch
     def initialize
       # TODO: Read local config and decide what Utility to use
       # (e.g. PivotalUtils, GithubUtils, ...)
-      @local_config = init_local_config
-      @global_config = init_global_config
-      @tracker = PivotalUtils.new(local_config, global_config)
+      @local_config = ConfigManager.init_config('.')
+      @global_config = ConfigManager.init_config(Dir.home)
+      @tracker = PivotalUtils.new(@local_config, @global_config)
       exit unless @tracker.valid?
     end
 
@@ -23,13 +23,15 @@ module StoryBranch
       stories = @tracker.get_stories('started')
       if stories.empty?
         prompt.say 'No stories started, exiting'
-        exit
+        return
       end
       options = {}
       stories.each do |s|
         options[s.to_s] = s
       end
-      story = prompt.select('Choose the feature you want to work on:', options, filter: true)
+      story = prompt.select('Choose the feature you want to work on:',
+                            options,
+                            filter: true)
       create_feature_branch story
     end
 
@@ -98,25 +100,21 @@ module StoryBranch
       @prompt = TTY::Prompt.new
     end
 
-    def init_local_config
-      ConfigManager.init_config('.')
-    end
-
-    def init_global_config
-      ConfigManager.init_config(Dir.home)
-    end
-
     def finish_tag
       return @finish_tag if @finish_tag
-      fallback = @global_config.fetch(project_id, :finish_tag, default: 'Finishes')
+      fallback = @global_config.fetch(project_id,
+                                      :finish_tag,
+                                      default: 'Finishes')
       @finish_tag = @local_config.fetch(:finish_tag, default: fallback)
       @finish_tag
     end
 
     def create_feature_branch(story)
+      return if story.nil?
       current_branch = GitUtils.current_branch
       prompt.say "You are checked out at: #{current_branch}"
-      feature_branch_name = prompt.ask('Provide a new branch name', default: story.dashed_title)
+      feature_branch_name = prompt.ask('Provide a new branch name',
+                                       default: story.dashed_title)
       feature_branch_name.chomp!
       return unless validate_branch_name(feature_branch_name, story.id)
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
