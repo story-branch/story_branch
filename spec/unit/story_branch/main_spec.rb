@@ -23,9 +23,9 @@ RSpec.describe StoryBranch::Main do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
     allow(prompt).to receive(:select).and_call_original
     allow(prompt).to receive(:error)
+    allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
     allow(prompt).to receive(:ask).and_return branch_name
-    allow(sb.tracker).to receive(:get_stories).and_return stories
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
       conf = ::TTY::Config.new
       if arg == '.'
@@ -35,6 +35,7 @@ RSpec.describe StoryBranch::Main do
       end
       conf
     end
+    allow(sb.tracker).to receive(:get_stories).and_return stories
     prompt.input << "\r"
     prompt.input.rewind
     sb
@@ -75,7 +76,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_name) { story.dashed_title }
       let(:branch_name_with_id) { "#{branch_name}-#{story.id}" }
 
-      it 'passes an structure to prompt select with story and text' do
+      it 'passes a structure to prompt select with story and text' do
         expected_select = {
           story.to_s => story
         }
@@ -129,11 +130,8 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'story_start' do
-    before do
-      sb.story_start
-    end
-
     it 'fetches the stories from the tracker' do
+      sb.story_start
       expect(sb.tracker).to have_received(:get_stories).with('unstarted')
     end
 
@@ -141,7 +139,43 @@ RSpec.describe StoryBranch::Main do
       let(:stories) { [] }
 
       it 'prints message informing the user' do
+        sb.story_start
         expect(prompt).to have_received(:say).with('No unstarted stories, exiting')
+      end
+    end
+
+    describe 'when there are unstarted features' do
+      let(:stories) do
+        fake_story = OpenStruct.new(name: 'test', id: '123456')
+        [StoryBranch::Story.new(fake_story)]
+      end
+      let(:story) { stories[0] }
+      let(:update_state_result) { OpenStruct.new(error: nil) }
+
+      before do
+        allow(story).to receive(:update_state).and_return update_state_result
+        sb.story_start
+      end
+
+      it 'passes a structure to prompt select with story and text' do
+        expected_select = {
+          story.to_s => story
+        }
+        expect(prompt).to have_received(:select).with(
+          'Choose the feature you want to start:',
+          expected_select,
+          filter: true
+        )
+      end
+
+      describe 'when the update_state runs with success' do
+        it 'triggers the upadate_state with the new state: started' do
+          expect(story).to have_received(:update_state).with('started')
+        end
+
+        it 'prints the result to the user' do
+          expect(prompt).to receive(:ok).with("#{story.id} started")
+        end
       end
     end
   end

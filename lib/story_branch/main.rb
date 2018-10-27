@@ -76,10 +76,16 @@ module StoryBranch
       stories.each do |s|
         options[s.to_s] = s
       end
-      story = prompt.select('Choose the feature you want to start:', options, filter: true)
+      story = prompt.select('Choose the feature you want to start:',
+                            options,
+                            filter: true)
       return unless story
       res = story.update_state('started')
-      prompt.error(res.error) if res.error
+      if res.error&.present?
+        prompt.error(res.error)
+        return
+      end
+      puts 'here'
       prompt.ok("#{story.id} started")
     end
 
