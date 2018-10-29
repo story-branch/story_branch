@@ -85,13 +85,16 @@ module StoryBranch
         prompt.error(res.error)
         return
       end
-      puts 'here'
       prompt.ok("#{story.id} started")
     end
 
     # TODO: Refactor story start and unstart due to similarities
     def story_unstart
       stories = @tracker.get_stories('started')
+      if stories.empty?
+        prompt.say 'No unstarted stories, exiting'
+        return
+      end
       options = {}
       stories.each do |s|
         options[s.to_s] = s

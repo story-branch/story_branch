@@ -174,7 +174,58 @@ RSpec.describe StoryBranch::Main do
         end
 
         it 'prints the result to the user' do
-          expect(prompt).to receive(:ok).with("#{story.id} started")
+          expect(prompt).to have_received(:ok).with("#{story.id} started")
+        end
+      end
+    end
+  end
+
+  describe 'story_unstart' do
+    it 'fetches the stories from the tracker' do
+      sb.story_unstart
+      expect(sb.tracker).to have_received(:get_stories).with('started')
+    end
+
+    describe 'when there are no started features' do
+      let(:stories) { [] }
+
+      it 'prints message informing the user' do
+        sb.story_unstart
+        expect(prompt).to have_received(:say).with('No unstarted stories, exiting')
+      end
+    end
+
+    describe 'when there are started features' do
+      let(:stories) do
+        fake_story = OpenStruct.new(name: 'test', id: '123456')
+        [StoryBranch::Story.new(fake_story)]
+      end
+      let(:story) { stories[0] }
+      let(:update_state_result) { OpenStruct.new(error: nil) }
+
+      before do
+        allow(story).to receive(:update_state).and_return update_state_result
+        sb.story_unstart
+      end
+
+      it 'passes a structure to prompt select with story and text' do
+        expected_select = {
+          story.to_s => story
+        }
+        expect(prompt).to have_received(:select).with(
+          'Choose the feature you want to unstart:',
+          expected_select,
+          filter: true
+        )
+      end
+
+      describe 'when the update_state runs with success' do
+        it 'triggers the upadate_state with the new state: started' do
+          expect(story).to have_received(:update_state).with('unstarted')
+        end
+
+        it 'prints the result to the user' do
+          expect(prompt).to have_received(:ok).with("#{story.id} unstarted")
         end
       end
     end
