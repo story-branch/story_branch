@@ -66,42 +66,32 @@ module StoryBranch
       end
     end
 
-    # TODO: Refactor story start and unstart due to similarities
     def story_start
-      stories = @tracker.get_stories('unstarted')
+      update_status('unstarted', 'started', 'start')
+    end
+
+    def story_unstart
+      update_status('started', 'unstarted', 'unstart')
+    end
+
+    private
+
+    def update_status(current_status, next_status, action)
+      stories = @tracker.get_stories(current_status)
       if stories.empty?
-        prompt.say 'No unstarted stories, exiting'
+        prompt.say "No #{current_status} stories, exiting"
         return
       end
       options = build_stories_structure(stories)
-      story = prompt.select('Choose the feature you want to start:',
-                            options,
-                            filter: true)
+      story = prompt.select("Choose the feature you want to #{action}:", options, filter: true)
       return unless story
-      res = story.update_state('started')
+      res = story.update_state(next_status)
       if res.error&.present?
         prompt.error(res.error)
         return
       end
-      prompt.ok("#{story.id} started")
+      prompt.ok("#{story.id} #{next_status}")
     end
-
-    # TODO: Refactor story start and unstart due to similarities
-    def story_unstart
-      stories = @tracker.get_stories('started')
-      if stories.empty?
-        prompt.say 'No unstarted stories, exiting'
-        return
-      end
-      options = build_stories_structure(stories)
-      story = prompt.select('Choose the feature you want to unstart:', options, filter: true)
-      return unless story
-      res = story.update_state('unstarted')
-      prompt.error(res.error) if res.error
-      prompt.ok("#{story.id} unstarted")
-    end
-
-    private
 
     def build_stories_structure(stories)
       options = {}

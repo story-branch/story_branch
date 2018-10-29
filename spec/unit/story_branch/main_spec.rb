@@ -201,7 +201,7 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints message informing the user' do
         sb.story_unstart
-        expect(prompt).to have_received(:say).with('No unstarted stories, exiting')
+        expect(prompt).to have_received(:say).with('No started stories, exiting')
       end
     end
 
