@@ -10,6 +10,7 @@ RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::TestPrompt.new }
   let(:sb) { StoryBranch::Main.new }
   let(:current_branch_name) { 'rspec-testing' }
+  let(:branch_story_parts) { 'rspec-testing' }
   let(:branch_exists) { false }
   let(:similar_branch) { false }
   let(:branch_name) { '' }
@@ -17,6 +18,7 @@ RSpec.describe StoryBranch::Main do
 
   before do
     allow(StoryBranch::GitUtils).to receive(:current_branch).and_return current_branch_name
+    allow(StoryBranch::GitUtils).to receive(:current_branch_story_parts).and_return branch_story_parts
     allow(StoryBranch::GitUtils).to receive(:branch_for_story_exists?).and_return branch_exists
     allow(StoryBranch::GitUtils).to receive(:existing_branch?).and_return similar_branch
     allow(StoryBranch::GitUtils).to receive(:create_branch).and_return true
@@ -228,6 +230,26 @@ RSpec.describe StoryBranch::Main do
           expect(prompt).to have_received(:ok).with("#{story.id} unstarted")
         end
       end
+    end
+  end
+
+  describe 'story_finish' do
+    describe 'when the branch name does not follow story branch format' do
+      it 'prints the error message to the user' do
+        expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
+      end
+    end
+
+    describe 'when the feature id does not match a feature in the tracker' do
+      it 'prints the error message to the user' do
+        expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
+      end
+    end
+
+    describe 'when there are untracked files' do
+    end
+
+    describe 'when there are unstaged modified files' do
     end
   end
 end

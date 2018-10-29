@@ -37,12 +37,12 @@ module StoryBranch
 
     def story_finish
       current_story = StoryBranch::GitUtils.current_branch_story_parts
-      unless current_story && @tracker.story(current_story)
+      unless !current_story.empty? && @tracker.get_story_by_id(current_story.id)
         prompt.error('No tracked feature associated with this branch')
         return
       end
 
-      if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
+      if StoryBranch::GitUtils.status?(:untracked) || StoryBranch::GitUtils.status?(:modified)
         prompt.say 'There are unstaged changes'
         prompt.say 'Use git add to stage changes before running git finish'
         prompt.say 'Use git stash if you want to hide changes for this commit'
@@ -56,8 +56,9 @@ module StoryBranch
       end
 
       commit_message = "[#{@finish_tag} ##{current_story.id} #{@current_story.title}"
-      prompt.say(commit_message)
-      abort_commit = prompt.no?('Use standard finishing commit message?')
+      abort_commit = prompt.no?('Commit with standard message?') do |q|
+        q.suffix commit_message
+      end
       if abort_commit
         prompt.say 'Aborted'
       else
