@@ -110,7 +110,7 @@ module StoryBranch
 
     def prompt
       return @prompt if @prompt
-      @prompt = TTY::Prompt.new
+      @prompt = TTY::Prompt.new(interrupt: :exit)
     end
 
     def finish_tag
