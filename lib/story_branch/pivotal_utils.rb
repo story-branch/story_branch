@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'blanket'
-require 'rb-readline'
 require_relative './string_utils'
 
 module StoryBranch
