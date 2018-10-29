@@ -25,10 +25,7 @@ module StoryBranch
         prompt.say 'No stories started, exiting'
         return
       end
-      options = {}
-      stories.each do |s|
-        options[s.to_s] = s
-      end
+      options = build_stories_structure(stories)
       story = prompt.select('Choose the feature you want to work on:',
                             options,
                             filter: true)
@@ -73,10 +70,7 @@ module StoryBranch
         prompt.say 'No unstarted stories, exiting'
         return
       end
-      options = {}
-      stories.each do |s|
-        options[s.to_s] = s
-      end
+      options = build_stories_structure(stories)
       story = prompt.select('Choose the feature you want to start:',
                             options,
                             filter: true)
@@ -96,10 +90,7 @@ module StoryBranch
         prompt.say 'No unstarted stories, exiting'
         return
       end
-      options = {}
-      stories.each do |s|
-        options[s.to_s] = s
-      end
+      options = build_stories_structure(stories)
       story = prompt.select('Choose the feature you want to unstart:', options, filter: true)
       return unless story
       res = story.update_state('unstarted')
@@ -108,6 +99,14 @@ module StoryBranch
     end
 
     private
+
+    def build_stories_structure(stories)
+      options = {}
+      stories.each do |s|
+        options[s.to_s] = s
+      end
+      options
+    end
 
     def prompt
       return @prompt if @prompt
