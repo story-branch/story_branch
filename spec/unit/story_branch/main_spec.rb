@@ -324,7 +324,11 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints the message informing the user' do
         sb.story_finish
-        expect(prompt).to have_received(:say).exactly(2).times
+        message = <<~MESSAGE
+          There are no staged changes.
+          Nothing to do.
+        MESSAGE
+        expect(prompt).to have_received(:say).once.with(message)
       end
     end
 

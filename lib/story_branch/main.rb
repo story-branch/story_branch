@@ -50,8 +50,11 @@ module StoryBranch
       end
 
       unless GitUtils.status?(:added) || GitUtils.status?(:staged)
-        prompt.say 'There are no staged changes.'
-        prompt.say 'Nothing to do'
+        message = <<~MESSAGE
+          There are no staged changes.
+          Nothing to do.
+        MESSAGE
+        prompt.say message
         return
       end
 
