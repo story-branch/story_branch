@@ -33,13 +33,13 @@ module StoryBranch
     end
 
     def story_finish
-      current_story = StoryBranch::GitUtils.current_branch_story_parts
+      current_story = GitUtils.current_branch_story_parts
       unless !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
         prompt.error('No tracked feature associated with this branch')
         return
       end
 
-      if StoryBranch::GitUtils.status?(:untracked) || StoryBranch::GitUtils.status?(:modified)
+      if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
         message = <<~MESSAGE
           There are unstaged changes
           Use git add to stage changes before running git finish
@@ -49,7 +49,7 @@ module StoryBranch
         return
       end
 
-      unless StoryBranch::GitUtils.status?(:added) || StoryBranch::GitUtils.status?(:staged)
+      unless GitUtils.status?(:added) || GitUtils.status?(:staged)
         prompt.say 'There are no staged changes.'
         prompt.say 'Nothing to do'
         return
@@ -62,7 +62,7 @@ module StoryBranch
       if abort_commit
         prompt.say 'Aborted'
       else
-        StoryBranch::GitUtils.commit commit_message
+        GitUtils.commit commit_message
       end
     end
 
