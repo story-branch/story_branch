@@ -37,7 +37,7 @@ module StoryBranch
 
     def story_finish
       current_story = StoryBranch::GitUtils.current_branch_story_parts
-      unless !current_story.empty? && @tracker.get_story_by_id(current_story.id)
+      unless !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
         prompt.error('No tracked feature associated with this branch')
         return
       end
@@ -49,20 +49,20 @@ module StoryBranch
         return
       end
 
-      unless GitUtils.status?(:added) || GitUtils.status?(:staged)
+      unless StoryBranch::GitUtils.status?(:added) || StoryBranch::GitUtils.status?(:staged)
         prompt.say 'There are no staged changes.'
         prompt.say 'Nothing to do'
         return
       end
 
-      commit_message = "[#{@finish_tag} ##{current_story.id} #{@current_story.title}"
+      commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
       abort_commit = prompt.no?('Commit with standard message?') do |q|
         q.suffix commit_message
       end
       if abort_commit
         prompt.say 'Aborted'
       else
-        GitUtils.commit commit_message
+        StoryBranch::GitUtils.commit commit_message
       end
     end
 
@@ -121,6 +121,13 @@ module StoryBranch
                                       default: 'Finishes')
       @finish_tag = @local_config.fetch(:finish_tag, default: fallback)
       @finish_tag
+    end
+
+    # TODO: cleanup as it is the same method as the one used in pivotal utils
+    def project_id
+      return @project_id if @project_id
+      @project_id = @local_config.fetch(:project_id)
+      @project_id
     end
 
     def create_feature_branch(story)

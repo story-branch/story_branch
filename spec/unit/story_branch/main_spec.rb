@@ -10,23 +10,30 @@ RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::TestPrompt.new }
   let(:sb) { StoryBranch::Main.new }
   let(:current_branch_name) { 'rspec-testing' }
-  let(:branch_story_parts) { 'rspec-testing' }
+  let(:branch_story_parts) { {} }
   let(:branch_exists) { false }
   let(:similar_branch) { false }
   let(:branch_name) { '' }
   let(:stories) { [] }
+  let(:story_from_tracker) { nil }
+  let(:answer_to_no) { true }
 
   before do
-    allow(StoryBranch::GitUtils).to receive(:current_branch).and_return current_branch_name
-    allow(StoryBranch::GitUtils).to receive(:current_branch_story_parts).and_return branch_story_parts
-    allow(StoryBranch::GitUtils).to receive(:branch_for_story_exists?).and_return branch_exists
-    allow(StoryBranch::GitUtils).to receive(:existing_branch?).and_return similar_branch
-    allow(StoryBranch::GitUtils).to receive(:create_branch).and_return true
+    allow(StoryBranch::GitUtils).to receive_messages(
+      current_branch: current_branch_name,
+      current_branch_story_parts: branch_story_parts,
+      branch_for_story_exists?: branch_exists,
+      existing_branch?: similar_branch,
+      create_branch: true,
+      commit: true
+    )
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
+
     allow(prompt).to receive(:select).and_call_original
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
+    allow(prompt).to receive(:no?).and_return answer_to_no
     allow(prompt).to receive(:ask).and_return branch_name
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
       conf = ::TTY::Config.new
@@ -38,6 +45,7 @@ RSpec.describe StoryBranch::Main do
       conf
     end
     allow(sb.tracker).to receive(:get_stories).and_return stories
+    allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
     prompt.input << "\r"
     prompt.input.rewind
     sb
@@ -235,21 +243,118 @@ RSpec.describe StoryBranch::Main do
 
   describe 'story_finish' do
     describe 'when the branch name does not follow story branch format' do
+      let(:branch_story_parts) { {} }
+      let(:story_from_tracker) { 'something to check condition is met' }
+
       it 'prints the error message to the user' do
+        sb.story_finish
         expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
       end
     end
 
     describe 'when the feature id does not match a feature in the tracker' do
+      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
+      let(:story_from_tracker) { nil }
+
+      it 'tries to fetch the story from the tracker' do
+        sb.story_finish
+        expect(sb.tracker).to have_received(:get_story_by_id).with('111')
+      end
+
       it 'prints the error message to the user' do
+        sb.story_finish
         expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
       end
     end
 
     describe 'when there are untracked files' do
+      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
+      let(:story_from_tracker) do
+        fake_story = OpenStruct.new(branch_story_parts)
+        StoryBranch::Story.new(fake_story)
+      end
+
+      before do
+        allow(StoryBranch::GitUtils).to receive(:status?).and_return true
+      end
+
+      it 'prints the message informing the user' do
+        sb.story_finish
+        expect(prompt).to have_received(:say).exactly(3).times
+      end
     end
 
     describe 'when there are unstaged modified files' do
+      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
+      let(:story_from_tracker) do
+        fake_story = OpenStruct.new(branch_story_parts)
+        StoryBranch::Story.new(fake_story)
+      end
+
+      before do
+        allow(StoryBranch::GitUtils).to receive(:status?).and_return true
+      end
+
+      it 'prints the message informing the user' do
+        sb.story_finish
+        expect(prompt).to have_received(:say).exactly(3).times
+      end
+    end
+
+    describe 'when there are no changes to commit' do
+      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
+      let(:story_from_tracker) do
+        fake_story = OpenStruct.new(branch_story_parts)
+        StoryBranch::Story.new(fake_story)
+      end
+
+      before do
+        allow(StoryBranch::GitUtils).to receive(:status?).and_return false
+      end
+
+      it 'prints the message informing the user' do
+        sb.story_finish
+        expect(prompt).to have_received(:say).exactly(2).times
+      end
+    end
+
+    describe 'when there are staged changes to be commited' do
+      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
+      let(:story_from_tracker) do
+        fake_story = OpenStruct.new(branch_story_parts)
+        StoryBranch::Story.new(fake_story)
+      end
+      let(:answer_to_no) { true }
+
+      before do
+        allow(StoryBranch::GitUtils).to receive(:status?) do |arg|
+          !(arg == :untracked || arg == :modified)
+        end
+      end
+
+      it 'prompts the user to commit with default message' do
+        sb.story_finish
+        expect(prompt).to have_received(:no?).once
+        expect(prompt).to have_received(:no?).with('Commit with standard message?')
+      end
+
+      describe 'when the user says no' do
+        let(:answer_to_no) { true }
+
+        it 'aborts the commit' do
+          sb.story_finish
+          expect(prompt).to have_received(:say).with('Aborted')
+        end
+      end
+
+      describe 'when the user says yes' do
+        let(:answer_to_no) { false }
+
+        it 'commits with the message' do
+          sb.story_finish
+          expect(StoryBranch::GitUtils).to have_received(:commit).with('[Finishes #111] amazing story')
+        end
+      end
     end
   end
 end
