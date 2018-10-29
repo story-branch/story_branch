@@ -40,9 +40,12 @@ module StoryBranch
       end
 
       if StoryBranch::GitUtils.status?(:untracked) || StoryBranch::GitUtils.status?(:modified)
-        prompt.say 'There are unstaged changes'
-        prompt.say 'Use git add to stage changes before running git finish'
-        prompt.say 'Use git stash if you want to hide changes for this commit'
+        message = <<~MESSAGE
+          There are unstaged changes
+          Use git add to stage changes before running git finish
+          Use git stash if you want to hide changes for this commit
+        MESSAGE
+        prompt.say message
         return
       end
 

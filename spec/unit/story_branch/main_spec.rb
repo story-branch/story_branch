@@ -280,7 +280,12 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints the message informing the user' do
         sb.story_finish
-        expect(prompt).to have_received(:say).exactly(3).times
+        message = <<~MESSAGE
+          There are unstaged changes
+          Use git add to stage changes before running git finish
+          Use git stash if you want to hide changes for this commit
+        MESSAGE
+        expect(prompt).to have_received(:say).once.with(message)
       end
     end
 
@@ -297,7 +302,12 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints the message informing the user' do
         sb.story_finish
-        expect(prompt).to have_received(:say).exactly(3).times
+        message = <<~MESSAGE
+          There are unstaged changes
+          Use git add to stage changes before running git finish
+          Use git stash if you want to hide changes for this commit
+        MESSAGE
+        expect(prompt).to have_received(:say).once.with(message)
       end
     end
 
