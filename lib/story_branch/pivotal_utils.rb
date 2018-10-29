@@ -40,7 +40,7 @@ module StoryBranch
     # Returns an array of PT Stories (Story Class)
     # TODO: add other possible args
     def stories(options = {})
-      params = { with_state: options.with_state }
+      params = { with_state: options[:with_state] }
       stories = @project.stories.get(params: params).payload
       stories.map { |s| Story.new(s) }
     end
@@ -65,11 +65,11 @@ module StoryBranch
     # - Filtering on labels
     # - Filtering on story type
     def get_stories(state)
-      @project.stories(with_state: state)
+      project.stories(with_state: state)
     end
 
     def get_story_by_id(story_id)
-      @project.stories(id: story_id).first
+      project.stories(id: story_id).first
     end
 
     private
