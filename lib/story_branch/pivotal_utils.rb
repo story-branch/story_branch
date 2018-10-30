@@ -41,8 +41,12 @@ module StoryBranch
     # Returns an array of PT Stories (Story Class)
     # TODO: add other possible args
     def stories(options = {})
-      params = { with_state: options[:with_state] }
-      stories = @project.stories.get(params: params).payload
+      stories = if options[:id]
+                  [@project.stories(options[:id])]
+                else
+                  params = { with_state: options[:with_state] }
+                  @project.stories.get(params: params).payload
+                end
       stories.map { |s| Story.new(s, @project) }
     end
   end
