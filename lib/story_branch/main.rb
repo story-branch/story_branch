@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './pivotal_utils'
+require_relative './git_utils'
 require_relative './config_manager'
 require 'tty-prompt'
 
@@ -37,13 +38,13 @@ module StoryBranch
     end
 
     def story_finish
-      current_story = StoryBranch::GitUtils.current_branch_story_parts
+      current_story = GitUtils.current_branch_story_parts
       unless !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
         prompt.error('No tracked feature associated with this branch')
         return
       end
 
-      if StoryBranch::GitUtils.status?(:untracked) || StoryBranch::GitUtils.status?(:modified)
+      if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
         message = <<~MESSAGE
           There are unstaged changes
           Use git add to stage changes before running git finish
@@ -53,7 +54,7 @@ module StoryBranch
         return
       end
 
-      unless StoryBranch::GitUtils.status?(:added) || StoryBranch::GitUtils.status?(:staged)
+      unless GitUtils.status?(:added) || GitUtils.status?(:staged)
         message = <<~MESSAGE
           There are no staged changes.
           Nothing to do.
@@ -69,7 +70,7 @@ module StoryBranch
       if abort_commit
         prompt.say 'Aborted'
       else
-        StoryBranch::GitUtils.commit commit_message
+        GitUtils.commit commit_message
       end
     end
 
@@ -131,7 +132,7 @@ module StoryBranch
 
     def create_feature_branch(story)
       return if story.nil?
-      current_branch = StoryBranch::GitUtils.current_branch
+      current_branch = GitUtils.current_branch
       prompt.say "You are checked out at: #{current_branch}"
       branch_name = prompt.ask('Provide a new branch name',
                                default: story.dashed_title)
@@ -139,16 +140,16 @@ module StoryBranch
       return unless validate_branch_name(feature_branch_name, story.id)
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      StoryBranch::GitUtils.create_branch feature_branch_name_with_story_id
+      GitUtils.create_branch feature_branch_name_with_story_id
     end
 
     # Branch name validation
     def validate_branch_name(name, id)
-      if StoryBranch::GitUtils.branch_for_story_exists? id
+      if GitUtils.branch_for_story_exists? id
         prompt.error("An existing branch has the same story id: #{id}")
         return false
       end
-      if StoryBranch::GitUtils.existing_branch? name
+      if GitUtils.existing_branch? name
         prompt.error('This name is very similar to an existing branch. Avoid confusion and use a more unique name.')
         return false
       end
