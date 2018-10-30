@@ -16,7 +16,7 @@ RSpec.describe StoryBranch::Main do
   let(:branch_name) { '' }
   let(:stories) { [] }
   let(:story_from_tracker) { nil }
-  let(:answer_to_no) { true }
+  let(:answer_to_no) { false }
   let(:fake_project) { OpenStruct.new }
 
   before do
@@ -35,7 +35,7 @@ RSpec.describe StoryBranch::Main do
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
-    allow(prompt).to receive(:no?).and_return answer_to_no
+    allow(prompt).to receive(:yes?).and_return answer_to_no
     allow(prompt).to receive(:ask).and_return branch_name
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
       conf = ::TTY::Config.new
@@ -340,7 +340,8 @@ RSpec.describe StoryBranch::Main do
         fake_story = OpenStruct.new(branch_story_parts)
         StoryBranch::Story.new(fake_story, fake_project)
       end
-      let(:answer_to_no) { true }
+      let(:answer_to_no) { false }
+      let(:commit_message) { '[Finishes #111] amazing story' }
 
       before do
         allow(StoryBranch::GitUtils).to receive(:status?) do |arg|
@@ -350,12 +351,13 @@ RSpec.describe StoryBranch::Main do
 
       it 'prompts the user to commit with default message' do
         sb.story_finish
-        expect(prompt).to have_received(:no?).once
-        expect(prompt).to have_received(:no?).with('Commit with standard message?')
+        expect(prompt).to have_received(:yes?).once
+        expect(prompt).to have_received(:yes?)
+          .with("Commit with standard message? #{commit_message}")
       end
 
       describe 'when the user says no' do
-        let(:answer_to_no) { true }
+        let(:answer_to_no) { false }
 
         it 'aborts the commit' do
           sb.story_finish
@@ -364,11 +366,12 @@ RSpec.describe StoryBranch::Main do
       end
 
       describe 'when the user says yes' do
-        let(:answer_to_no) { false }
+        let(:answer_to_no) { true }
 
         it 'commits with the message' do
           sb.story_finish
-          expect(StoryBranch::GitUtils).to have_received(:commit).with('[Finishes #111] amazing story')
+          expect(StoryBranch::GitUtils).to have_received(:commit)
+            .with(commit_message)
         end
       end
     end
