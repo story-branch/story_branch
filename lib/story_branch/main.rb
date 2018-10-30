@@ -64,11 +64,11 @@ module StoryBranch
       end
 
       commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
-      abort_commit = prompt.no?("Commit with standard message? #{commit_message}")
-      if abort_commit
-        prompt.say 'Aborted'
-      else
+      proceed = prompt.yes?("Commit with standard message? #{commit_message}")
+      if proceed
         GitUtils.commit commit_message
+      else
+        prompt.say 'Aborted'
       end
     end
 
