@@ -8,7 +8,8 @@ module StoryBranch
   class Story
     attr_accessor :title, :id
 
-    def initialize(blanket_story)
+    def initialize(blanket_story, project)
+      @project = project
       @story = blanket_story
       @title = blanket_story.name
       @id = blanket_story.id
@@ -16,7 +17,7 @@ module StoryBranch
 
     def update_state(new_state)
       params = { current_state: new_state }
-      @story.put(body: params).payload
+      @project.stories(@id).put(body: params).payload
     end
 
     def to_s
@@ -42,7 +43,7 @@ module StoryBranch
     def stories(options = {})
       params = { with_state: options[:with_state] }
       stories = @project.stories.get(params: params).payload
-      stories.map { |s| Story.new(s) }
+      stories.map { |s| Story.new(s, @project) }
     end
   end
 
