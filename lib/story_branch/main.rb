@@ -63,7 +63,7 @@ module StoryBranch
         return
       end
 
-      commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
+      commit_message = "\[#{finish_tag} #{current_story[:id]}\] #{current_story[:title]}"
       abort_commit = prompt.no?('Commit with standard message?') do |q|
         q.suffix commit_message
       end
