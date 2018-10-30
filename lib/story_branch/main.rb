@@ -63,10 +63,8 @@ module StoryBranch
         return
       end
 
-      commit_message = "\[#{finish_tag} #{current_story[:id]}\] #{current_story[:title]}"
-      abort_commit = prompt.no?('Commit with standard message?') do |q|
-        q.suffix commit_message
-      end
+      commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
+      abort_commit = prompt.no?("Commit with standard message? #{commit_message}")
       if abort_commit
         prompt.say 'Aborted'
       else
