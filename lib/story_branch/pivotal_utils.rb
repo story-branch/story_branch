@@ -1,149 +1,107 @@
 # frozen_string_literal: true
 
 require 'blanket'
-require 'rb-readline'
-require_relative './git_utils'
+require_relative './string_utils'
 
 module StoryBranch
+  # PivotalTracker Story representation
+  class Story
+    attr_accessor :title, :id
+
+    def initialize(blanket_story, project)
+      @project = project
+      @story = blanket_story
+      @title = blanket_story.name
+      @id = blanket_story.id
+    end
+
+    def update_state(new_state)
+      params = { current_state: new_state }
+      @project.stories(@id).put(body: params).payload
+    end
+
+    def to_s
+      "#{@id} - #{@title}"
+    end
+
+    def dashed_title
+      StoryBranch::StringUtils.normalised_branch_name @title
+    end
+  end
+
+  # PivotalTracker Project representation
+  class Project
+    def initialize(blanket_project)
+      @project = blanket_project
+    end
+
+    # NOTE: takes in possible keys:
+    # - with_state
+    # - estimated
+    # Returns an array of PT Stories (Story Class)
+    # TODO: add other possible args
+    def stories(options = {})
+      stories = if options[:id]
+                  [@project.stories(options[:id])]
+                else
+                  params = { with_state: options[:with_state] }
+                  @project.stories.get(params: params).payload
+                end
+      stories.map { |s| Story.new(s, @project) }
+    end
+  end
+
   # Utility class for integration with PivotalTracker. It relies on Blanket
   # wrapper to communicate with pivotal tracker's api.
   class PivotalUtils
     API_URL = 'https://www.pivotaltracker.com/services/v5/'
-    attr_accessor :api_key, :project_id, :finish_tag
+
+    def initialize(local_config, global_config)
+      @local_config = local_config
+      @global_config = global_config
+    end
 
     def valid?
-      !@api_key.nil? && !@project_id.nil?
+      !api_key.nil? && !project_id.nil?
     end
+
+    # TODO: Maybe add some other predicates
+    # - Filtering on where a story lives (Backlog, IceBox)
+    # - Filtering on labels
+    # - Filtering on story type
+    def get_stories(state)
+      project.stories(with_state: state)
+    end
+
+    def get_story_by_id(story_id)
+      project.stories(id: story_id).first
+    end
+
+    private
 
     def api
       fail 'API key must be specified' unless @api_key
       Blanket.wrap API_URL, headers: { 'X-TrackerToken' => @api_key }
     end
 
+    def api_key
+      return @api_key if @api_key
+      @api_key = @global_config.fetch(project_id, :api_key)
+      @api_key
+    end
+
+    def project_id
+      return @project_id if @project_id
+      @project_id = @local_config.fetch(:project_id)
+      @project_id
+    end
+
     def project
       return @project if @project
       fail 'Project ID must be set' unless @project_id
-      @project = api.projects(@project_id.to_i)
+      blanket_project = api.projects(@project_id.to_i)
+      @project = Project.new blanket_project
       @project
-    end
-
-    def story_accessor
-      project.stories
-    end
-
-    def is_current_branch_a_story?
-      current_story = StoryBranch::GitUtils.current_branch_story_parts
-      return unless current_story
-      filtered_stories_list(:started, true).map(&:id).include? current_story[:id]
-    end
-
-    def story_from_current_branch
-      return unless StoryBranch::GitUtils.current_story.length == 3
-      story_accessor.get(StoryBranch::GitUtils.current_story[2].to_i)
-    end
-
-    # TODO: Maybe add some other predicates
-    # - Filtering on where a story lives (Backlog, IceBox)
-    # - Filtering on labels
-    # as the need arises...
-    #
-    def filtered_stories_list(state, estimated)
-      options = { with_state: state.to_s }
-      stories = [* story_accessor.get(params: options).payload]
-      if estimated
-        stories.select do |s|
-          s.story_type == 'bug' || s.story_type == 'chore' ||
-            (s.story_type == 'feature' && s.estimate && s.estimate >= 0)
-        end
-      else
-        stories
-      end
-    end
-
-    def display_stories(state, estimated)
-      filtered_stories_list(state, estimated).each {|s| puts one_line_story s }
-    end
-
-    def one_line_story(s)
-      "#{s.id} - #{s.name}"
-    end
-
-    # TODO: Use TTY prompt with pagination
-    def select_story(stories)
-      story_texts = stories.map { |s| one_line_story s }
-      puts 'Leave blank to exit, use <up>/<down> to scroll through stories, TAB to list all and auto-complete'
-      story_selection = readline('Select a story: ', story_texts)
-      return nil if story_selection == '' || story_selection.nil?
-      story = stories.select { |s| story_matcher s, story_selection }.first
-      if story.nil?
-        puts "Not found: #{story_selection}"
-        return nil
-      else
-        puts "Selected : #{one_line_story story}"
-        return story
-      end
-    end
-
-    def story_update(story, hash)
-      project.stories(story.id).put(body: hash).payload
-    end
-
-    def story_matcher(story, selection)
-      m = selection.match(/^(\d*) /)
-      return false unless m
-      id = m.captures.first
-      story.id.to_s == id
-    end
-
-    def create_feature_branch(story)
-      dashed_story_name = StoryBranch::StringUtils.normalised_branch_name story.name
-      feature_branch_name = nil
-      puts "You are checked out at: #{StoryBranch::GitUtils.current_branch}"
-      while feature_branch_name.nil? || feature_branch_name == ''
-        puts 'Provide a new branch name... (TAB for suggested name)' if [nil, ''].include? feature_branch_name
-        feature_branch_name = readline('Name of feature branch: ', [dashed_story_name])
-      end
-      feature_branch_name.chomp!
-      return unless validate_branch_name(feature_branch_name, story.id)
-      feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
-      puts "Creating: #{feature_branch_name_with_story_id} with #{StoryBranch::GitUtils.current_branch} as parent"
-      StoryBranch::GitUtils.create_branch feature_branch_name_with_story_id
-    end
-
-    # Branch name validation
-    def validate_branch_name(name, id)
-      if StoryBranch::GitUtils.existing_story? id
-        puts "Error: An existing branch has the same story id: #{id}"
-        return false
-      end
-      if StoryBranch::GitUtils.existing_branch? name
-        puts 'Error: This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
-        return false
-      end
-      unless valid_branch_name? name
-        puts "Error: #{name}\nis an invalid name."
-        return false
-      end
-      true
-    end
-
-    def valid_branch_name?(name)
-      # Valid names begin with a letter and are followed by alphanumeric
-      # with _ . - as allowed punctuation
-      valid = /[a-zA-Z][-._0-9a-zA-Z]*/
-      name.match valid
-    end
-
-    def readline(prompt, completions = [])
-      # Store the state of the terminal
-      RbReadline.clear_history
-      if completions.length.positive?
-        completions.each { |i| Readline::HISTORY.push i }
-        RbReadline.rl_completer_word_break_characters = ''
-        Readline.completion_proc = proc { |s| completions.grep(/#{Regexp.escape(s)}/) }
-        Readline.completion_append_character = ''
-      end
-      Readline.readline(prompt, false)
     end
   end
 end

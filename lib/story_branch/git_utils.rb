@@ -22,7 +22,7 @@ module StoryBranch
       false
     end
 
-    def self.existing_story?(id)
+    def self.branch_for_story_exists?(id)
       branch_names.each do |n|
         branch_id = n.match(/-[1-9][0-9]+$/)
         next unless branch_id
@@ -45,7 +45,7 @@ module StoryBranch
 
     def self.current_branch_story_parts
       matches = current_story
-      return unless matches.length == 3
+      return {} unless matches.length == 3
       { title: matches[1], id: matches[2].to_i }
     end
 
