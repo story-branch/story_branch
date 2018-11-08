@@ -15,7 +15,7 @@ module StoryBranch
     class Add < StoryBranch::Command
       def initialize(options)
         @options = options
-        @config = ConfigManager.init_config(ENV['HOME'])
+        @config = ConfigManager.init_config(Dir.home)
         @local_config = ConfigManager.init_config('.')
       end
 
@@ -28,7 +28,7 @@ module StoryBranch
       private
 
       def create_local_config
-        @local_config.set(:project_id, value: project_id)
+        @local_config.append(project_id, to: :project_id)
         @local_config.write(force: true)
       end
 
@@ -40,6 +40,7 @@ module StoryBranch
 
       def project_id
         return @project_id if @project_id
+
         @project_id = prompt.ask "Please provide this project's id:"
         @project_id
       end
