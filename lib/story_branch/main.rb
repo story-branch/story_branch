@@ -20,7 +20,7 @@ module StoryBranch
       # (e.g. PivotalUtils, GithubUtils, ...)
       @local_config = ConfigManager.init_config('.')
       @global_config = ConfigManager.init_config(Dir.home)
-      @tracker = PivotalUtils.new(@local_config, @global_config)
+      initialize_tracker
       exit unless @tracker.valid?
     end
 
@@ -89,8 +89,13 @@ module StoryBranch
         return
       end
       options = build_stories_structure(stories)
-      story = prompt.select("Choose the feature you want to #{action}:", options, filter: true)
+      story = prompt.select(
+        "Choose the feature you want to #{action}:",
+        options,
+        filter: true
+      )
       return unless story
+
       res = story.update_state(next_status)
       if res.error&.present?
         prompt.error(res.error)
@@ -109,11 +114,13 @@ module StoryBranch
 
     def prompt
       return @prompt if @prompt
+
       @prompt = TTY::Prompt.new(interrupt: :exit)
     end
 
     def finish_tag
       return @finish_tag if @finish_tag
+
       fallback = @global_config.fetch(project_id,
                                       :finish_tag,
                                       default: 'Finishes')
@@ -121,21 +128,16 @@ module StoryBranch
       @finish_tag
     end
 
-    # TODO: cleanup as it is the same method as the one used in pivotal utils
-    def project_id
-      return @project_id if @project_id
-      @project_id = @local_config.fetch(:project_id)
-      @project_id
-    end
-
     def create_feature_branch(story)
       return if story.nil?
+
       current_branch = GitUtils.current_branch
       prompt.say "You are checked out at: #{current_branch}"
       branch_name = prompt.ask('Provide a new branch name',
                                default: story.dashed_title)
       feature_branch_name = branch_name.chomp
       return unless validate_branch_name(feature_branch_name, story.id)
+
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
       GitUtils.create_branch feature_branch_name_with_story_id
@@ -152,6 +154,35 @@ module StoryBranch
         return false
       end
       true
+    end
+
+    def project_id
+      return @project_id if @project_id
+
+      project_ids = @local_config.fetch(:project_id)
+      @project_id = if project_ids.length == 1
+                      project_ids[0]
+                    else
+                      prompt.select(
+                        'Which project you want to fetch from?',
+                        project_ids
+                      )
+                    end
+    end
+
+    def api_key
+      return @api_key if @api_key
+
+      @api_key = @global_config.fetch(project_id, :api_key)
+      @api_key
+    end
+
+    def initialize_tracker
+      if project_id.nil?
+        prompt.say 'Project ID not set'
+        exit 0
+      end
+      @tracker = PivotalUtils.new(project_id, api_key)
     end
   end
 end
