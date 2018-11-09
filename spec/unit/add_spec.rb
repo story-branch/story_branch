@@ -48,7 +48,7 @@ RSpec.describe StoryBranch::Commands::Add do
       config.filename = '.story_branch'
       expect(config.persisted?).to eq true
       config.read
-      expect(config.fetch(:project_id)).to eq '123456'
+      expect(config.fetch(:project_id)).to eq ['123456']
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe StoryBranch::Commands::Add do
       config.filename = '.story_branch'
       expect(config.persisted?).to eq true
       config.read
-      expect(config.fetch(:project_id)).to eq '123456'
+      expect(config.fetch(:project_id)).to eq ['123456']
     end
   end
 end
