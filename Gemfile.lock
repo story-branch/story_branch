@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    story_branch (0.3.3)
+    story_branch (0.4.0.alpha)
       blanket_wrapper (~> 3.0)
       git (~> 1.2)
       levenshtein-ffi (~> 1.0)
