@@ -60,6 +60,12 @@ RSpec.describe StoryBranch::Commands::Add do
       config.filename = '.story_branch'
       config.set('1234560000', :api_key, value: 'amazingkey0000')
       config.write
+
+      local_config = TTY::Config.new
+      local_config.append_path('.')
+      local_config.filename = '.story_branch'
+      local_config.set(:project_id, value: '1234560000')
+      local_config.write
     end
 
     it 'appends the new config to the home directory' do
@@ -72,13 +78,13 @@ RSpec.describe StoryBranch::Commands::Add do
       expect(config.fetch('123456', :api_key)).to eq 'amazingkey'
     end
 
-    it 'creates a new local config file' do
+    it 'appends to the local config file' do
       config = TTY::Config.new
       config.append_path('.')
       config.filename = '.story_branch'
       expect(config.persisted?).to eq true
       config.read
-      expect(config.fetch(:project_id)).to eq ['123456']
+      expect(config.fetch(:project_id)).to eq %w[1234560000 123456]
     end
   end
 end
