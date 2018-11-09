@@ -62,7 +62,7 @@ module StoryBranch
     end
 
     def valid?
-      !api_key.nil? && !project_id.nil?
+      !@api_key.nil? && !@project_id.nil?
     end
 
     # TODO: Maybe add some other predicates
