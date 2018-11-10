@@ -12,10 +12,9 @@ module StoryBranch
     attr_accessor :tracker
 
     def initialize
-      # TODO:
-      # Config manager should be responsible for handling the configuration
-      # and the story branch should only initialize one config manager that
-      # has attr accessors for needed values
+      # TODO: Config manager should be responsible for handling the
+      # configuration and the story branch should only initialize one
+      # config manager that has attr accessors for needed values
       # Read local config and decide what Utility to use
       # (e.g. PivotalUtils, GithubUtils, ...)
       @local_config = ConfigManager.init_config('.')
