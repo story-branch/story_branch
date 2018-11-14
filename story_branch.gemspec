@@ -10,15 +10,15 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.version = StoryBranch::VERSION
   spec.authors = [
-    'Jason Milkins',
     'Rui Baltazar',
+    'Jason Milkins',
     'Dominic Wong',
     'Ranhiru Cooray',
     'Gabe Hollombe'
   ]
   spec.email = [
-    'jasonm23@gmail.com',
     'rui.p.baltazar@gmail.com',
+    'jasonm23@gmail.com',
     'dominic.wong.617@gmail.com',
     'ranhiru@gmail.com',
     'gabe@neo.com'
