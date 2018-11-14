@@ -77,7 +77,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are multiple local projects configured' do
       let(:local_config) do
         conf = ::TTY::Config.new
-        conf.set('project_id', value: ['123456','54321'])
+        conf.set('project_id', value: %w[123456 54321])
         conf
       end
       let(:global_config) do
@@ -90,7 +90,8 @@ RSpec.describe StoryBranch::Main do
       end
 
       xit 'prompts the user to choose the project to use' do
-        expect(prompt).to have_received(:say).with('Which project you want to fetch from?')
+        expect(prompt).to have_received(:say)
+          .with('Which project you want to fetch from?')
       end
     end
   end
