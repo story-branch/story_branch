@@ -159,13 +159,14 @@ module StoryBranch
       return @project_id if @project_id
 
       project_ids = @local_config.fetch(:project_id)
-      @project_id = if project_ids.length == 1
-                      project_ids[0]
-                    else
+
+      @project_id = if project_ids.is_a? Array
                       prompt.select(
                         'Which project you want to fetch from?',
                         project_ids
                       )
+                    else
+                      project_ids
                     end
     end
 
