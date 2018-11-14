@@ -56,13 +56,13 @@ module StoryBranch
   class PivotalUtils
     API_URL = 'https://www.pivotaltracker.com/services/v5/'
 
-    def initialize(local_config, global_config)
-      @local_config = local_config
-      @global_config = global_config
+    def initialize(project_id, api_key)
+      @project_id = project_id
+      @api_key = api_key
     end
 
     def valid?
-      !api_key.nil? && !project_id.nil?
+      !@api_key.nil? && !@project_id.nil?
     end
 
     # TODO: Maybe add some other predicates
@@ -80,25 +80,15 @@ module StoryBranch
     private
 
     def api
-      fail 'API key must be specified' unless @api_key
+      raise 'API key must be specified' unless @api_key
+
       Blanket.wrap API_URL, headers: { 'X-TrackerToken' => @api_key }
-    end
-
-    def api_key
-      return @api_key if @api_key
-      @api_key = @global_config.fetch(project_id, :api_key)
-      @api_key
-    end
-
-    def project_id
-      return @project_id if @project_id
-      @project_id = @local_config.fetch(:project_id)
-      @project_id
     end
 
     def project
       return @project if @project
-      fail 'Project ID must be set' unless @project_id
+      raise 'Project ID must be set' unless @project_id
+
       blanket_project = api.projects(@project_id.to_i)
       @project = Project.new blanket_project
       @project

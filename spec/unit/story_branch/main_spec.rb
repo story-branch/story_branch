@@ -18,6 +18,17 @@ RSpec.describe StoryBranch::Main do
   let(:story_from_tracker) { nil }
   let(:answer_to_no) { false }
   let(:fake_project) { OpenStruct.new }
+  let(:local_config) do
+    conf = ::TTY::Config.new
+    conf.set('project_id', value: '123456')
+    conf
+  end
+  let(:global_config) do
+    conf = ::TTY::Config.new
+    conf.set('123456', 'api_key', value: 'myamazingkey')
+    conf
+  end
+  let(:select_prompt_input) { "\r" }
 
   before do
     allow(fake_project).to receive(:stories)
@@ -38,17 +49,15 @@ RSpec.describe StoryBranch::Main do
     allow(prompt).to receive(:yes?).and_return answer_to_no
     allow(prompt).to receive(:ask).and_return branch_name
     allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
-      conf = ::TTY::Config.new
       if arg == '.'
-        conf.set('project_id', value: '123456')
+        local_config
       elsif arg == Dir.home
-        conf.set('123456', 'api_key', value: 'myamazingkey')
+        global_config
       end
-      conf
     end
     allow(sb.tracker).to receive(:get_stories).and_return stories
     allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
-    prompt.input << "\r"
+    prompt.input << select_prompt_input
     prompt.input.rewind
     sb
   end
@@ -57,9 +66,34 @@ RSpec.describe StoryBranch::Main do
     expect(StoryBranch::ConfigManager).to have_received(:init_config).exactly(2).times
   end
 
-  it 'initializes the PivotalTracker utils' do
-    expect(sb.tracker).to_not be(nil)
-    expect(sb.tracker.valid?).to eq true
+  describe 'tracker initialization' do
+    describe 'when there is only one local project configured' do
+      it 'initializes the PivotalTracker utils' do
+        expect(sb.tracker).to_not be(nil)
+        expect(sb.tracker.valid?).to eq true
+      end
+    end
+
+    describe 'when there are multiple local projects configured' do
+      let(:local_config) do
+        conf = ::TTY::Config.new
+        conf.set('project_id', value: %w[123456 54321])
+        conf
+      end
+      let(:global_config) do
+        conf = ::TTY::Config.new
+        conf.set('123456', 'api_key', value: 'myamazingkey')
+        conf
+      end
+      let(:select_prompt_input) do
+        "\r\r"
+      end
+
+      xit 'prompts the user to choose the project to use' do
+        expect(prompt).to have_received(:say)
+          .with('Which project you want to fetch from?')
+      end
+    end
   end
 
   describe 'create_story_branch' do
