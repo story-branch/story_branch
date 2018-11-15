@@ -14,8 +14,10 @@ module StoryBranch
     def self.existing_branch?(name)
       branch_names.each do |n|
         return true if Levenshtein.distance(n, name) < 3
+
         branch_name_match = n.match(/(.*)(-[1-9][0-9]+$)/)
         next unless branch_name_match
+
         levenshtein_distance = Levenshtein.distance branch_name_match[1], name
         return true if levenshtein_distance < 3
       end
@@ -32,7 +34,12 @@ module StoryBranch
     end
 
     def self.branch_names
-      g.branches.map(&:name)
+      all_branches = g.lib.send(:command, 'branch', '-a').lines
+      all_branches.each do |line|
+        line.delete!("\n")
+        line.delete!(' ')
+        line.sub!(%r{^remotes\/.*\/}, '')
+      end
     end
 
     def self.current_branch
@@ -46,6 +53,7 @@ module StoryBranch
     def self.current_branch_story_parts
       matches = current_story
       return {} unless matches.length == 3
+
       { title: matches[1], id: matches[2].to_i }
     end
 
@@ -66,16 +74,18 @@ module StoryBranch
       added_rx     = /^A  (.*)/
       status = g.lib.send(:command, 'status', '-s').lines
       return nil if status.empty?
+
       {
-        modified:  status_collect(status, modified_rx),
+        modified: status_collect(status, modified_rx),
         untracked: status_collect(status, untracked_rx),
-        added:     status_collect(status, added_rx),
-        staged:    status_collect(status, staged_rx)
+        added: status_collect(status, added_rx),
+        staged: status_collect(status, staged_rx)
       }
     end
 
     def self.status?(state)
       return false unless status
+
       !status[state].empty?
     end
 
