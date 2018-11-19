@@ -2,13 +2,14 @@
 
 require 'spec_helper'
 require 'story_branch/git_utils'
+require 'ostruct'
 
 RSpec.describe StoryBranch::GitUtils do
-  let(:fake_g) { instance_double('Git') }
-
+  let(:command_output) { [] }
   describe 'g' do
     before do
-      allow(::Git).to receive(:open)
+      g_lib = double(Git::Lib, send: OpenStruct.new(lines: command_output))
+      double(::Git, open: g_lib)
     end
 
     it 'uses Git gem to open the local git directory' do
@@ -20,6 +21,7 @@ RSpec.describe StoryBranch::GitUtils do
   describe 'branch_for_story_exists?' do
     describe 'existing branches include the passed id' do
       it 'returns true' do
+
       end
     end
 
