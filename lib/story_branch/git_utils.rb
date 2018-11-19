@@ -35,10 +35,11 @@ module StoryBranch
 
     def self.branch_names
       all_branches = g.lib.send(:command, 'branch', '-a').lines
-      all_branches.each do |line|
-        line.delete!("\n")
-        line.delete!(' ')
-        line.sub!(%r{^remotes\/.*\/}, '')
+      all_branches.map do |line|
+        line = line.delete("\n")
+        line = line.delete(' ')
+        line = line.sub(%r{^remotes\/.*\/}, '')
+        line
       end
     end
 
