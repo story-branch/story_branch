@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-require 'git'
+# require 'git'
 require 'levenshtein'
 
 module StoryBranch
   # Class used to interact with git. It relies on git gem as the wrapper
   # and levenshtein algo to determine branch name proximity
   class GitUtils
-    def self.g
-      ::Git.open '.'
-    end
-
     def self.existing_branch?(name)
       branch_names.each do |n|
         return true if Levenshtein.distance(n, name) < 3
@@ -34,9 +30,9 @@ module StoryBranch
     end
 
     def self.branch_names
-      all_branches = g.lib.send(:command, 'branch', '-a').lines
+      all_branches = `git branch -a`.split("\n")
       all_branches.map do |line|
-        line = line.delete("\n")
+        line = line.delete('*')
         line = line.delete(' ')
         line = line.sub(%r{^remotes\/.*\/}, '')
         line
@@ -44,7 +40,7 @@ module StoryBranch
     end
 
     def self.current_branch
-      g.current_branch
+      `git branch | grep \* | cut -d ' ' -f2`
     end
 
     def self.current_story
@@ -59,8 +55,7 @@ module StoryBranch
     end
 
     def self.create_branch(name)
-      g.branch(name).create
-      g.branch(name).checkout
+      `git checkout -b #{name}`
     end
 
     def self.status_collect(status, regex)
@@ -73,7 +68,7 @@ module StoryBranch
       untracked_rx = /^\?\? (.*)/
       staged_rx    = /^M  (.*)/
       added_rx     = /^A  (.*)/
-      status = g.lib.send(:command, 'status', '-s').lines
+      status = `git status -s`.split("\n")
       return nil if status.empty?
 
       {
@@ -91,7 +86,7 @@ module StoryBranch
     end
 
     def self.commit(message)
-      g.commit(message)
+      `git commit -m \"#{message}\"`
     end
   end
 end
