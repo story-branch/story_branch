@@ -4,6 +4,7 @@ require 'spec_helper'
 require 'story_branch/git_utils'
 require 'ostruct'
 
+# TODO: Write the specs for git utils
 # RSpec.describe StoryBranch::GitUtils do
 #   let(:command_output) { [] }
 #   let(:g_lib) { double(Git::Lib, send: OpenStruct.new(lines: command_output)) }
