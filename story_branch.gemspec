@@ -47,7 +47,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'blanket_wrapper', '~> 3.0'
-  spec.add_runtime_dependency 'git', '~> 1.2'
   spec.add_runtime_dependency 'levenshtein-ffi', '~> 1.0'
   spec.add_runtime_dependency 'pastel', '~> 0.7.2'
   spec.add_runtime_dependency 'thor', '~> 0.20.0'
