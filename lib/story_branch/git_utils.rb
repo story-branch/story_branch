@@ -30,17 +30,26 @@ module StoryBranch
     end
 
     def self.branch_names
-      all_branches = `git branch -a`.split("\n")
+      # NOTE: Regex matcher for cases as:
+      # remotes/origin/allow.... <- remote branch (remove 'remotes/origin')
+      # * allow.... <- * indicates current branch (remove '* ')
+      # allow <- local branch (do nothing)
+      regex = %r{(^remotes\/.*\/|\s|[*])}
       all_branches.map do |line|
-        line = line.delete('*')
-        line = line.delete(' ')
-        line = line.sub(%r{^remotes\/.*\/}, '')
+        line = line.sub(regex, '')
         line
       end
     end
 
     def self.current_branch
-      `git branch | grep \* | cut -d ' ' -f2`
+      current_branch_line = all_branches.detect do |line|
+        line.match(/\*/)
+      end
+      current_branch_line.tr('*', ' ').strip
+    end
+
+    def self.all_branches
+      `git branch -a`.split("\n")
     end
 
     def self.current_story
