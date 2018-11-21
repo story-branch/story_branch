@@ -2,6 +2,7 @@
 
 require_relative './pivotal_utils'
 require_relative './git_utils'
+require_relative './git_wrapper'
 require_relative './config_manager'
 require 'tty-prompt'
 
@@ -130,7 +131,7 @@ module StoryBranch
     def create_feature_branch(story)
       return if story.nil?
 
-      current_branch = GitUtils.current_branch
+      current_branch = GitWrapper.current_branch
       prompt.say "You are checked out at: #{current_branch}"
       branch_name = prompt.ask('Provide a new branch name',
                                default: story.dashed_title)
@@ -139,7 +140,7 @@ module StoryBranch
 
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      GitUtils.create_branch feature_branch_name_with_story_id
+      GitWrapper.create_branch feature_branch_name_with_story_id
     end
 
     # Branch name validation
