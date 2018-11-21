@@ -66,7 +66,7 @@ module StoryBranch
       commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
-        GitUtils.commit commit_message
+        GitWrapper.commit commit_message
       else
         prompt.say 'Aborted'
       end

@@ -70,7 +70,7 @@ RSpec.describe StoryBranch::GitUtils do
 
     it 'returns story title and id' do
       expect(StoryBranch::GitUtils.current_branch_story_parts).to eq(
-        title: 'amazing-feature', id: 1
+        title: 'amazing feature', id: 1
       )
     end
   end

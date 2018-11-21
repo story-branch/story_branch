@@ -33,11 +33,13 @@ RSpec.describe StoryBranch::Main do
   before do
     allow(fake_project).to receive(:stories)
     allow(StoryBranch::GitUtils).to receive_messages(
-      current_branch: current_branch_name,
       current_branch_story_parts: branch_story_parts,
       branch_for_story_exists?: branch_exists,
-      existing_branch?: similar_branch,
+      existing_branch?: similar_branch
+    )
+    allow(StoryBranch::GitWrapper).to receive_messages(
       create_branch: true,
+      current_branch: current_branch_name,
       commit: true
     )
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
@@ -143,7 +145,7 @@ RSpec.describe StoryBranch::Main do
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
         it 'creates the branch for the feature based on the feature name' do
-          expect(StoryBranch::GitUtils).to have_received(:create_branch).with(branch_name_with_id)
+          expect(StoryBranch::GitWrapper).to have_received(:create_branch).with(branch_name_with_id)
         end
       end
 
@@ -151,7 +153,7 @@ RSpec.describe StoryBranch::Main do
         let(:branch_exists) { true }
 
         it 'does not create a new branch' do
-          expect(StoryBranch::GitUtils).to_not have_received(:create_branch)
+          expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
         end
 
         it 'shows an informative message' do
@@ -163,7 +165,7 @@ RSpec.describe StoryBranch::Main do
         let(:similar_branch) { true }
 
         it 'does not create a new branch' do
-          expect(StoryBranch::GitUtils).to_not have_received(:create_branch)
+          expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
         end
 
         it 'shows an informative message' do
@@ -404,7 +406,7 @@ RSpec.describe StoryBranch::Main do
 
         it 'commits with the message' do
           sb.story_finish
-          expect(StoryBranch::GitUtils).to have_received(:commit)
+          expect(StoryBranch::GitWrapper).to have_received(:commit)
             .with(commit_message)
         end
       end
