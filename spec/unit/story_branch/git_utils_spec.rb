@@ -2,42 +2,63 @@
 
 require 'spec_helper'
 require 'story_branch/git_utils'
-require 'ostruct'
+require 'story_branch/git_wrapper'
 
-# TODO: Write the specs for git utils
-# RSpec.describe StoryBranch::GitUtils do
-#   let(:command_output) { [] }
-#   let(:g_lib) { double(Git::Lib, send: OpenStruct.new(lines: command_output)) }
+RSpec.describe StoryBranch::GitUtils do
+  let(:distance1) { 3 }
+  let(:distance2) { 4 }
 
-#   before do
-#     g_base = double(Git::Base, lib: g_lib)
-#     allow(::Git).to receive(:open).and_return g_base
-#   end
+  before do
+    allow(StoryBranch::GitWrapper).to receive(:branch_names).and_return(branches)
+    allow(Levenshtein).to receive(:distance).and_return(distance1, distance2)
+  end
 
-#   describe 'g' do
-#     it 'uses Git gem to open the local git directory' do
-#       StoryBranch::GitUtils.g
-#       expect(Git).to have_received(:open).with('.')
-#     end
-#   end
+  describe 'existing_branch?' do
+    let(:branches) { %w[amazing-name-1 amazing-feature-2] }
 
-#   describe 'branch_for_story_exists?' do
-#     describe 'existing branches include the passed id' do
-#       let(:command_output) { %w[amazing-name-1 amazing-feature-2] }
+    it 'determnines levenshtein distance between branch name and branch list' do
+      StoryBranch::GitUtils.existing_branch?('new-branch-name')
+      expect(Levenshtein).to have_received(:distance)
+    end
 
-#       it 'fetches all branches with command execution' do
-#         StoryBranch::GitUtils.branch_for_story_exists?(1)
-#         expect(g_lib).to have_received(:send).with([:command, 'branch', '-a'])
-#       end
+    describe 'when levenshtein distance is not close' do
+      it 'determnines levenshtein distance between branch name and branch list' do
+        StoryBranch::GitUtils.existing_branch?('new-branch-name')
+        # TODO:
+        # Check it has been called - with branches and branch name
+        expect(Levenshtein).to have_received(:distance)
+      end
 
-#       it 'returns true' do
-#         expect(StoryBranch::GitUtils.branch_for_story_exists?(1)).to eq true
-#       end
-#     end
+      it 'returns false' do
+        expect(StoryBranch::GitUtils.existing_branch?('new-branch')).to eq false
+      end
+    end
 
-#     describe 'existing branches does not include the passed id' do
-#       it 'returns false' do
-#       end
-#     end
-#   end
-# end
+    describe 'when levenshtein distance is close' do
+      it 'returns false' do
+        expect(StoryBranch::GitUtils.existing_branch?('new-branch')).to eq false
+      end
+    end
+  end
+
+  describe 'branch_for_story_exists?' do
+    let(:branches) { %w[amazing-name-1 amazing-feature-2] }
+
+    describe 'existing branches include the passed id' do
+      it 'fetches all branches with command execution' do
+        StoryBranch::GitUtils.branch_for_story_exists?(1)
+        expect(StoryBranch::GitWrapper).to have_received(:branch_names)
+      end
+
+      it 'returns true' do
+        expect(StoryBranch::GitUtils.branch_for_story_exists?(1)).to eq true
+      end
+    end
+
+    describe 'existing branches does not include the passed id' do
+      it 'returns false' do
+        expect(StoryBranch::GitUtils.branch_for_story_exists?(3)).to eq false
+      end
+    end
+  end
+end
