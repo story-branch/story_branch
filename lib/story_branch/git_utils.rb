@@ -37,7 +37,8 @@ module StoryBranch
       matches = current_story
       return {} unless matches.length == 3
 
-      { title: matches[1], id: matches[2].to_i }
+      title = matches[1].tr('-', ' ')
+      { title: title, id: matches[2].to_i }
     end
 
     def self.status?(state)
