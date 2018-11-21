@@ -3,6 +3,12 @@
 # NOTE: Consider extracting this to a separate gem
 module StoryBranch
   # GitWrapper to help running git commands with direct system calls
+  # Essentially it provides two commands:
+  # - StoryBranch::GitWrapper.command('<cmd>', [<opts>])
+  #   Returns the output as is
+  #
+  # - StoryBranch::GitWrapper.command_lines('<cmd>', [<opts>])
+  #   Returns the output split into an array of lines, stripped and chomped
   class GitWrapper
     def self.command(cmd, opts = [])
       gw = new
@@ -42,10 +48,3 @@ module StoryBranch
     end
   end
 end
-
-# StoryBranch::GitWrapper.command()
-# StoryBranch::GitWrapper.command_lines()
-
-# require_relative './lib/story_branch/git_wrapper.rb'
-# StoryBranch::GitWrapper.command('branch', '-a')
-# StoryBranch::GitWrapper.command_lines('branch', '-a')
