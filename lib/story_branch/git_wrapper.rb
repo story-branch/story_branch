@@ -18,7 +18,7 @@ module StoryBranch
       untracked_rx: /^\?\? (.*)/,
       staged_rx: /^M  (.*)/,
       added_rx: /^A  (.*)/
-    }
+    }.freeze
 
     def self.command(cmd, opts = [])
       gw = new
