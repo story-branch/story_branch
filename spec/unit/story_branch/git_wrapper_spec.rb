@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'story_branch/git_wrapper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::GitWrapper do
   let(:output) { '' }
 
@@ -50,3 +51,4 @@ RSpec.describe StoryBranch::GitWrapper do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

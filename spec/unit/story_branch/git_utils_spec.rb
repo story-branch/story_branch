@@ -4,12 +4,14 @@ require 'spec_helper'
 require 'story_branch/git_utils'
 require 'story_branch/git_wrapper'
 
+# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::GitUtils do
   let(:distances) { [3, 4, 3, 4] }
   let(:branches) { %w[amazing-name-1 amazing-feature-2] }
 
   before do
-    allow(StoryBranch::GitWrapper).to receive(:branch_names).and_return(branches)
+    allow(StoryBranch::GitWrapper).to receive(:branch_names)
+      .and_return(branches)
     allow(Levenshtein).to receive(:distance).and_return(*distances)
   end
 
@@ -65,7 +67,8 @@ RSpec.describe StoryBranch::GitUtils do
     let(:branch) { 'amazing-feature-1' }
 
     before do
-      allow(StoryBranch::GitWrapper).to receive(:current_branch).and_return(branch)
+      allow(StoryBranch::GitWrapper).to receive(:current_branch)
+        .and_return(branch)
     end
 
     it 'returns story title and id' do
@@ -75,3 +78,4 @@ RSpec.describe StoryBranch::GitUtils do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
