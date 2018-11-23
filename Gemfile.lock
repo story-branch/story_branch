@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    story_branch (0.4.1)
+    story_branch (0.4.0)
       blanket_wrapper (~> 3.0)
       levenshtein-ffi (~> 1.0)
       pastel (~> 0.7.2)
