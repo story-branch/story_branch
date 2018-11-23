@@ -6,7 +6,10 @@ require 'story_branch/commands/add'
 # rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { TTY::TestPrompt.new }
-  let(:config_directory) { FileUtils.mkdir_p Dir.home }
+  let(:config_directory) do
+    puts Dir.home
+    FileUtils.mkdir_p Dir.home
+  end
 
   before do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
