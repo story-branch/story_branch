@@ -2,6 +2,7 @@
 
 require 'bundler/setup'
 require 'fileutils'
+require 'git'
 require 'pp'
 require 'tty-config'
 require 'tty-screen'

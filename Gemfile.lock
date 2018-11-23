@@ -21,6 +21,7 @@ GEM
     equatable (0.5.0)
     fakefs (0.18.0)
     ffi (1.9.25)
+    git (1.5.0)
     httparty (0.16.3)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
@@ -89,6 +90,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.16)
   fakefs (~> 0.14)
+  git (~> 1.5)
   rake (~> 10.0)
   rspec (~> 3)
   rspec_junit_formatter (~> 0.4)
