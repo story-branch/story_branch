@@ -7,7 +7,7 @@ require 'story_branch/commands/add'
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { TTY::TestPrompt.new }
   let(:config_directory) do
-    puts Dir.home
+    FileUtils.mkdir_p '/tmp'
     FileUtils.mkdir_p Dir.home
   end
 
