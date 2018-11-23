@@ -4,8 +4,6 @@ require 'bundler/setup'
 require 'fileutils'
 require 'git'
 require 'pp'
-require 'tty-config'
-require 'tty-screen'
 require 'fakefs/safe'
 require 'story_branch'
 
