@@ -6,6 +6,7 @@ require_relative './string_utils'
 module StoryBranch
   # PivotalTracker Story representation
   class Story
+    NON_ESTIMATED_TYPES = %w[chore bug release].freeze
     attr_accessor :title, :id
 
     def initialize(blanket_story, project)
@@ -13,6 +14,8 @@ module StoryBranch
       @story = blanket_story
       @title = blanket_story.name
       @id = blanket_story.id
+      @story_type = blanket_story.story_type
+      @estimate = blanket_story.estimate
     end
 
     def update_state(new_state)
@@ -27,6 +30,11 @@ module StoryBranch
     def dashed_title
       StoryBranch::StringUtils.normalised_branch_name @title
     end
+
+    def estimated
+      (@story_type == 'feature' && !@estimate.nil?) ||
+        NON_ESTIMATED_TYPES.include?(@story_type)
+    end
   end
 
   # PivotalTracker Project representation
@@ -37,17 +45,19 @@ module StoryBranch
 
     # NOTE: takes in possible keys:
     # - with_state
-    # - estimated
     # Returns an array of PT Stories (Story Class)
     # TODO: add other possible args
-    def stories(options = {})
+    def stories(options = {}, estimated = true)
       stories = if options[:id]
                   [@project.stories(options[:id])]
                 else
                   params = { with_state: options[:with_state] }
                   @project.stories.get(params: params).payload
                 end
-      stories.map { |s| Story.new(s, @project) }
+      stories = stories.map { |s| Story.new(s, @project) }
+      return stories if estimated == false
+
+      stories.select(&:estimated)
     end
   end
 
