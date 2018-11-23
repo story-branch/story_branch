@@ -2,7 +2,6 @@
 
 require 'bundler/setup'
 require 'fileutils'
-require 'pp'
 require 'fakefs/safe'
 require 'story_branch'
 
