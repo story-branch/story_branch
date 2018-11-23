@@ -31,7 +31,13 @@ Gem::Specification.new do |spec|
     on the selected story
   DESCRIPTION
 
-  spec.homepage = 'https://github.com/story-branch/story_branch'
+  spec.metadata = {
+    'bug_tracker_uri' => 'https://github.com/story-branch/story_branch/issues',
+    'changelog_uri' => 'https://github.com/story-branch/story_branch/blob/master/Changelog.md',
+    'documentation_uri' => 'https://github.com/story-branch/story_branch/blob/master/README.md',
+    'homepage_uri' => 'https://github.com/story-branch/story_branch',
+    'source_code_uri' => 'https://github.com/story-branch/story_branch'
+  }
   spec.required_ruby_version = ['>= 2.3', '< 2.6']
 
   # Specify which files should be added to the gem when it is released.
