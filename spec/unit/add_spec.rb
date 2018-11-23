@@ -6,10 +6,7 @@ require 'story_branch/commands/add'
 # rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { TTY::TestPrompt.new }
-  let(:config_directory) do
-    FileUtils.mkdir_p 'tmp'
-    FileUtils.mkdir_p Dir.home
-  end
+  let(:config_directory) { FileUtils.mkdir_p Dir.home }
 
   before do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
@@ -57,7 +54,6 @@ RSpec.describe StoryBranch::Commands::Add do
 
   describe 'when there is an existing config file' do
     let(:config_directory) do
-      FileUtils.mkdir_p 'tmp'
       FileUtils.mkdir_p Dir.home
       config = TTY::Config.new
       config.append_path(Dir.home)
