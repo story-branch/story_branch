@@ -111,7 +111,8 @@ RSpec.describe StoryBranch::Main do
       let(:stories) { [] }
 
       it 'prints message informing the user' do
-        expect(prompt).to have_received(:say).with('No stories started, exiting')
+        message = 'No stories started, exiting'
+        expect(prompt).to have_received(:say).with(message)
       end
     end
 
@@ -145,7 +146,8 @@ RSpec.describe StoryBranch::Main do
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
         it 'creates the branch for the feature based on the feature name' do
-          expect(StoryBranch::GitWrapper).to have_received(:create_branch).with(branch_name_with_id)
+          expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            .with(branch_name_with_id)
         end
       end
 
@@ -157,7 +159,8 @@ RSpec.describe StoryBranch::Main do
         end
 
         it 'shows an informative message' do
-          expect(prompt).to have_received(:error).with("An existing branch has the same story id: #{story.id}")
+          message = "An existing branch has the same story id: #{story.id}"
+          expect(prompt).to have_received(:error).with(message)
         end
       end
 
@@ -169,9 +172,9 @@ RSpec.describe StoryBranch::Main do
         end
 
         it 'shows an informative message' do
-          expect(prompt).to have_received(:error).with(
-            'This name is very similar to an existing branch. Avoid confusion and use a more unique name.'
-          )
+          message = 'This name is very similar to an existing branch. '\
+          'Avoid confusion and use a more unique name.'
+          expect(prompt).to have_received(:error).with(message)
         end
       end
     end
