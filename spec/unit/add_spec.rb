@@ -7,7 +7,7 @@ require 'story_branch/commands/add'
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { TTY::TestPrompt.new }
   let(:config_directory) do
-    FileUtils.mkdir_p '/tmp'
+    FileUtils.mkdir_p 'tmp'
     FileUtils.mkdir_p Dir.home
   end
 
@@ -57,6 +57,7 @@ RSpec.describe StoryBranch::Commands::Add do
 
   describe 'when there is an existing config file' do
     let(:config_directory) do
+      FileUtils.mkdir_p 'tmp'
       FileUtils.mkdir_p Dir.home
       config = TTY::Config.new
       config.append_path(Dir.home)
