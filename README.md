@@ -43,9 +43,30 @@ Commands:
 Story branch has a command available that will help you creating the configurations
 for the projects, but essentially you'll be asked for the pivotal tracker project id and your api key.
 
+### Configuring the project id
+
 The project id you can get it easily from the url when viewing the project.
+This value will be stored in the local configuration file that will be committed
+to the working repository
+
+### Configuring the api key
 
 The api key you can get it from your account settings.
+This value will be stored in your global configuration file that typically is
+not shared with your co-workers in the repository. This way, each user will
+be properly identified in the tracker
+
+### Configuring the finish tag
+
+On your local config you can add a line with `finish_tag: <Some random word>`.
+This tag will be used in the commit message when running `story_branch finish`.
+
+E.g.
+`finish_tag: Resolves`
+
+`story_branch finish` will make a commit with the message
+`[Resolves #12313] story title`
+
 
 ### .story_branch files
 
