@@ -160,15 +160,14 @@ module StoryBranch
       return @project_id if @project_id
 
       project_ids = @local_config.fetch(:project_id)
+      @project_id = choose_project_id(project_ids)
+    end
 
-      @project_id = if project_ids.is_a? Array
-                      prompt.select(
-                        'Which project you want to fetch from?',
-                        project_ids
-                      )
-                    else
-                      project_ids
-                    end
+    def choose_project_id(project_ids)
+      return project_ids unless project_ids.is_a? Array
+      return project_ids[0] unless project_ids.length > 1
+
+      prompt.select('Which project you want to fetch from?', project_ids)
     end
 
     def api_key
