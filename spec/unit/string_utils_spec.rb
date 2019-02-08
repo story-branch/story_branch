@@ -5,12 +5,12 @@ require 'story_branch/string_utils'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::StringUtils do
-  let(:simple_string) { "H_e,l l::o.W;h+o&?'Are'" }
+  let(:simple_string) { "<H_e,l l::o.W;h+o&?'Are'>" }
 
   describe 'dashed' do
     it 'converts non alphabet to dash' do
       dashed = StoryBranch::StringUtils.dashed(simple_string)
-      expect(dashed).to eq 'H-e-l-l-o-W-h-o-Are-'
+      expect(dashed).to eq 'H-e-l-l-o-W-h-o-Are'
     end
   end
 
@@ -31,7 +31,7 @@ RSpec.describe StoryBranch::StringUtils do
   describe 'normalised_branch_name' do
     it 'downcases the dashed string' do
       res = StoryBranch::StringUtils.normalised_branch_name(simple_string)
-      expect(res).to eq 'h-e-l-l-o-w-h-o-are-'
+      expect(res).to eq 'h-e-l-l-o-w-h-o-are'
     end
   end
 
