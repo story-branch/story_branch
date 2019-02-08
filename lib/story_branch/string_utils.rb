@@ -3,8 +3,8 @@
 module StoryBranch
   # Utility class for string manipulation
   class StringUtils
-    def self.sanitize(s)
-      res = s.strip
+    def self.sanitize(text)
+      res = text.strip
       res.tr!("\n", '-')
       encoding_options = {
         invalid: :replace, # Replace invalid byte sequences
@@ -14,16 +14,16 @@ module StoryBranch
       res.encode(Encoding.find('ASCII'), encoding_options)
     end
 
-    def self.dashed(s)
-      sanitize(s).tr(" _,./:;+&'\"?", '-').squeeze('-')
+    def self.dashed(text)
+      sanitize(text).tr(" _,./:;+&'\"?<>", '-').squeeze('-').sub(/^-/, '').sub(/-$/, '')
     end
 
-    def self.normalised_branch_name(s)
-      dashed(s).downcase
+    def self.normalised_branch_name(text)
+      dashed(text).downcase
     end
 
-    def self.undashed(s)
-      s.tr('-', ' ').squeeze(' ').strip.capitalize
+    def self.undashed(text)
+      text.tr('-', ' ').squeeze(' ').strip.capitalize
     end
   end
 end
