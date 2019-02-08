@@ -28,6 +28,9 @@ module StoryBranch
       private
 
       def create_local_config
+        return if local_config_has_value?
+
+        puts "Appending #{project_id}"
         @local_config.append(project_id, to: :project_id)
         @local_config.write(force: true)
       end
@@ -43,6 +46,15 @@ module StoryBranch
 
         @project_id = prompt.ask "Please provide this project's id:"
         @project_id
+      end
+
+      def local_config_has_value?
+        config_value = @local_config.fetch(:project_id)
+        if config_value.is_a? Array
+          config_value.include?(project_id)
+        else
+          config_value == project_id
+        end
       end
     end
   end
