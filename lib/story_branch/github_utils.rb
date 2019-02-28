@@ -4,27 +4,50 @@ require 'blanket'
 require_relative './string_utils'
 
 module StoryBranch
-  # PivotalTracker Story representation
+  # Github Milestones representation
+  class Milestone
+    attr_accessor :id, :title, :description
+
+    def initialize(milestone_data)
+      @id = milestone_data.number
+      @title = milestone_data.title
+      @description = milestone_data.description
+    end
+
+    def to_s
+      "MS: #{@title} - #{@description}"
+    end
+  end
+
+  # Github Labels representation
+  class Label
+    attr_accessor :name, :color
+    def initialize(label_data)
+      @name = label_data.name
+      @color = label_data.color
+    end
+  end
+
+  # GitHub Issue representation
   class Story
-    NON_ESTIMATED_TYPES = %w[chore bug release].freeze
     attr_accessor :title, :id
 
-    def initialize(blanket_story, project)
-      @project = project
+    def initialize(blanket_story, repo)
+      @repo = repo
       @story = blanket_story
-      @title = blanket_story.name
-      @id = blanket_story.id
-      @story_type = blanket_story.story_type
-      @estimate = blanket_story.estimate
+      @title = blanket_story.title
+      @id = blanket_story.number
+      @labels = blanket_story.labels.map { |label| Label.new(label) }
+      @milestone = Milestone.new(blanket_story.milestone) if blanket_story.milestone
     end
 
     def update_state(new_state)
       params = { current_state: new_state }
-      @project.stories(@id).put(body: params).payload
+      @repo.issues(@id).put(body: params).payload
     end
 
     def to_s
-      "#{@id} - #{@title}"
+      "#{@id} - #{@title} [#{@milestone}]"
     end
 
     def dashed_title
@@ -37,27 +60,19 @@ module StoryBranch
     end
   end
 
-  # PivotalTracker Project representation
+  # Github Repository representation
   class Project
     def initialize(blanket_project)
-      @project = blanket_project
+      @repo = blanket_project
     end
 
-    # NOTE: takes in possible keys:
-    # - with_state
-    # Returns an array of PT Stories (Story Class)
-    # TODO: add other possible args
-    def stories(options = {}, estimated = true)
+    def stories(options = {})
       stories = if options[:id]
-                  [@project.stories(options[:id]).get.payload]
+                  [@repo.issues(options[:id]).get.payload]
                 else
-                  params = { with_state: options[:with_state] }
-                  @project.stories.get(params: params).payload
+                  @repo.issues.get(params: options).payload
                 end
-      stories = stories.map { |s| Story.new(s, @project) }
-      return stories if estimated == false
-
-      stories.select(&:estimated)
+      stories.map { |s| Story.new(s, @repo) }
     end
   end
 
@@ -67,6 +82,7 @@ module StoryBranch
     API_URL = 'https://api.github.com/'
 
     def initialize(repo_name, api_key)
+      # NOTE: RepoName should follow owner/repo_name format
       @repo_name = repo_name
       @api_key = api_key
     end
@@ -75,12 +91,8 @@ module StoryBranch
       !@api_key.nil? && !@repo_name.nil?
     end
 
-    def get_stories(state)
-      project.stories(with_state: state)
-    end
-
-    def get_story_by_id(story_id)
-      project.stories(id: story_id).first
+    def get_stories(options = {})
+      project.stories(options)
     end
 
     private
@@ -88,14 +100,15 @@ module StoryBranch
     def api
       raise 'API key must be specified' unless @api_key
 
-      Blanket.wrap API_URL, headers: { 'X-TrackerToken' => @api_key }
+      # TODO: need to add api_key somewhere
+      Blanket.wrap API_URL
     end
 
     def project
       return @project if @project
-      raise 'Project ID must be set' unless @repo_name
+      raise 'repo name must be set' unless @repo_name
 
-      blanket_project = api.projects(@repo_name.to_i)
+      blanket_project = api.repos(@repo_name)
       @project = Project.new blanket_project
       @project
     end
