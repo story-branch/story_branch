@@ -85,7 +85,7 @@ module StoryBranch
       !@api_key.nil? && !@repo_name.nil?
     end
 
-    def get_stories(options = {})
+    def get_stories(_options = {})
       project.stories
     end
 

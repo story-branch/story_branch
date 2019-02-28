@@ -172,10 +172,7 @@ module StoryBranch
     end
 
     def api_key
-      return @api_key if @api_key
-
-      @api_key = @global_config.fetch(project_id, :api_key)
-      @api_key
+      @api_key || @api_key = @global_config.fetch(project_id, :api_key)
     end
 
     def initialize_tracker
