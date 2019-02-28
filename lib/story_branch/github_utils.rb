@@ -94,8 +94,10 @@ module StoryBranch
     def api
       raise 'API key must be specified' unless @api_key
 
-      # TODO: need to add api_key somewhere
-      Blanket.wrap API_URL
+      Blanket.wrap API_URL, headers: {
+        'User-Agent' => 'Story Branch',
+        Authorization: "token #{@api_key}"
+      }
     end
 
     def project
