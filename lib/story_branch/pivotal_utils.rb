@@ -43,16 +43,13 @@ module StoryBranch
       @project = blanket_project
     end
 
-    # NOTE: takes in possible keys:
-    # - with_state
     # Returns an array of PT Stories (Story Class)
     # TODO: add other possible args
     def stories(options = {}, estimated = true)
       stories = if options[:id]
                   [@project.stories(options[:id]).get.payload]
                 else
-                  params = { with_state: options[:with_state] }
-                  @project.stories.get(params: params).payload
+                  @project.stories.get(params: options).payload
                 end
       stories = stories.map { |s| Story.new(s, @project) }
       return stories if estimated == false
@@ -75,10 +72,6 @@ module StoryBranch
       !@api_key.nil? && !@project_id.nil?
     end
 
-    # TODO: Maybe add some other predicates
-    # - Filtering on where a story lives (Backlog, IceBox)
-    # - Filtering on labels
-    # - Filtering on story type
     def get_stories(state)
       project.stories(with_state: state)
     end

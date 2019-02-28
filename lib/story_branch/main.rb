@@ -39,30 +39,9 @@ module StoryBranch
     end
 
     def story_finish
-      current_story = GitUtils.current_branch_story_parts
-      unless !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
-        prompt.error('No tracked feature associated with this branch')
-        return
-      end
-
-      if GitUtils.status?(:untracked) || GitUtils.status?(:modified)
-        message = <<~MESSAGE
-          There are unstaged changes
-          Use git add to stage changes before running git finish
-          Use git stash if you want to hide changes for this commit
-        MESSAGE
-        prompt.say message
-        return
-      end
-
-      unless GitUtils.status?(:added) || GitUtils.status?(:staged)
-        message = <<~MESSAGE
-          There are no staged changes.
-          Nothing to do.
-        MESSAGE
-        prompt.say message
-        return
-      end
+      return unless tracked_story?
+      return if unstaged_changes?
+      return if nothing_to_add?
 
       commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
@@ -82,6 +61,36 @@ module StoryBranch
     end
 
     private
+
+    def tracked_story?
+      current_story = GitUtils.current_branch_story_parts
+      return true if !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
+
+      prompt.error('No tracked feature associated with this branch')
+      false
+    end
+
+    def unstaged_changes?
+      return false unless GitUtils.status?(:untracked) || GitUtils.status?(:modified)
+
+      message = <<~MESSAGE
+        There are unstaged changes
+        Use git add to stage changes before running git finish
+        Use git stash if you want to hide changes for this commit
+      MESSAGE
+      prompt.say message
+    end
+
+    def nothing_to_add?
+      return false if GitUtils.status?(:added) || GitUtils.status?(:staged)
+
+      message = <<~MESSAGE
+        There are no staged changes.
+        Nothing to do.
+      MESSAGE
+      prompt.say message
+      true
+    end
 
     def update_status(current_status, next_status, action)
       stories = @tracker.get_stories(current_status)
