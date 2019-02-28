@@ -41,9 +41,8 @@ module StoryBranch
       @milestone = Milestone.new(blanket_story.milestone) if blanket_story.milestone
     end
 
-    def update_state(new_state)
-      params = { current_state: new_state }
-      @repo.issues(@id).put(body: params).payload
+    def update_state
+      puts "What to do in github for this?"
     end
 
     def to_s
@@ -52,11 +51,6 @@ module StoryBranch
 
     def dashed_title
       StoryBranch::StringUtils.normalised_branch_name @title
-    end
-
-    def estimated
-      (@story_type == 'feature' && !@estimate.nil?) ||
-        NON_ESTIMATED_TYPES.include?(@story_type)
     end
   end
 
@@ -92,7 +86,7 @@ module StoryBranch
     end
 
     def get_stories(options = {})
-      project.stories(options)
+      project.stories
     end
 
     private

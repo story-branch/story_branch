@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './pivotal_utils'
+require_relative './github_utils'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
@@ -182,7 +183,13 @@ module StoryBranch
         prompt.say 'Project ID not set'
         exit 0
       end
-      @tracker = PivotalUtils.new(project_id, api_key)
+      tracker_type = @local_config.fetch(:tracker, default: 'pivotal-tracker')
+      @tracker = case tracker_type
+                 when 'github'
+                   GithubUtils.new(project_id, api_key)
+                 else
+                   PivotalUtils.new(project_id, api_key)
+                 end
     end
   end
 end
