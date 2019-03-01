@@ -192,9 +192,9 @@ module StoryBranch
       tracker_type = @local_config.fetch(:tracker, default: 'pivotal-tracker')
       @tracker = case tracker_type
                  when 'github'
-                   GithubUtils.new(project_id, api_key)
+                   StoryBranch::Github::Tracker.new(project_id, api_key)
                  else
-                   PivotalUtils.new(project_id, api_key)
+                   StoryBranch::Pivotal::Tracker.new(project_id, api_key)
                  end
     end
   end
