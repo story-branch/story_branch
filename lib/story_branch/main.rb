@@ -39,7 +39,7 @@ module StoryBranch
     end
 
     def story_finish
-      return unless tracked_story?
+      current_story = tracked_story
       return if unstaged_changes?
       return if nothing_to_add?
 
@@ -62,12 +62,13 @@ module StoryBranch
 
     private
 
-    def tracked_story?
+    def tracked_story
       current_story = GitUtils.current_branch_story_parts
-      return true if !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
+      if !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
+        return current_story
+      end
 
       prompt.error('No tracked feature associated with this branch')
-      false
     end
 
     def unstaged_changes?

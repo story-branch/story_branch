@@ -19,7 +19,7 @@ module StoryBranch
       end
 
       def update_state
-        puts "What to do in github for this?"
+        puts 'What to do in github for this?'
       end
 
       def to_s

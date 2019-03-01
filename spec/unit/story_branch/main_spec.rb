@@ -119,7 +119,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:branch_name) { story.dashed_title }
@@ -198,7 +198,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are unstarted features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:update_state_result) { OpenStruct.new(error: nil) }
@@ -249,7 +249,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are started features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:update_state_result) { OpenStruct.new(error: nil) }
@@ -312,7 +312,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -334,7 +334,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -356,7 +356,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -377,7 +377,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
       let(:answer_to_no) { false }
       let(:commit_message) { '[Finishes #111] amazing story' }
