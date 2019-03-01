@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'blanket'
+require_relative './project'
+
 module StoryBranch
   module Github
     # Github API wrapper for story branch tracker

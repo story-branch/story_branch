@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative './label'
+require_relative './milestone'
+
 module StoryBranch
   module Github
     # GitHub Issue representation

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative './pivotal_utils'
-require_relative './github_utils'
+require_relative './pivotal/tracker'
+require_relative './github/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
