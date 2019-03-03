@@ -109,7 +109,7 @@ RSpec.describe StoryBranch::Main do
 
       it 'prompts the user to choose the project to use' do
         expect(prompt).to have_received(:select)
-          .with('Which project you want to fetch from?', ['123456', '54321'])
+          .with('Which project you want to fetch from?', %w[123456 54321])
       end
     end
   end
