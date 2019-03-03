@@ -28,7 +28,6 @@ RSpec.describe StoryBranch::Main do
     conf.set('123456', 'api_key', value: 'myamazingkey')
     conf
   end
-  let(:select_prompt_input) { "\r" }
 
   before do
     allow(fake_project).to receive(:stories)
@@ -44,7 +43,7 @@ RSpec.describe StoryBranch::Main do
     )
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
 
-    allow(prompt).to receive(:select).and_call_original
+    allow(prompt).to receive(:select).and_return stories[0]
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
@@ -59,8 +58,6 @@ RSpec.describe StoryBranch::Main do
     end
     allow(sb.tracker).to receive(:get_stories).and_return stories
     allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
-    prompt.input << select_prompt_input
-    prompt.input.rewind
     sb
   end
 
@@ -86,9 +83,6 @@ RSpec.describe StoryBranch::Main do
         conf = ::TTY::Config.new
         conf.set('123456', 'api_key', value: 'myamazingkey')
         conf
-      end
-      let(:select_prompt_input) do
-        "\r\r"
       end
 
       xit 'prompts the user to choose the project to use' do
