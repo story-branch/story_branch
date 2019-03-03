@@ -43,7 +43,13 @@ RSpec.describe StoryBranch::Main do
     )
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
 
-    allow(prompt).to receive(:select).and_return stories[0]
+    allow(prompt).to receive(:select) do |arg|
+      if arg == 'Which project you want to fetch from?'
+        '123456'
+      else
+        stories[0]
+      end
+    end
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
@@ -73,12 +79,21 @@ RSpec.describe StoryBranch::Main do
         expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
       end
     end
-    # describe 'when there is only one local project configured' do
-    #   it 'initializes the PivotalTracker utils' do
-    #     expect(sb.tracker).to_not be(nil)
-    #     expect(sb.tracker.valid?).to eq true
-    #   end
-    # end
+
+    describe 'when there is a tracker defined in config files' do
+      let(:local_config) do
+        conf = ::TTY::Config.new
+        conf.set('project_id', value: '123456')
+        conf.set('tracker', value: 'github')
+        conf
+      end
+
+      it 'initializes the matching tracker' do
+        expect(sb.tracker).to_not be(nil)
+        expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
+      end
+    end
 
     describe 'when there are multiple local projects configured' do
       let(:local_config) do
@@ -93,8 +108,8 @@ RSpec.describe StoryBranch::Main do
       end
 
       it 'prompts the user to choose the project to use' do
-        expect(prompt).to have_received(:say)
-          .with('Which project you want to fetch from?')
+        expect(prompt).to have_received(:select)
+          .with('Which project you want to fetch from?', ['123456', '54321'])
       end
     end
   end
