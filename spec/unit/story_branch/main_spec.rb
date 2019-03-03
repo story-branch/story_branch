@@ -85,7 +85,7 @@ RSpec.describe StoryBranch::Main do
         conf
       end
 
-      xit 'prompts the user to choose the project to use' do
+      it 'prompts the user to choose the project to use' do
         expect(prompt).to have_received(:say)
           .with('Which project you want to fetch from?')
       end
