@@ -8,6 +8,29 @@ RSpec.describe StoryBranch::Github::Tracker do
   it 'has the api endpoint defined' do
     expect(described_class::API_URL).to eq 'https://api.github.com/'
   end
+
+  describe 'valid?' do
+    describe 'when there is a repo name and an api key' do
+      it 'is true' do
+        tracker = described_class.new('reponame', 'apikey')
+        expect(tracker.valid?).to eq true
+      end
+    end
+
+    describe 'when there is a repo name but no api key' do
+      it 'is false' do
+        tracker = described_class.new('reponame', nil)
+        expect(tracker.valid?).to eq false
+      end
+    end
+
+    describe 'when there is an api key but no repo name' do
+      it 'is false' do
+        tracker = described_class.new(nil, 'apikey')
+        expect(tracker.valid?).to eq false
+      end
+    end
+  end
   # let(:distances) { [3, 4, 3, 4] }
   # let(:branches) { %w[amazing-name-1 amazing-feature-2] }
 
