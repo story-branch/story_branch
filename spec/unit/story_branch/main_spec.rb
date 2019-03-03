@@ -66,12 +66,19 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'tracker initialization' do
-    describe 'when there is only one local project configured' do
-      it 'initializes the PivotalTracker utils' do
+    describe 'when there is no tracker defined in config files' do
+      it 'initializes pivotal tracker' do
         expect(sb.tracker).to_not be(nil)
         expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
       end
     end
+    # describe 'when there is only one local project configured' do
+    #   it 'initializes the PivotalTracker utils' do
+    #     expect(sb.tracker).to_not be(nil)
+    #     expect(sb.tracker.valid?).to eq true
+    #   end
+    # end
 
     describe 'when there are multiple local projects configured' do
       let(:local_config) do
