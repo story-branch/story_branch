@@ -32,6 +32,9 @@ module StoryBranch
 
         puts "Appending #{project_id}"
         @local_config.append(project_id, to: :project_id)
+
+        puts "Setting #{tracker}"
+        @local_config.set(:tracker, value: tracker)
         @local_config.write(force: true)
       end
 
@@ -45,7 +48,16 @@ module StoryBranch
         return @project_id if @project_id
 
         @project_id = prompt.ask "Please provide this project's id:"
-        @project_id
+      end
+
+      def tracker
+        return @tracker if @tracker
+
+        trackers = {
+          'Pivotal Tracker' => 'pivotal-tracker',
+          'Github' => 'github'
+        }
+        @tracker = prompt.select('Which tracker are you using?', trackers)
       end
 
       def local_config_has_value?

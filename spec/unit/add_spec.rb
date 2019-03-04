@@ -5,30 +5,18 @@ require 'story_branch/commands/add'
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Add do
-  let(:prompt) { TTY::TestPrompt.new }
+  let(:prompt) { instance_double('TTY::Prompt') }
   let(:config_directory) { FileUtils.mkdir_p Dir.home }
 
   before do
-    allow(::TTY::Prompt).to receive(:new).and_return(prompt)
-    prompt.input << "amazingkey\r123456"
-    prompt.input.rewind
+    allow(TTY::Prompt).to receive(:new).and_return(prompt)
+    allow(prompt).to receive(:ask).and_return('amazingkey', '123456')
+    allow(prompt).to receive(:select).and_return('pivotal-tracker')
 
     FakeFS.with_fresh do
       config_directory
       command = StoryBranch::Commands::Add.new({})
       command.execute
-    end
-  end
-
-  describe 'prompting the user' do
-    it 'prompts the user for the api key' do
-      question = 'Please provide the api key:'
-      expect(prompt.output.string).to match(question)
-    end
-
-    it 'prompts the user for the project id' do
-      question = "Please provide this project's id:"
-      expect(prompt.output.string).to match(question)
     end
   end
 
@@ -49,6 +37,7 @@ RSpec.describe StoryBranch::Commands::Add do
       expect(config.persisted?).to eq true
       config.read
       expect(config.fetch(:project_id)).to eq ['123456']
+      expect(config.fetch(:tracker)).to eq 'pivotal-tracker'
     end
   end
 

@@ -28,7 +28,6 @@ RSpec.describe StoryBranch::Main do
     conf.set('123456', 'api_key', value: 'myamazingkey')
     conf
   end
-  let(:select_prompt_input) { "\r" }
 
   before do
     allow(fake_project).to receive(:stories)
@@ -44,7 +43,13 @@ RSpec.describe StoryBranch::Main do
     )
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
 
-    allow(prompt).to receive(:select).and_call_original
+    allow(prompt).to receive(:select) do |arg|
+      if arg == 'Which project you want to fetch from?'
+        '123456'
+      else
+        stories[0]
+      end
+    end
     allow(prompt).to receive(:error)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
@@ -57,10 +62,9 @@ RSpec.describe StoryBranch::Main do
         global_config
       end
     end
-    allow(sb.tracker).to receive(:get_stories).and_return stories
+    allow(sb.tracker).to receive(:stories).and_return stories
+    allow(sb.tracker).to receive(:stories_with_state).and_return stories
     allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
-    prompt.input << select_prompt_input
-    prompt.input.rewind
     sb
   end
 
@@ -69,10 +73,26 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'tracker initialization' do
-    describe 'when there is only one local project configured' do
-      it 'initializes the PivotalTracker utils' do
+    describe 'when there is no tracker defined in config files' do
+      it 'initializes pivotal tracker' do
         expect(sb.tracker).to_not be(nil)
         expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
+      end
+    end
+
+    describe 'when there is a tracker defined in config files' do
+      let(:local_config) do
+        conf = ::TTY::Config.new
+        conf.set('project_id', value: '123456')
+        conf.set('tracker', value: 'github')
+        conf
+      end
+
+      it 'initializes the matching tracker' do
+        expect(sb.tracker).to_not be(nil)
+        expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
       end
     end
 
@@ -87,13 +107,10 @@ RSpec.describe StoryBranch::Main do
         conf.set('123456', 'api_key', value: 'myamazingkey')
         conf
       end
-      let(:select_prompt_input) do
-        "\r\r"
-      end
 
-      xit 'prompts the user to choose the project to use' do
-        expect(prompt).to have_received(:say)
-          .with('Which project you want to fetch from?')
+      it 'prompts the user to choose the project to use' do
+        expect(prompt).to have_received(:select)
+          .with('Which project you want to fetch from?', %w[123456 54321])
       end
     end
   end
@@ -104,7 +121,7 @@ RSpec.describe StoryBranch::Main do
     end
 
     it 'gets the stories from the tracker' do
-      expect(sb.tracker).to have_received(:get_stories).with('started')
+      expect(sb.tracker).to have_received(:stories)
     end
 
     describe 'when there are no features' do
@@ -119,7 +136,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:branch_name) { story.dashed_title }
@@ -183,7 +200,7 @@ RSpec.describe StoryBranch::Main do
   describe 'story_start' do
     it 'fetches the stories from the tracker' do
       sb.story_start
-      expect(sb.tracker).to have_received(:get_stories).with('unstarted')
+      expect(sb.tracker).to have_received(:stories_with_state).with('unstarted')
     end
 
     describe 'when there are no unstarted features' do
@@ -198,7 +215,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are unstarted features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:update_state_result) { OpenStruct.new(error: nil) }
@@ -234,7 +251,7 @@ RSpec.describe StoryBranch::Main do
   describe 'story_unstart' do
     it 'fetches the stories from the tracker' do
       sb.story_unstart
-      expect(sb.tracker).to have_received(:get_stories).with('started')
+      expect(sb.tracker).to have_received(:stories_with_state).with('started')
     end
 
     describe 'when there are no started features' do
@@ -249,7 +266,7 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are started features' do
       let(:stories) do
         fake_story = OpenStruct.new(name: 'test', id: '123456')
-        [StoryBranch::Story.new(fake_story, fake_project)]
+        [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
       let(:update_state_result) { OpenStruct.new(error: nil) }
@@ -312,7 +329,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -334,7 +351,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -356,7 +373,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
 
       before do
@@ -377,7 +394,7 @@ RSpec.describe StoryBranch::Main do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
         fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Story.new(fake_story, fake_project)
+        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
       end
       let(:answer_to_no) { false }
       let(:commit_message) { '[Finishes #111] amazing story' }
