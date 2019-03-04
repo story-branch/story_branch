@@ -39,7 +39,8 @@ RSpec.describe StoryBranch::Github::Tracker do
     before do
       allow(Blanket).to receive(:wrap).and_return(blanket_wrapper)
       allow(blanket_wrapper).to receive(:repos).and_return('repo')
-      allow(StoryBranch::Github::Project).to receive(:new).and_return(mock_project)
+      allow(StoryBranch::Github::Project).to receive(:new)
+        .and_return(mock_project)
       tracker = described_class.new('reponame', 'apikey')
       tracker.stories
     end

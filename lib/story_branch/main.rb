@@ -88,7 +88,9 @@ module StoryBranch
     end
 
     def unstaged_changes?
-      return false unless GitUtils.status?(:untracked) || GitUtils.status?(:modified)
+      unless GitUtils.status?(:untracked) || GitUtils.status?(:modified)
+        return false
+      end
 
       message = <<~MESSAGE
         There are unstaged changes

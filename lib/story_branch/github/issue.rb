@@ -15,7 +15,9 @@ module StoryBranch
         @title = blanket_story.title
         @id = blanket_story.number
         @labels = blanket_story.labels.map { |label| Label.new(label) }
-        @milestone = Milestone.new(blanket_story.milestone) if blanket_story.milestone
+        @milestone =  if blanket_story.milestone
+                        Milestone.new(blanket_story.milestone)
+                      end
       end
 
       def update_state
