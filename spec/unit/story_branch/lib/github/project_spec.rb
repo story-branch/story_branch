@@ -31,7 +31,7 @@ RSpec.describe StoryBranch::Github::Project do
     end
 
     describe 'when options do not have id attribute' do
-      let(:get_double) { double('get', payload: ['Issue']) }
+      let(:get_double) { double('get', payload: ['Issue1', 'Issue2']) }
       before do
         project.stories(state: 'open')
       end
@@ -42,6 +42,11 @@ RSpec.describe StoryBranch::Github::Project do
 
       it 'calls get in the issues with the params' do
         expect(issues_double).to have_received(:get).with(params: { state: 'open' })
+      end
+
+      it 'initializes Issues with the payload' do
+        expect(StoryBranch::Github::Issue).to have_received(:new).with('Issue1', blanket_project).once
+        expect(StoryBranch::Github::Issue).to have_received(:new).with('Issue2', blanket_project).once
       end
     end
   end
