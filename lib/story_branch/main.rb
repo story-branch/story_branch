@@ -52,15 +52,31 @@ module StoryBranch
       end
     end
 
+    # NOTE: This feature is only available for pivotal tracker at the moment
+    # as for github there is no use case
     def story_start
+      return unless require_pivotal
+
       update_status('unstarted', 'started', 'start')
     end
 
+    # NOTE: This feature is only available for pivotal tracker at the moment
+    # as for github there is no use case
     def story_unstart
+      return unless require_pivotal
+
       update_status('started', 'unstarted', 'unstart')
     end
 
     private
+
+    def require_pivotal
+      if @tracker.type != 'pivotal'
+        prompt.say 'The configured tracker does not support this feature'
+        return false
+      end
+      true
+    end
 
     def tracked_story
       current_story = GitUtils.current_branch_story_parts
@@ -94,7 +110,7 @@ module StoryBranch
     end
 
     def update_status(current_status, next_status, action)
-      stories = @tracker.get_stories(current_status)
+      stories = @tracker.stories_with_state(current_status)
       if stories.empty?
         prompt.say "No #{current_status} stories, exiting"
         return

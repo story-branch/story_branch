@@ -9,10 +9,14 @@ module StoryBranch
     # wrapper to communicate with pivotal tracker's api.
     class Tracker
       API_URL = 'https://www.pivotaltracker.com/services/v5/'
+      TYPE = 'pivotal'
+
+      attr_reader :type
 
       def initialize(project_id, api_key)
         @project_id = project_id
         @api_key = api_key
+        @type = TYPE
       end
 
       def valid?
@@ -24,7 +28,10 @@ module StoryBranch
       # which depend on the tracker's workflow. PivotalTracker they need to
       # be started and estimated, while for Github they just need to be open
       def stories
-        state = 'started'
+        stories_with_state('started')
+      end
+
+      def stories_with_state(state)
         project.stories(with_state: state)
       end
 

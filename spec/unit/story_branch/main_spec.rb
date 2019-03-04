@@ -62,7 +62,8 @@ RSpec.describe StoryBranch::Main do
         global_config
       end
     end
-    allow(sb.tracker).to receive(:get_stories).and_return stories
+    allow(sb.tracker).to receive(:stories).and_return stories
+    allow(sb.tracker).to receive(:stories_with_state).and_return stories
     allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
     sb
   end
@@ -120,7 +121,7 @@ RSpec.describe StoryBranch::Main do
     end
 
     it 'gets the stories from the tracker' do
-      expect(sb.tracker).to have_received(:get_stories).with('started')
+      expect(sb.tracker).to have_received(:stories)
     end
 
     describe 'when there are no features' do
@@ -199,7 +200,7 @@ RSpec.describe StoryBranch::Main do
   describe 'story_start' do
     it 'fetches the stories from the tracker' do
       sb.story_start
-      expect(sb.tracker).to have_received(:get_stories).with('unstarted')
+      expect(sb.tracker).to have_received(:stories_with_state).with('unstarted')
     end
 
     describe 'when there are no unstarted features' do
@@ -250,7 +251,7 @@ RSpec.describe StoryBranch::Main do
   describe 'story_unstart' do
     it 'fetches the stories from the tracker' do
       sb.story_unstart
-      expect(sb.tracker).to have_received(:get_stories).with('started')
+      expect(sb.tracker).to have_received(:stories_with_state).with('started')
     end
 
     describe 'when there are no started features' do

@@ -8,11 +8,15 @@ module StoryBranch
     # Github API wrapper for story branch tracker
     class Tracker
       API_URL = 'https://api.github.com/'
+      TYPE = 'github'
+
+      attr_reader :type
 
       def initialize(repo_name, api_key)
         # NOTE: RepoName should follow owner/repo_name format
         @repo_name = repo_name
         @api_key = api_key
+        @type = TYPE
       end
 
       def valid?
