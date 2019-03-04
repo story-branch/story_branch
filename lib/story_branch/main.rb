@@ -57,7 +57,8 @@ module StoryBranch
     def story_start
       return unless require_pivotal
 
-      update_status('unstarted', 'started', 'start')
+      story = update_status('unstarted', 'started', 'start')
+      create_feature_branch story
     end
 
     # NOTE: This feature is only available for pivotal tracker at the moment
@@ -131,6 +132,7 @@ module StoryBranch
         return
       end
       prompt.ok("#{story.id} #{next_status}")
+      story
     end
 
     def build_stories_structure(stories)
