@@ -1,3 +1,4 @@
 .DS_Store
 story_branch-*.gem
 /.pairs
+.byebug_history
