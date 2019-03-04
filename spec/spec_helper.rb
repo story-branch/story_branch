@@ -6,6 +6,7 @@ require 'git'
 require 'pp'
 require 'fakefs/safe'
 require 'story_branch'
+require 'ostruct'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

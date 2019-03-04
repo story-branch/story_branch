@@ -16,7 +16,7 @@ module StoryBranch
                   else
                     @repo.issues.get(params: options).payload
                   end
-        stories.select! { |s| s.pull_request.nil? }
+        stories.reject!(&:pull_request)
         stories.map { |s| Issue.new(s, @repo) }
       end
     end
