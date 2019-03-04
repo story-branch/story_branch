@@ -19,7 +19,7 @@ module StoryBranch
         !@api_key.nil? && !@repo_name.nil?
       end
 
-      def get_stories(_state)
+      def stories
         project.stories
       end
 
@@ -44,7 +44,6 @@ module StoryBranch
 
         blanket_project = api.repos(@repo_name)
         @project = Project.new blanket_project
-        @project
       end
     end
   end
