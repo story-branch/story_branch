@@ -26,7 +26,7 @@ module StoryBranch
     end
 
     def create_story_branch
-      stories = @tracker.get_stories('started')
+      stories = @tracker.stories
       if stories.empty?
         prompt.say 'No stories started, exiting'
         return

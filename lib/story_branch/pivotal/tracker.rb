@@ -19,7 +19,12 @@ module StoryBranch
         !@api_key.nil? && !@project_id.nil?
       end
 
-      def get_stories(state)
+      # TODO: This should probably be renamed to something more meaningful
+      # in the sense that it should be workable stories/issues
+      # which depend on the tracker's workflow. PivotalTracker they need to
+      # be started and estimated, while for Github they just need to be open
+      def stories
+        state = 'started'
         project.stories(with_state: state)
       end
 
