@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    story_branch (0.4.2)
+    story_branch (0.5.0)
       blanket_wrapper (~> 3.0)
       levenshtein-ffi (~> 1.0)
       thor (~> 0.20.0)
