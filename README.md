@@ -3,8 +3,9 @@
 
 # Story Branch
 
-Story branch is a CLI application that interacts with Pivotal Tracker at the
-at the moment. It allows you to start and un-start stories as well as creating
+Story branch is a CLI application that interacts with Pivotal Tracker or Github at the
+at the moment.
+It allows you to start and un-start stories in Pivotal Tracker, as well as creating
 branches based on the story name and id and have a final commit message marking
 the story as Finished.
 
@@ -81,30 +82,6 @@ The one in your project root will keep a reference to the project configuration.
 For now, this reference is the project id. This file can be safely committed to
 the repository and shared amongst your co-workers.
 
-## Migrating
-
-### Old configuration
-
-If your were using story branch before there are some small changes on the way the
-tool works. But worry not, we've written a command that allows you to migrate your
-configuration. Running
-
-`$ story_branch migrate`
-
-will grab your existing configuration and convert it into the new format. The only
-thing you'll need to provide is the project name reference.
-
-### Old commands
-
-Story branch was built providing a set of bin commands such as `git-story`, `git-finish`, `git-start` and `git-unstart`. These will be available still as
-we try as much as possible to keep the updates retro-compatible, but are nothing
-more than an alias for the CLI commands as follow:
-
-- `git-story` runs `story_branch create`
-- `git-finish` runs `story_branch finish`
-- `git-start` runs `story_branch start`
-- `git-unstart` runs `story_branch unstart`
-
 ## Commentary
 
 `story_branch create`: Creates a git branch with automatic reference to a
@@ -132,6 +109,45 @@ the full list.
 It'll get all started stories in your current project. You can
 enter text and press TAB to search for a story name, or TAB to show
 the full list.
+
+## Configuring PivotalTracker
+
+When running the command `story_branch add` you'll be asked 3 things:
+1. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
+2. tracker - You should select Pivotal Tracker
+3. api key - this is your personal api key. You can get that from [your profile page](https://www.pivotaltracker.com/profile)
+
+## Configuring Github
+
+When running the command `story_branch add` you'll be asked 3 things:
+1. project id - This is the github repository name in the format `<owner>/<repo_name>`. E.g. `story-branch/story_branch`.
+2. tracker - You should select Github
+3. api key - this is your personal api token. You can create one under your
+[developer profile tokens page](https://github.com/settings/tokens)
+
+## Migrating
+
+### Old configuration
+
+If your were using story branch before there are some small changes on the way the
+tool works. But worry not, we've written a command that allows you to migrate your
+configuration. Running
+
+`$ story_branch migrate`
+
+will grab your existing configuration and convert it into the new format. The only
+thing you'll need to provide is the project name reference.
+
+### Old commands
+
+Story branch was built providing a set of bin commands such as `git-story`, `git-finish`, `git-start` and `git-unstart`. These will be available still as
+we try as much as possible to keep the updates retro-compatible, but are nothing
+more than an alias for the CLI commands as follow:
+
+- `git-story` runs `story_branch create`
+- `git-finish` runs `story_branch finish`
+- `git-start` runs `story_branch start`
+- `git-unstart` runs `story_branch unstart`
 
 ## Contributing
 
