@@ -15,7 +15,7 @@ module StoryBranch
     end
 
     def self.dashed(text)
-      sanitize(text).tr(" _,./:;+&'\"?<>", '-').squeeze('-').gsub(/-$|^-/, '')
+      sanitize(text).gsub(/[^0-9a-z]/i, '-').squeeze('-').gsub(/-$|^-/, '')
     end
 
     def self.normalised_branch_name(text)
