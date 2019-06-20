@@ -12,19 +12,19 @@ RSpec.describe StoryBranch::GitUtils do
   before do
     allow(StoryBranch::GitWrapper).to receive(:branch_names)
       .and_return(branches)
-    allow(Levenshtein).to receive(:distance).and_return(*distances)
+    allow(DamerauLevenshtein).to receive(:distance).and_return(*distances)
   end
 
   describe 'existing_branch?' do
     it 'determnines levenshtein distance between branch name and branch list' do
       StoryBranch::GitUtils.existing_branch?('new-branch-name')
-      expect(Levenshtein).to have_received(:distance)
+      expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-name-1', 'new-branch-name')
-      expect(Levenshtein).to have_received(:distance)
+      expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-name', 'new-branch-name')
-      expect(Levenshtein).to have_received(:distance)
+      expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-feature-2', 'new-branch-name')
-      expect(Levenshtein).to have_received(:distance)
+      expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-feature', 'new-branch-name')
     end
 
