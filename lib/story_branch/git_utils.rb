@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'levenshtein'
+require 'damerau-levenshtein'
 require_relative './git_wrapper'
 
 module StoryBranch
@@ -9,13 +9,13 @@ module StoryBranch
   class GitUtils
     def self.existing_branch?(name)
       GitWrapper.branch_names.each do |n|
-        return true if Levenshtein.distance(n, name) < 3
+        return true if DamerauLevenshtein.distance(n, name) < 3
 
         branch_name_match = n.match(/(.*)(-[1-9]+[0-9]*$)/)
         next unless branch_name_match
 
-        levenshtein_distance = Levenshtein.distance branch_name_match[1], name
-        return true if levenshtein_distance < 3
+        distance = DamerauLevenshtein.distance branch_name_match[1], name
+        return true if distance < 3
       end
       false
     end
