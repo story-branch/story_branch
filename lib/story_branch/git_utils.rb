@@ -14,8 +14,8 @@ module StoryBranch
         branch_name_match = n.match(/(.*)(-[1-9]+[0-9]*$)/)
         next unless branch_name_match
 
-        levenshtein_distance = DamerauLevenshtein.distance branch_name_match[1], name
-        return true if levenshtein_distance < 3
+        distance = DamerauLevenshtein.distance branch_name_match[1], name
+        return true if distance < 3
       end
       false
     end
