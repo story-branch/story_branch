@@ -47,14 +47,15 @@ module StoryBranch
           password: @api_key,
           site: @tracker_url,
           auth_type: :basic,
-          read_timeout: 120
+          read_timeout: 120,
+          context_path: ''
         }
       end
 
       def api
         raise 'API key must be specified' unless @api_key
 
-        JIRA::Client.new(options)
+        @api ||= JIRA::Client.new(options)
       end
 
       def project
@@ -62,7 +63,7 @@ module StoryBranch
         raise 'project key must be set' unless @project_id
 
         jira_project = api.Project.find(@project_id)
-        @project = Project.new jira_project
+        @project = Project.new(jira_project, api)
       end
     end
   end

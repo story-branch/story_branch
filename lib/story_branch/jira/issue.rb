@@ -11,7 +11,7 @@ module StoryBranch
         @project = project
         @story = jira_issue
         @title = jira_issue.summary
-        @id = jira_issue.id
+        @id = jira_issue.key
       end
 
       def update_state

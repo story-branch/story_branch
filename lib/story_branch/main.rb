@@ -229,7 +229,6 @@ module StoryBranch
                  when 'pivotal-tracker'
                    StoryBranch::Pivotal::Tracker.new(project_id, api_key)
                  when 'jira'
-                   # tracker_url:, project_id:, api_key:, username:
                    tracker_url, project_key = project_id.split('|')
                    options = {
                      tracker_url: tracker_url,
@@ -237,7 +236,6 @@ module StoryBranch
                      api_key: api_key,
                      username: username
                    }
-                   puts options
                    StoryBranch::Jira::Tracker.new(options)
                  end
     end
