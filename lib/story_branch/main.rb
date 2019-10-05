@@ -237,6 +237,7 @@ module StoryBranch
                      api_key: api_key,
                      username: username
                    }
+                   puts options
                    StoryBranch::Jira::Tracker.new(options)
                  end
     end
