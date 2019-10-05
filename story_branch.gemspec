@@ -54,6 +54,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'blanket_wrapper', '~> 3.0'
   spec.add_runtime_dependency 'damerau-levenshtein', '~> 1.3'
+  spec.add_runtime_dependency 'jira-ruby', '~> 1.7'
   spec.add_runtime_dependency 'thor', '~> 0.20.0'
   spec.add_runtime_dependency 'tty-command', '~> 0.8.2'
   spec.add_runtime_dependency 'tty-config', '~> 0.2.0'

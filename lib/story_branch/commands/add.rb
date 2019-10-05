@@ -20,8 +20,8 @@ module StoryBranch
       end
 
       def execute(_input: $stdin, output: $stdout)
-        create_global_config
         create_local_config
+        create_global_config
         output.puts 'Configuration added successfully'
       end
 
@@ -30,24 +30,38 @@ module StoryBranch
       def create_local_config
         return if local_config_has_value?
 
+        puts "Setting #{tracker}"
+        @local_config.set(:tracker, value: tracker)
+
         puts "Appending #{project_id}"
         @local_config.append(project_id, to: :project_id)
 
-        puts "Setting #{tracker}"
-        @local_config.set(:tracker, value: tracker)
         @local_config.write(force: true)
       end
 
       def create_global_config
-        api_key = prompt.ask 'Please provide the api key:'
+        api_key = prompt.ask('Please provide the api key:', required: true)
         @config.set(project_id, :api_key, value: api_key)
+        @config.write(force: true)
+
+        return unless tracker == 'jira'
+
+        username = prompt.ask('Please provide username (email most of the times) for this key:',
+                              required: true)
+        @config.set(project_id, :username, value: username)
         @config.write(force: true)
       end
 
       def project_id
         return @project_id if @project_id
 
-        @project_id = prompt.ask "Please provide this project's id:"
+        if tracker == 'jira'
+          project_domain = prompt.ask("What is your JIRA's subdomain?", required: true)
+          project_key = prompt.ask("What is your JIRA's project key?", required: true)
+          @project_id = "#{project_domain}|#{project_key}"
+        else
+          @project_id = prompt.ask("Please provide this project's id:", required: true)
+        end
       end
 
       def tracker
@@ -55,7 +69,8 @@ module StoryBranch
 
         trackers = {
           'Pivotal Tracker' => 'pivotal-tracker',
-          'Github' => 'github'
+          'Github' => 'github',
+          'JIRA' => 'jira'
         }
         @tracker = prompt.select('Which tracker are you using?', trackers)
       end

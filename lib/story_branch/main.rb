@@ -2,6 +2,7 @@
 
 require_relative './pivotal/tracker'
 require_relative './github/tracker'
+require_relative './jira/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
@@ -187,6 +188,13 @@ module StoryBranch
       true
     end
 
+    def tracker_url
+      return @tracker_url if @tracker_url
+
+      tracker_urls = @local_config.fetch(:project_id)
+      @project_id = choose_project_id(project_ids)
+    end
+
     def project_id
       return @project_id if @project_id
 
@@ -202,7 +210,11 @@ module StoryBranch
     end
 
     def api_key
-      @api_key || @api_key = @global_config.fetch(project_id, :api_key)
+      @api_key ||= @global_config.fetch(project_id, :api_key)
+    end
+
+    def username
+      @username ||= @global_config.fetch(project_id, :username)
     end
 
     def initialize_tracker
@@ -214,8 +226,18 @@ module StoryBranch
       @tracker = case tracker_type
                  when 'github'
                    StoryBranch::Github::Tracker.new(project_id, api_key)
-                 else
+                 when 'pivotal-tracker'
                    StoryBranch::Pivotal::Tracker.new(project_id, api_key)
+                 when 'jira'
+                   # tracker_url:, project_id:, api_key:, username:
+                   tracker_url, project_key = project_id.split('|')
+                   options = {
+                     tracker_url: tracker_url,
+                     project_id: project_key,
+                     api_key: api_key,
+                     username: username
+                   }
+                   StoryBranch::Jira::Tracker.new(options)
                  end
     end
   end
