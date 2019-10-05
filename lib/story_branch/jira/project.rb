@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 require_relative './issue'
+require 'pry'
 
 module StoryBranch
   module Jira
     # Jira Project representation
     class Project
-      def initialize(jira_project, api)
+      def initialize(jira_project)
         @project = jira_project
-        @api = api
       end
 
       # Returns an array of Jira issues (Issue Class)
-      # TODO: add other possible args
+      # TODO: Support different options being passed.
+      # Probably will need a specific query builder per tracker
       def stories(options = {})
-        stories = @api.Issue.jql("project=#{@project.key} AND status='To Do' AND assignee=currentUser()")
+        stories = @project.client.Issue.jql(
+          "project=#{@project.key} AND status='To Do' AND assignee=currentUser()"
+        )
         # stories = if options[:id]
         #             [@project.issues.find(options[:id])]
         #           else
