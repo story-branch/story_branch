@@ -221,11 +221,18 @@ module StoryBranch
         prompt.error("An existing branch has the same story id: #{id}")
         return false
       end
-      if GitUtils.existing_branch? name
-        # rubocop:disable Layout/LineLength
-        prompt.error('This name is very similar to an existing branch. Avoid confusion and use a more unique name.')
-        # rubocop:enable Layout/LineLength
-        return false
+      if GitUtils.similar_branch? name
+        prompt.warn('This name is very similar to an existing branch. It is recommended to use a more unique name.')
+        decision = prompt.select('What to do?') do |menu|
+          menu.choice 'Rename the branch', 1
+          menu.choice 'Proceed with branch name', 2
+          menu.choice 'Abort branch creation', 3
+        end
+        return false if decision == 3
+        return true if decision == 2
+
+        branch_name = prompt.ask('Provide a new branch name',
+                                 default: story.dashed_title)
       end
       true
     end

@@ -7,7 +7,7 @@ module StoryBranch
   # Class used to interact with git. It relies on git gem as the wrapper
   # and levenshtein algo to determine branch name proximity
   class GitUtils
-    def self.existing_branch?(name)
+    def self.similar_branch?(name)
       GitWrapper.branch_names.each do |n|
         return true if DamerauLevenshtein.distance(n, name) < 3
 

@@ -33,7 +33,7 @@ RSpec.describe StoryBranch::Main do
     allow(StoryBranch::GitUtils).to receive_messages(
       current_branch_story_parts: branch_story_parts,
       branch_for_story_exists?: branch_exists,
-      existing_branch?: similar_branch
+      similar_branch?: similar_branch
     )
     allow(StoryBranch::GitWrapper).to receive_messages(
       create_branch: true,
