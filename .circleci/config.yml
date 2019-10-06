@@ -92,6 +92,6 @@ jobs:
           name: Publish to Rubygems
           command: |
             CURRENT_VERSION=$(ruby -r "./lib/story_branch/version.rb" -e "puts StoryBranch::VERSION")
-            CURRENT_TAG=$(git tag --points-at HEAD)
-
-            echo "Running publish of a tag"
+            gem build story_branch.gemspec
+            gem push "story_branch-${CURRENT_VERSION}.gem"
+            shred -u ~/.gem/credentials
