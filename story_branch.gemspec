@@ -24,11 +24,11 @@ Gem::Specification.new do |spec|
     'gabe@neo.com'
   ]
 
-  spec.summary = 'Create git branches based on pivotal tracker stories'
+  spec.summary = 'Create git branches based on your preferred tracker tickets'
   spec.description = <<~DESCRIPTION
-    Simple gem that fetches the available stories in your PivotalTracker
-    project and allows you to create a git branch with the name based
-    on the selected story
+    This simple gem allows you to create a branch based on the existing issues
+    in your preferred tracker. It integrates with PivotalTracker, Github and
+    JIRA. Different workflows shall be supported in the next versions.
   DESCRIPTION
 
   spec.metadata = {

@@ -113,8 +113,8 @@ the full list.
 ## Configuring PivotalTracker
 
 When running the command `story_branch add` you'll be asked 3 things:
-1. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
-2. tracker - You should select Pivotal Tracker
+1. tracker - You should select Pivotal Tracker
+2. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
 3. api key - this is your personal api key. You can get that from [your profile page](https://www.pivotaltracker.com/profile)
 
 ## Configuring Github
@@ -124,6 +124,16 @@ When running the command `story_branch add` you'll be asked 3 things:
 2. tracker - You should select Github
 3. api key - this is your personal api token. You can create one under your
 [developer profile tokens page](https://github.com/settings/tokens)
+
+## Configuring JIRA
+
+The configuration for JIRA is slightly more complex as the endpoint changes according
+to your project setup. You will need an API token, which you can create a new one in your [JIRA id management page](https://id.atlassian.com/manage/api-tokens)
+1. tracker - You should select JIRA
+2. JIRA's subdomain - you should type the JIRA's subdomain that you use to access in your browser. E.g I'd type perxtechnologies to access to https://perxtechnologies.atlassian.net
+3. JIRA's project key - this should match which project you want to fetch the issues from. E.g. PW is the key for my Project Whistler, so I'd type PW
+4. API key that you should have gotten in the first description step
+5. username used for login in the JIRA usually. If you use google email authentication, the username should be your email
 
 ## Migrating
 
