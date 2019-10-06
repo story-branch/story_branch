@@ -10,7 +10,7 @@ RSpec.describe StoryBranch::Commands::Add do
 
   before do
     allow(TTY::Prompt).to receive(:new).and_return(prompt)
-    allow(prompt).to receive(:ask).and_return('amazingkey', '123456')
+    allow(prompt).to receive(:ask).and_return('123456', 'amazingkey')
     allow(prompt).to receive(:select).and_return('pivotal-tracker')
 
     FakeFS.with_fresh do
