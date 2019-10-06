@@ -15,8 +15,8 @@ module StoryBranch
 
       attr_reader :type
 
-      def initialize(tracker_url:, project_id:, api_key:, username:)
-        @tracker_url = "https://#{tracker_url}.atlassian.net"
+      def initialize(tracker_domain:, project_id:, api_key:, username:)
+        @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key
         @username = username
@@ -24,7 +24,7 @@ module StoryBranch
       end
 
       def valid?
-        !@api_key.nil? && !@project_id.nil? && !@username.nil? && !@tracker_url.nil?
+        [@api_key, @project_id, @username, @tracker_url].none?(&:nil?)
       end
 
       # TODO: This should probably be renamed to something more meaningful
