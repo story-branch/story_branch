@@ -46,8 +46,10 @@ module StoryBranch
 
         return unless tracker == 'jira'
 
+        # rubocop:disable Metrics/LineLength
         username = prompt.ask('Please provide username (email most of the times) for this key:',
                               required: true)
+        # rubocop:enable Metrics/LineLength
         @config.set(project_id, :username, value: username)
         @config.write(force: true)
       end
@@ -56,11 +58,15 @@ module StoryBranch
         return @project_id if @project_id
 
         if tracker == 'jira'
+          # rubocop:disable Metrics/LineLength
           project_domain = prompt.ask("What is your JIRA's subdomain?", required: true)
           project_key = prompt.ask("What is your JIRA's project key?", required: true)
+          # rubocop:enable Metrics/LineLength
           @project_id = "#{project_domain}|#{project_key}"
         else
+          # rubocop:disable Metrics/LineLength
           @project_id = prompt.ask("Please provide this project's id:", required: true)
+          # rubocop:enable Metrics/LineLength
         end
       end
 
