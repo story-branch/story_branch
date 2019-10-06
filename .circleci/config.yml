@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: circleci/ruby:2.4.1-node-browsers
+    - image: circleci/ruby:2.6.5-node
   working_directory: ~/repo
 
 workflows:

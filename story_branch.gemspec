@@ -24,11 +24,11 @@ Gem::Specification.new do |spec|
     'gabe@neo.com'
   ]
 
-  spec.summary = 'Create git branches based on pivotal tracker stories'
+  spec.summary = 'Create git branches based on your preferred tracker tickets'
   spec.description = <<~DESCRIPTION
-    Simple gem that fetches the available stories in your PivotalTracker
-    project and allows you to create a git branch with the name based
-    on the selected story
+    This simple gem allows you to create a branch based on the existing issues
+    in your preferred tracker. It integrates with PivotalTracker, Github and
+    JIRA. Different workflows shall be supported in the next versions.
   DESCRIPTION
 
   spec.metadata = {
@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
     'homepage_uri' => 'https://github.com/story-branch/story_branch',
     'source_code_uri' => 'https://github.com/story-branch/story_branch'
   }
-  spec.required_ruby_version = ['>= 2.3', '< 2.7']
+  spec.required_ruby_version = ['>= 2.4', '< 2.7']
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been
@@ -54,6 +54,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'blanket_wrapper', '~> 3.0'
   spec.add_runtime_dependency 'damerau-levenshtein', '~> 1.3'
+  spec.add_runtime_dependency 'jira-ruby', '~> 1.7'
   spec.add_runtime_dependency 'thor', '~> 0.20.0'
   spec.add_runtime_dependency 'tty-command', '~> 0.8.2'
   spec.add_runtime_dependency 'tty-config', '~> 0.2.0'
@@ -64,6 +65,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'fakefs', '~> 0.14'
   spec.add_development_dependency 'git', '~> 1.5'
   spec.add_development_dependency 'ostruct', '~> 0.1'
+  spec.add_development_dependency 'pry', '~> 0.11'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'

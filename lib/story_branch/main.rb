@@ -2,6 +2,7 @@
 
 require_relative './pivotal/tracker'
 require_relative './github/tracker'
+require_relative './jira/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
@@ -10,6 +11,7 @@ require 'tty-prompt'
 module StoryBranch
   # Main story branch class. It is resposnible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
+  # rubocop:disable Metrics/ClassLength
   class Main
     attr_accessor :tracker
 
@@ -43,7 +45,9 @@ module StoryBranch
       return if unstaged_changes?
       return if nothing_to_add?
 
+      # rubocop:disable Metrics/LineLength
       commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
+      # rubocop:enable Metrics/LineLength
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
         GitWrapper.commit commit_message
@@ -112,6 +116,8 @@ module StoryBranch
       true
     end
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def update_status(current_status, next_status, action)
       stories = @tracker.stories_with_state(current_status)
       if stories.empty?
@@ -134,6 +140,8 @@ module StoryBranch
       prompt.ok("#{story.id} #{next_status}")
       story
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def build_stories_structure(stories)
       options = {}
@@ -170,7 +178,9 @@ module StoryBranch
       return unless validate_branch_name(feature_branch_name, story.id)
 
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+      # rubocop:disable Metrics/LineLength
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
+      # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
 
@@ -181,7 +191,9 @@ module StoryBranch
         return false
       end
       if GitUtils.existing_branch? name
+        # rubocop:disable Metrics/LineLength
         prompt.error('This name is very similar to an existing branch. Avoid confusion and use a more unique name.')
+        # rubocop:enable Metrics/LineLength
         return false
       end
       true
@@ -202,9 +214,15 @@ module StoryBranch
     end
 
     def api_key
-      @api_key || @api_key = @global_config.fetch(project_id, :api_key)
+      @api_key ||= @global_config.fetch(project_id, :api_key)
     end
 
+    def username
+      @username ||= @global_config.fetch(project_id, :username)
+    end
+
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def initialize_tracker
       if project_id.nil?
         prompt.say 'Project ID not set'
@@ -214,9 +232,21 @@ module StoryBranch
       @tracker = case tracker_type
                  when 'github'
                    StoryBranch::Github::Tracker.new(project_id, api_key)
-                 else
+                 when 'pivotal-tracker'
                    StoryBranch::Pivotal::Tracker.new(project_id, api_key)
+                 when 'jira'
+                   tracker_domain, project_key = project_id.split('|')
+                   options = {
+                     tracker_domain: tracker_domain,
+                     project_id: project_key,
+                     api_key: api_key,
+                     username: username
+                   }
+                   StoryBranch::Jira::Tracker.new(options)
                  end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
   end
+  # rubocop:enable Metrics/ClassLength
 end
