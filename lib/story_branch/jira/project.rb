@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative './issue'
-require 'pry'
 
 module StoryBranch
   module Jira
