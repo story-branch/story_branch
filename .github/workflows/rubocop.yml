@@ -13,10 +13,6 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.x
-    - name: add PostgreSQL dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client libpq-dev
     - name: Rubocop Linter
       uses: andrewmcodes/rubocop-linter-action@v0.1.2
       env:
