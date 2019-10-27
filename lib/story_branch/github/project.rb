@@ -16,6 +16,7 @@ module StoryBranch
                   else
                     @repo.issues.get(params: options)
                   end
+
         stories.reject!(&:pull_request)
         stories.map { |s| Issue.new(s, @repo) }
       end
