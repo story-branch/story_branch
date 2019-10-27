@@ -1,0 +1,9 @@
+Metrics/BlockLength:
+  Exclude:
+    - '**/spec/**/*.rb'
+AllCops:
+  Exclude:
+    - '**/*.gemspec'
+    - '**/exe/*'
+    - '**/Gemfile'
+    - '.github/**/*'
