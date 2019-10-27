@@ -9,8 +9,9 @@ require_relative './config_manager'
 require 'tty-prompt'
 
 module StoryBranch
-  # Main story branch class. It is resposnible for the main interaction between
+  # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
+
   # rubocop:disable Metrics/ClassLength
   class Main
     attr_accessor :tracker
@@ -41,13 +42,11 @@ module StoryBranch
     end
 
     def story_finish
-      current_story = tracked_story
+      current_story
       return if unstaged_changes?
       return if nothing_to_add?
 
-      # rubocop:disable Metrics/LineLength
-      commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
-      # rubocop:enable Metrics/LineLength
+      commit_message = build_finish_message
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
         GitWrapper.commit commit_message
@@ -83,10 +82,14 @@ module StoryBranch
       true
     end
 
-    def tracked_story
+    def current_story
+      return @current_story if @current_story
+
       current_story = GitUtils.current_branch_story_parts
-      if !current_story.empty? && @tracker.get_story_by_id(current_story[:id])
-        return current_story
+
+      unless current_story.empty?
+        @current_story = @tracker.get_story_by_id(current_story[:id])
+        return @current_story if @current_story
       end
 
       prompt.error('No tracked feature associated with this branch')
@@ -152,9 +155,7 @@ module StoryBranch
     end
 
     def prompt
-      return @prompt if @prompt
-
-      @prompt = TTY::Prompt.new(interrupt: :exit)
+      @prompt ||= TTY::Prompt.new(interrupt: :exit)
     end
 
     def finish_tag
@@ -165,6 +166,11 @@ module StoryBranch
                                       default: 'Finishes')
       @finish_tag = @local_config.fetch(:finish_tag, default: fallback)
       @finish_tag
+    end
+
+    def build_finish_message
+      message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
+      "[#{message_tag}] #{current_story.title}"
     end
 
     def create_feature_branch(story)

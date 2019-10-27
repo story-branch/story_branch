@@ -333,8 +333,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are untracked files' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -355,8 +355,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are unstaged modified files' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -377,8 +377,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are no changes to commit' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -398,8 +398,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are staged changes to be commited' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
       let(:answer_to_no) { false }
       let(:commit_message) { '[Finishes #111] amazing story' }
@@ -408,10 +408,44 @@ RSpec.describe StoryBranch::Main do
         allow(StoryBranch::GitUtils).to receive(:status?) do |arg|
           !%i[untracked modified].include? arg
         end
+        sb.story_finish
+      end
+
+      context 'commit message is based on the settings' do
+        context 'if the value is set to a word' do
+          let(:local_config) do
+            conf = ::TTY::Config.new
+            conf.set('project_id', value: '123456')
+            conf.set('finish_tag', value: 'Bananas')
+            conf
+          end
+          let(:commit_message) { '[Bananas #111] amazing story' }
+
+          it 'prompts the user to commit with default message' do
+            expect(prompt).to have_received(:yes?).once
+            expect(prompt).to have_received(:yes?)
+              .with("Commit with standard message? #{commit_message}")
+          end
+        end
+
+        context 'if the value is set to an empty string' do
+          let(:local_config) do
+            conf = ::TTY::Config.new
+            conf.set('project_id', value: '123456')
+            conf.set('finish_tag', value: '')
+            conf
+          end
+          let(:commit_message) { '[#111] amazing story' }
+
+          it 'prompts the user to commit with default message' do
+            expect(prompt).to have_received(:yes?).once
+            expect(prompt).to have_received(:yes?)
+              .with("Commit with standard message? #{commit_message}")
+          end
+        end
       end
 
       it 'prompts the user to commit with default message' do
-        sb.story_finish
         expect(prompt).to have_received(:yes?).once
         expect(prompt).to have_received(:yes?)
           .with("Commit with standard message? #{commit_message}")
@@ -421,7 +455,6 @@ RSpec.describe StoryBranch::Main do
         let(:answer_to_no) { false }
 
         it 'aborts the commit' do
-          sb.story_finish
           expect(prompt).to have_received(:say).with('Aborted')
         end
       end
@@ -430,7 +463,6 @@ RSpec.describe StoryBranch::Main do
         let(:answer_to_no) { true }
 
         it 'commits with the message' do
-          sb.story_finish
           expect(StoryBranch::GitWrapper).to have_received(:commit)
             .with(commit_message)
         end
