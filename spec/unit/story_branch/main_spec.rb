@@ -163,9 +163,22 @@ RSpec.describe StoryBranch::Main do
 
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
-        it 'creates the branch for the feature based on the feature name' do
-          expect(StoryBranch::GitWrapper).to have_received(:create_branch)
-            .with(branch_name_with_id)
+        context 'when the branch name is not longer that 40 characters' do
+          it 'creates the branch for the feature based on the feature name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
+        end
+
+        context 'when the branch name is longer than 40 characters' do
+          let(:branch_name) { '0123456789_0123456789_0123456789_0123456789' }
+          let(:branch_name_with_id) do
+            "#{StoryBranch::StringUtils.truncate(branch_name)}-#{story.id}"
+          end
+          it 'creates the branch for the feature based on the truncated name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
         end
       end
 

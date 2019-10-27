@@ -29,7 +29,7 @@ module StoryBranch
     def self.truncate(text, max_length = 40)
       return text if text.length <= max_length
 
-      text[0..max_length-1]
+      text[0..max_length - 1]
     end
   end
 end
