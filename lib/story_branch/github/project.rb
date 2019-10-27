@@ -12,9 +12,9 @@ module StoryBranch
 
       def stories(options = {})
         stories = if options[:id]
-                    [@repo.issues(options[:id]).get.payload]
+                    [@repo.issues(options[:id]).get]
                   else
-                    @repo.issues.get(params: options).payload
+                    @repo.issues.get(params: options)
                   end
         stories.reject!(&:pull_request)
         stories.map { |s| Issue.new(s, @repo) }
