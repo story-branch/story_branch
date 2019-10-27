@@ -3,12 +3,12 @@
 require 'spec_helper'
 require 'story_branch/github/project'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Github::Project do
   describe 'stories' do
     let(:blanket_project) { double('project') }
     let(:project) { described_class.new(blanket_project) }
-    let(:issues_double) { double('issues', get: get_double) }
+    let(:issues_double) { double('issues', get: matching_issue) }
+    let(:matching_issue) { OpenStruct.new(title: 'Issue', pull_request: false) }
 
     before do
       allow(StoryBranch::Github::Issue).to receive(:new)
@@ -16,9 +16,6 @@ RSpec.describe StoryBranch::Github::Project do
     end
 
     describe 'when options passed include id attribute' do
-      let(:matching_issue) { OpenStruct.new(title: 'Issue') }
-      let(:get_double) { double('get', payload: matching_issue) }
-
       before do
         project.stories(id: 10)
       end
@@ -34,12 +31,12 @@ RSpec.describe StoryBranch::Github::Project do
     end
 
     describe 'when options do not have id attribute' do
+      let(:issues_double) { double('issues', get: all_issues) }
       let(:all_issues) do
         [OpenStruct.new(title: 'Issue1'),
          OpenStruct.new(title: 'Issue2'),
          OpenStruct.new(title: 'PR1', pull_request: {})]
       end
-      let(:get_double) { double('get', payload: all_issues) }
 
       before do
         project.stories(state: 'open')
@@ -65,4 +62,3 @@ RSpec.describe StoryBranch::Github::Project do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

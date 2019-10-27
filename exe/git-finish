@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
-# rubocop:disable Style/FrozenStringLiteralComment
+# !/usr/bin/env ruby
 
 `story_branch finish`

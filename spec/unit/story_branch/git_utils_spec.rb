@@ -4,7 +4,6 @@ require 'spec_helper'
 require 'story_branch/git_utils'
 require 'story_branch/git_wrapper'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::GitUtils do
   let(:distances) { [3, 4, 3, 4] }
   let(:branches) { %w[amazing-name-1 amazing-feature-2] }
@@ -78,4 +77,3 @@ RSpec.describe StoryBranch::GitUtils do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

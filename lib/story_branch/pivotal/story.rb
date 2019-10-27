@@ -20,7 +20,7 @@ module StoryBranch
 
       def update_state(new_state)
         params = { current_state: new_state }
-        @project.stories(@id).put(body: params).payload
+        @project.stories(@id).put(body: params)
       end
 
       def to_s

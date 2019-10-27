@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/string_utils'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::StringUtils do
   let(:simple_string) { "$%^*()<H_e,l l::o.W;h+o&?'A#r`e'>@" }
 
@@ -46,4 +45,3 @@ RSpec.describe StoryBranch::StringUtils do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

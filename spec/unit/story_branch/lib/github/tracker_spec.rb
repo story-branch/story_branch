@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/github/tracker'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Github::Tracker do
   it 'has the api endpoint defined' do
     expect(described_class::API_URL).to eq 'https://api.github.com/'
@@ -64,4 +63,3 @@ RSpec.describe StoryBranch::Github::Tracker do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

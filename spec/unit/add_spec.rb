@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/commands/add'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { instance_double('TTY::Prompt') }
   let(:config_directory) { FileUtils.mkdir_p Dir.home }
@@ -132,4 +131,3 @@ RSpec.describe StoryBranch::Commands::Add do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

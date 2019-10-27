@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/commands/migrate'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Commands::Migrate do
   let(:output) { ::StringIO.new }
 
@@ -141,4 +140,3 @@ RSpec.describe StoryBranch::Commands::Migrate do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -14,9 +14,9 @@ module StoryBranch
       # TODO: add other possible args
       def stories(options = {}, estimated = true)
         stories = if options[:id]
-                    [@project.stories(options[:id]).get.payload]
+                    [@project.stories(options[:id]).get]
                   else
-                    @project.stories.get(params: options).payload
+                    @project.stories.get(params: options)
                   end
         stories = stories.map { |s| Story.new(s, @project) }
         return stories if estimated == false
