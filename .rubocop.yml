@@ -4,6 +4,6 @@ Metrics/BlockLength:
 AllCops:
   Exclude:
     - '**/*.gemspec'
-    - '**/exe/*'
+    - 'exe/*'
     - '**/Gemfile'
     - '.github/**/*'
