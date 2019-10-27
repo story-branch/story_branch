@@ -173,6 +173,7 @@ module StoryBranch
       "[#{message_tag}] #{current_story.title}"
     end
 
+    # rubocop:disable Metrics/AbcSize
     def create_feature_branch(story)
       return if story.nil?
 
@@ -180,7 +181,7 @@ module StoryBranch
       prompt.say "You are checked out at: #{current_branch}"
       branch_name = prompt.ask('Provide a new branch name',
                                default: story.dashed_title)
-      feature_branch_name = branch_name.chomp
+      feature_branch_name = StringUtils.truncate(branch_name.chomp)
       return unless validate_branch_name(feature_branch_name, story.id)
 
       feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
@@ -189,6 +190,7 @@ module StoryBranch
       # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
+    # rubocop:enable Metrics/AbcSize
 
     # Branch name validation
     def validate_branch_name(name, id)

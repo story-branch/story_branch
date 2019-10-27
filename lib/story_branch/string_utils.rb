@@ -25,5 +25,11 @@ module StoryBranch
     def self.undashed(text)
       text.tr('-', ' ').squeeze(' ').strip.capitalize
     end
+
+    def self.truncate(text, max_length = 40)
+      return text if text.length <= max_length
+
+      text[0..max_length-1]
+    end
   end
 end

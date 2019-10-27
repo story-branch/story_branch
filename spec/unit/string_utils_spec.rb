@@ -44,4 +44,24 @@ RSpec.describe StoryBranch::StringUtils do
       expect(res).to eq 'H e l l o w h o are'
     end
   end
+
+  describe 'truncate' do
+    it 'returns the original string if the length is less than max length' do
+      str = 'amazing bananas'
+      res = StoryBranch::StringUtils.truncate(str)
+      expect(res).to eq str
+    end
+
+    it 'returns the original string if the length is less than max length' do
+      str = 'amazing bananas'
+      res = StoryBranch::StringUtils.truncate(str, str.length)
+      expect(res).to eq str
+    end
+
+    it 'returns the truncated string if the length is greater than max' do
+      str = 'amazing bananas'
+      res = StoryBranch::StringUtils.truncate(str, 7)
+      expect(res).to eq 'amazing'
+    end
+  end
 end
