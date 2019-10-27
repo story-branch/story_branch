@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/git_wrapper'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::GitWrapper do
   let(:output) { '' }
 
@@ -37,7 +36,7 @@ RSpec.describe StoryBranch::GitWrapper do
 
       it 'returns system call output in an array chomped and striped' do
         res = described_class.command_lines('branch', '-a')
-        expect(res).to eq ['test_dir', 'bananas', 'another-thing']
+        expect(res).to eq %w[test_dir bananas another-thing]
       end
     end
 
@@ -51,4 +50,3 @@ RSpec.describe StoryBranch::GitWrapper do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

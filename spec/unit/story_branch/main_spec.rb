@@ -5,7 +5,6 @@ require 'story_branch/main'
 require 'story_branch/config_manager'
 require 'story_branch/git_utils'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::TestPrompt.new }
   let(:sb) { StoryBranch::Main.new }
@@ -401,7 +400,7 @@ RSpec.describe StoryBranch::Main do
 
       before do
         allow(StoryBranch::GitUtils).to receive(:status?) do |arg|
-          !(arg == :untracked || arg == :modified)
+          !%i[untracked modified].include? arg
         end
       end
 
@@ -433,4 +432,3 @@ RSpec.describe StoryBranch::Main do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

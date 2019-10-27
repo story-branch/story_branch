@@ -35,12 +35,14 @@ module StoryBranch
 
       def project_id
         return @project_id if @project_id
+
         @project_id = old_config_value('project', 'PIVOTAL_PROJECT_ID')
         @project_id
       end
 
       def api_key
         return @api_key if @api_key
+
         @api_key = old_config_value('api', 'PIVOTAL_API_KEY')
         @api_key
       end
@@ -52,6 +54,7 @@ module StoryBranch
       def missing_old_config?
         OLD_CONFIG_FILES.each { |file| return false if File.exist?(file) }
         return false if env_set?
+
         true
       end
 
