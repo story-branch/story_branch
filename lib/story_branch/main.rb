@@ -9,8 +9,9 @@ require_relative './config_manager'
 require 'tty-prompt'
 
 module StoryBranch
-  # Main story branch class. It is resposnible for the main interaction between
+  # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
+
   # rubocop:disable Metrics/ClassLength
   class Main
     attr_accessor :tracker
@@ -45,9 +46,8 @@ module StoryBranch
       return if unstaged_changes?
       return if nothing_to_add?
 
-      # rubocop:disable Metrics/LineLength
-      commit_message = "[#{finish_tag} ##{current_story[:id]}] #{current_story[:title]}"
-      # rubocop:enable Metrics/LineLength
+      message_tag = [finish_tag, "##{current_story[:id]}"].join(' ').strip
+      commit_message = "[#{message_tag}] #{current_story[:title]}"
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
         GitWrapper.commit commit_message
@@ -152,9 +152,7 @@ module StoryBranch
     end
 
     def prompt
-      return @prompt if @prompt
-
-      @prompt = TTY::Prompt.new(interrupt: :exit)
+      @prompt ||= TTY::Prompt.new(interrupt: :exit)
     end
 
     def finish_tag
