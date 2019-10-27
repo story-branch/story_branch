@@ -31,7 +31,7 @@ RSpec.describe StoryBranch::Github::Project do
     end
 
     describe 'when options do not have id attribute' do
-      let(:issues_double) { double('issues', get: matching_issue) }
+      let(:issues_double) { double('issues', get: all_issues) }
       let(:all_issues) do
         [OpenStruct.new(title: 'Issue1'),
          OpenStruct.new(title: 'Issue2'),
