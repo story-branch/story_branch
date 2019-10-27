@@ -333,8 +333,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are untracked files' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -355,8 +355,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are unstaged modified files' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -377,8 +377,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are no changes to commit' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
 
       before do
@@ -398,8 +398,8 @@ RSpec.describe StoryBranch::Main do
     describe 'when there are staged changes to be commited' do
       let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
       let(:story_from_tracker) do
-        fake_story = OpenStruct.new(branch_story_parts)
-        StoryBranch::Pivotal::Story.new(fake_story, fake_project)
+        instance_double(StoryBranch::Pivotal::Story,
+                        title: 'amazing story', id: '111')
       end
       let(:answer_to_no) { false }
       let(:commit_message) { '[Finishes #111] amazing story' }

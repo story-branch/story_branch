@@ -42,6 +42,7 @@ module StoryBranch
     end
 
     def story_finish
+      current_story
       return if unstaged_changes?
       return if nothing_to_add?
 
