@@ -46,8 +46,7 @@ module StoryBranch
       return if unstaged_changes?
       return if nothing_to_add?
 
-      message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
-      commit_message = "[#{message_tag}] #{current_story.title}"
+      commit_message = build_finish_message
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
         GitWrapper.commit commit_message
@@ -87,8 +86,10 @@ module StoryBranch
       return @current_story if @current_story
 
       current_story = GitUtils.current_branch_story_parts
-      if !current_story.empty? && (@current_story = @tracker.get_story_by_id(current_story[:id]))
-        return @current_story
+
+      unless current_story.empty?
+        @current_story = @tracker.get_story_by_id(current_story[:id])
+        return @current_story if @current_story
       end
 
       prompt.error('No tracked feature associated with this branch')
@@ -165,6 +166,11 @@ module StoryBranch
                                       default: 'Finishes')
       @finish_tag = @local_config.fetch(:finish_tag, default: fallback)
       @finish_tag
+    end
+
+    def build_finish_message
+      message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
+      "[#{message_tag}] #{current_story.title}"
     end
 
     def create_feature_branch(story)
