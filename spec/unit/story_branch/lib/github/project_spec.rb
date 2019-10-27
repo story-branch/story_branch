@@ -3,7 +3,6 @@
 require 'spec_helper'
 require 'story_branch/github/project'
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe StoryBranch::Github::Project do
   describe 'stories' do
     let(:blanket_project) { double('project') }
@@ -32,7 +31,7 @@ RSpec.describe StoryBranch::Github::Project do
     end
 
     describe 'when options do not have id attribute' do
-      let(:issues_double) { double('issues', get: all_issues) }
+      let(:issues_double) { double('issues', get: matching_issue) }
       let(:all_issues) do
         [OpenStruct.new(title: 'Issue1'),
          OpenStruct.new(title: 'Issue2'),
@@ -63,4 +62,3 @@ RSpec.describe StoryBranch::Github::Project do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -1,6 +1,6 @@
 Metrics/BlockLength:
   Exclude:
-    - '**/spec/**/*.rb'
+    - 'spec/**/*.rb'
 AllCops:
   Exclude:
     - '**/*.gemspec'
