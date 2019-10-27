@@ -68,7 +68,9 @@ RSpec.describe StoryBranch::Main do
   end
 
   it 'loads the config files' do
-    expect(StoryBranch::ConfigManager).to have_received(:init_config).exactly(2).times
+    expect(StoryBranch::ConfigManager).to(
+      have_received(:init_config).exactly(2).times
+    )
   end
 
   describe 'tracker initialization' do
@@ -207,7 +209,8 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints message informing the user' do
         sb.story_start
-        expect(prompt).to have_received(:say).with('No unstarted stories, exiting')
+        msg = 'No unstarted stories, exiting'
+        expect(prompt).to have_received(:say).with msg
       end
     end
 
@@ -258,7 +261,8 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints message informing the user' do
         sb.story_unstart
-        expect(prompt).to have_received(:say).with('No started stories, exiting')
+        msg = 'No started stories, exiting'
+        expect(prompt).to have_received(:say).with msg
       end
     end
 
@@ -305,7 +309,8 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints the error message to the user' do
         sb.story_finish
-        expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
+        msg = 'No tracked feature associated with this branch'
+        expect(prompt).to have_received(:error).with msg
       end
     end
 
@@ -320,7 +325,8 @@ RSpec.describe StoryBranch::Main do
 
       it 'prints the error message to the user' do
         sb.story_finish
-        expect(prompt).to have_received(:error).with('No tracked feature associated with this branch')
+        msg = 'No tracked feature associated with this branch'
+        expect(prompt).to have_received(:error).with msg
       end
     end
 
