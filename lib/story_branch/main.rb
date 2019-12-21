@@ -174,7 +174,8 @@ module StoryBranch
       fallback = @global_config.fetch(project_id,
                                       :issue_placement,
                                       default: 'End')
-      @issue_placement = @local_config.fetch(:issue_placement, default: fallback)
+      @issue_placement = @local_config.fetch(:issue_placement,
+                                             default: fallback)
       @issue_placement
     end
 
@@ -184,6 +185,7 @@ module StoryBranch
     end
 
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def create_feature_branch(story)
       return if story.nil?
 
@@ -203,6 +205,7 @@ module StoryBranch
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
     # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
       if issue_placement.casecmp('beginning').zero?
