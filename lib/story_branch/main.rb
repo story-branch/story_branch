@@ -168,12 +168,24 @@ module StoryBranch
       @finish_tag
     end
 
+    def issue_placement
+      return @issue_placement if @issue_placement
+
+      fallback = @global_config.fetch(project_id,
+                                      :issue_placement,
+                                      default: 'End')
+      @issue_placement = @local_config.fetch(:issue_placement,
+                                             default: fallback)
+      @issue_placement
+    end
+
     def build_finish_message
       message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
       "[#{message_tag}] #{current_story.title}"
     end
 
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def create_feature_branch(story)
       return if story.nil?
 
@@ -184,13 +196,24 @@ module StoryBranch
       feature_branch_name = StringUtils.truncate(branch_name.chomp)
       return unless validate_branch_name(feature_branch_name, story.id)
 
-      feature_branch_name_with_story_id = "#{feature_branch_name}-#{story.id}"
+      feature_branch_name_with_story_id = build_branch_name(
+        feature_branch_name, story.id
+      )
       # rubocop:disable Metrics/LineLength
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
       # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
     # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+
+    def build_branch_name(branch_name, story_id)
+      if issue_placement.casecmp('beginning').zero?
+        "#{story_id}-#{branch_name}"
+      else
+        "#{branch_name}-#{story_id}"
+      end
+    end
 
     # Branch name validation
     def validate_branch_name(name, id)

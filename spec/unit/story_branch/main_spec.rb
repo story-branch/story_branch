@@ -163,6 +163,22 @@ RSpec.describe StoryBranch::Main do
 
       describe 'when the story id doesnt have a branch yet' do
         let(:branch_exists) { false }
+
+        context 'settings set issue id to be in the beginning' do
+          let(:local_config) do
+            conf = ::TTY::Config.new
+            conf.set('project_id', value: '123456')
+            conf.set('issue_placement', value: 'beginning')
+            conf
+          end
+          let(:branch_name_with_id) { "#{story.id}-#{branch_name}" }
+
+          it 'creates the branch for the feature based on the feature name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
+        end
+
         context 'when the branch name is not longer that 40 characters' do
           it 'creates the branch for the feature based on the feature name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
