@@ -25,7 +25,7 @@ module StoryBranch
       @local_config = ConfigManager.init_config('.')
       @global_config = ConfigManager.init_config(Dir.home)
       initialize_tracker
-      exit unless @tracker.valid?
+      abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
 
     def create_story_branch
