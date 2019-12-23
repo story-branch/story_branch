@@ -237,12 +237,12 @@ RSpec.describe StoryBranch::Main do
         end
 
         context 'when the user decides to proceed with the branch creation' do
-          # NOTE: User selects abort
+          # NOTE: User selects proceed
           let(:similar_branch_option) { 2 }
 
           it 'does not create a new branch' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
-              .with
+              .with(branch_name_with_id)
           end
         end
       end
