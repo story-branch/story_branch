@@ -7,10 +7,6 @@ require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
 require 'tty-prompt'
-require 'pry'
-
-Pry.config.history.should_load = false
-Pry.config.history.should_save = false
 
 module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
