@@ -221,14 +221,29 @@ RSpec.describe StoryBranch::Main do
       describe 'when branch name is very similar to an exsiting one' do
         let(:similar_branch) { true }
 
-        it 'does not create a new branch' do
-          expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
-        end
-
         it 'shows an informative message' do
           message = 'This name is very similar to an existing branch. '\
           'It is recommended to use a more unique name.'
           expect(prompt).to have_received(:warn).with(message)
+        end
+
+        context 'when the user aborts the creation of the branch' do
+          # NOTE: User selects abort
+          let(:similar_branch_option) { 3 }
+
+          it 'does not create a new branch' do
+            expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
+          end
+        end
+
+        context 'when the user decides to proceed with the branch creation' do
+          # NOTE: User selects abort
+          let(:similar_branch_option) { 2 }
+
+          it 'does not create a new branch' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with
+          end
         end
       end
     end
