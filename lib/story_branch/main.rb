@@ -7,6 +7,10 @@ require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
 require 'tty-prompt'
+require 'pry'
+
+Pry.config.history.should_load = false
+Pry.config.history.should_save = false
 
 module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
@@ -204,7 +208,6 @@ module StoryBranch
     end
 
     def valid_branch_name(story)
-      current_branch = GitWrapper.current_branch
       prompt.say "You are checked out at: #{current_branch}"
       branch_name = prompt.ask('Provide a new branch name',
                                default: story.dashed_title)
@@ -258,6 +261,10 @@ module StoryBranch
 
     def username
       @username ||= @global_config.fetch(project_id, :username)
+    end
+
+    def current_branch
+      @current_branch ||= GitWrapper.current_branch
     end
 
     # rubocop:disable Metrics/AbcSize

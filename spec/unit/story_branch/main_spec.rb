@@ -27,6 +27,9 @@ RSpec.describe StoryBranch::Main do
     conf.set('123456', 'api_key', value: 'myamazingkey')
     conf
   end
+  # NOTE: When prompting for what to do in case branch name is too similar,
+  # we have 1,2,3 as options. Being 1: Rename, 2: Proceed, 3: Abort
+  let(:similar_branch_option) { 3 }
 
   before do
     allow(fake_project).to receive(:stories)
@@ -43,13 +46,17 @@ RSpec.describe StoryBranch::Main do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
 
     allow(prompt).to receive(:select) do |arg|
-      if arg == 'Which project you want to fetch from?'
+      case arg
+      when 'Which project you want to fetch from?'
         '123456'
+      when 'What to do?'
+        similar_branch_option
       else
         stories[0]
       end
     end
     allow(prompt).to receive(:error)
+    allow(prompt).to receive(:warn)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
     allow(prompt).to receive(:yes?).and_return answer_to_no
@@ -220,8 +227,8 @@ RSpec.describe StoryBranch::Main do
 
         it 'shows an informative message' do
           message = 'This name is very similar to an existing branch. '\
-          'Avoid confusion and use a more unique name.'
-          expect(prompt).to have_received(:error).with(message)
+          'It is recommended to use a more unique name.'
+          expect(prompt).to have_received(:warn).with(message)
         end
       end
     end
