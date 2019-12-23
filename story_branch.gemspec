@@ -31,11 +31,12 @@ Gem::Specification.new do |spec|
     JIRA. Different workflows shall be supported in the next versions.
   DESCRIPTION
 
+  spec.homepage    = 'https://github.com/story-branch/story_branch'
+
   spec.metadata = {
     'bug_tracker_uri' => 'https://github.com/story-branch/story_branch/issues',
     'changelog_uri' => 'https://github.com/story-branch/story_branch/blob/master/Changelog.md',
     'documentation_uri' => 'https://github.com/story-branch/story_branch/blob/master/README.md',
-    'homepage_uri' => 'https://github.com/story-branch/story_branch',
     'source_code_uri' => 'https://github.com/story-branch/story_branch'
   }
   spec.required_ruby_version = ['>= 2.4', '< 2.7']
