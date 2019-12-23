@@ -195,9 +195,8 @@ module StoryBranch
       branch_name = valid_branch_name(story)
       return unless branch_name
 
+      # rubocop:disable Layout/LineLength
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
-
-      # rubocop:disable Metrics/LineLength
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
       # rubocop:enable Layout/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
@@ -213,9 +212,11 @@ module StoryBranch
     end
 
     # Branch name validation
+    # rubocop:disable Metrics/MethodLength
     def validate_branch_name(name)
       if GitUtils.similar_branch? name
-        prompt.warn('This name is very similar to an existing branch. It is recommended to use a more unique name.')
+        prompt.warn('This name is very similar to an existing branch.'\
+                    ' It is recommended to use a more unique name.')
         decision = prompt.select('What to do?') do |menu|
           menu.choice 'Rename the branch', 1
           menu.choice 'Proceed with branch name', 2
@@ -228,6 +229,7 @@ module StoryBranch
       end
       name
     end
+    # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
       if issue_placement.casecmp('beginning').zero?
