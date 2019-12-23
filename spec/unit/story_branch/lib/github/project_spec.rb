@@ -7,7 +7,8 @@ RSpec.describe StoryBranch::Github::Project do
   describe 'stories' do
     let(:blanket_project) { double('project') }
     let(:project) { described_class.new(blanket_project) }
-    let(:issues_double) { double('issues', get: matching_issue) }
+    let(:get_double) { OpenStruct.new(payload: matching_issue) }
+    let(:issues_double) { double('issues', get: get_double) }
     let(:matching_issue) { OpenStruct.new(title: 'Issue', pull_request: false) }
 
     before do
