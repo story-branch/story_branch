@@ -27,13 +27,16 @@ RSpec.describe StoryBranch::Main do
     conf.set('123456', 'api_key', value: 'myamazingkey')
     conf
   end
+  # NOTE: When prompting for what to do in case branch name is too similar,
+  # we have 1,2,3 as options. Being 1: Rename, 2: Proceed, 3: Abort
+  let(:similar_branch_option) { 3 }
 
   before do
     allow(fake_project).to receive(:stories)
     allow(StoryBranch::GitUtils).to receive_messages(
       current_branch_story_parts: branch_story_parts,
       branch_for_story_exists?: branch_exists,
-      existing_branch?: similar_branch
+      similar_branch?: similar_branch
     )
     allow(StoryBranch::GitWrapper).to receive_messages(
       create_branch: true,
@@ -43,13 +46,17 @@ RSpec.describe StoryBranch::Main do
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
 
     allow(prompt).to receive(:select) do |arg|
-      if arg == 'Which project you want to fetch from?'
+      case arg
+      when 'Which project you want to fetch from?'
         '123456'
+      when 'What to do?'
+        similar_branch_option
       else
         stories[0]
       end
     end
     allow(prompt).to receive(:error)
+    allow(prompt).to receive(:warn)
     allow(prompt).to receive(:ok)
     allow(prompt).to receive(:say)
     allow(prompt).to receive(:yes?).and_return answer_to_no
@@ -214,14 +221,48 @@ RSpec.describe StoryBranch::Main do
       describe 'when branch name is very similar to an exsiting one' do
         let(:similar_branch) { true }
 
-        it 'does not create a new branch' do
-          expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
-        end
-
         it 'shows an informative message' do
           message = 'This name is very similar to an existing branch. '\
-          'Avoid confusion and use a more unique name.'
-          expect(prompt).to have_received(:error).with(message)
+          'It is recommended to use a more unique name.'
+          expect(prompt).to have_received(:warn).with(message)
+        end
+
+        context 'when the user aborts the creation of the branch' do
+          # NOTE: User selects abort
+          let(:similar_branch_option) { 3 }
+
+          it 'does not create a new branch' do
+            expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
+          end
+        end
+
+        context 'when the user decides to proceed with the branch creation' do
+          # NOTE: User selects proceed
+          let(:similar_branch_option) { 2 }
+
+          it 'creates the branch with the similar name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
+        end
+
+        context 'when the user decides to rename the branch creation' do
+          # NOTE: User selects rename
+          let(:similar_branch_option) { 1 }
+
+          # NOTE: called twice because it has been called the first time
+          # before for collecting the name the first time
+          it 'asks the user for the new name' do
+            expect(prompt).to have_received(:ask).with(
+              'Provide a new branch name',
+              default: branch_name
+            ).twice
+          end
+
+          it 'creates the branch with the similar name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
         end
       end
     end

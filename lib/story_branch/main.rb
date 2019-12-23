@@ -184,27 +184,51 @@ module StoryBranch
       "[#{message_tag}] #{current_story.title}"
     end
 
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/MethodLength
     def create_feature_branch(story)
       return if story.nil?
 
-      current_branch = GitWrapper.current_branch
-      prompt.say "You are checked out at: #{current_branch}"
-      branch_name = prompt.ask('Provide a new branch name',
-                               default: story.dashed_title)
-      feature_branch_name = StringUtils.truncate(branch_name.chomp)
-      return unless validate_branch_name(feature_branch_name, story.id)
+      if GitUtils.branch_for_story_exists? story.id
+        prompt.error("An existing branch has the same story id: #{story.id}")
+        return
+      end
 
-      feature_branch_name_with_story_id = build_branch_name(
-        feature_branch_name, story.id
-      )
+      branch_name = valid_branch_name(story)
+      return unless branch_name
+
       # rubocop:disable Layout/LineLength
+      feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
       # rubocop:enable Layout/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def valid_branch_name(story)
+      prompt.say "You are checked out at: #{current_branch}"
+      branch_name = prompt.ask('Provide a new branch name',
+                               default: story.dashed_title)
+      feature_branch_name = StringUtils.truncate(branch_name.chomp)
+
+      validate_branch_name(feature_branch_name)
+    end
+
+    # Branch name validation
+    # rubocop:disable Metrics/MethodLength
+    def validate_branch_name(name)
+      if GitUtils.similar_branch? name
+        prompt.warn('This name is very similar to an existing branch.'\
+                    ' It is recommended to use a more unique name.')
+        decision = prompt.select('What to do?') do |menu|
+          menu.choice 'Rename the branch', 1
+          menu.choice 'Proceed with branch name', 2
+          menu.choice 'Abort branch creation', 3
+        end
+        return nil if decision == 3
+        return name if decision == 2
+
+        return prompt.ask('Provide a new branch name', default: name)
+      end
+      name
+    end
     # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
@@ -213,21 +237,6 @@ module StoryBranch
       else
         "#{branch_name}-#{story_id}"
       end
-    end
-
-    # Branch name validation
-    def validate_branch_name(name, id)
-      if GitUtils.branch_for_story_exists? id
-        prompt.error("An existing branch has the same story id: #{id}")
-        return false
-      end
-      if GitUtils.existing_branch? name
-        # rubocop:disable Layout/LineLength
-        prompt.error('This name is very similar to an existing branch. Avoid confusion and use a more unique name.')
-        # rubocop:enable Layout/LineLength
-        return false
-      end
-      true
     end
 
     def project_id
@@ -250,6 +259,10 @@ module StoryBranch
 
     def username
       @username ||= @global_config.fetch(project_id, :username)
+    end
+
+    def current_branch
+      @current_branch ||= GitWrapper.current_branch
     end
 
     # rubocop:disable Metrics/AbcSize

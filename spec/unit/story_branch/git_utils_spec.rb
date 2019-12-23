@@ -14,9 +14,9 @@ RSpec.describe StoryBranch::GitUtils do
     allow(DamerauLevenshtein).to receive(:distance).and_return(*distances)
   end
 
-  describe 'existing_branch?' do
+  describe 'similar_branch?' do
     it 'determnines levenshtein distance between branch name and branch list' do
-      StoryBranch::GitUtils.existing_branch?('new-branch-name')
+      StoryBranch::GitUtils.similar_branch?('new-branch-name')
       expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-name-1', 'new-branch-name')
       expect(DamerauLevenshtein).to have_received(:distance)
@@ -31,14 +31,14 @@ RSpec.describe StoryBranch::GitUtils do
       let(:distances) { [3, 4, 3, 4] }
 
       it 'returns false' do
-        expect(StoryBranch::GitUtils.existing_branch?('new-branch')).to eq false
+        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq false
       end
     end
 
     describe 'when levenshtein distance is close' do
       let(:distances) { [2] }
       it 'returns false' do
-        expect(StoryBranch::GitUtils.existing_branch?('new-branch')).to eq true
+        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq true
       end
     end
   end
