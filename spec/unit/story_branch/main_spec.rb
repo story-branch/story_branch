@@ -240,7 +240,26 @@ RSpec.describe StoryBranch::Main do
           # NOTE: User selects proceed
           let(:similar_branch_option) { 2 }
 
-          it 'does not create a new branch' do
+          it 'creates the branch with the similar name' do
+            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+              .with(branch_name_with_id)
+          end
+        end
+
+        context 'when the user decides to rename the branch creation' do
+          # NOTE: User selects rename
+          let(:similar_branch_option) { 1 }
+
+          # NOTE: called twice because it has been called the first time
+          # before for collecting the name the first time
+          it 'asks the user for the new name' do
+            expect(prompt).to have_received(:ask).with(
+              'Provide a new branch name',
+              default: branch_name
+            ).twice
+          end
+
+          it 'creates the branch with the similar name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
