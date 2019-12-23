@@ -42,7 +42,7 @@ module StoryBranch
     end
 
     def story_finish
-      current_story
+      return unless current_story
       return if unstaged_changes?
       return if nothing_to_add?
 
@@ -93,6 +93,7 @@ module StoryBranch
       end
 
       prompt.error('No tracked feature associated with this branch')
+      nil
     end
 
     def unstaged_changes?
