@@ -35,7 +35,7 @@ module StoryBranch
 
     def self.current_branch_story_parts
       matches = current_story
-      return {} unless matches.length == 3
+      return {} unless matches&.length == 3
 
       title = matches[1].tr('-', ' ').strip
       { title: title, id: matches[2].to_i }
