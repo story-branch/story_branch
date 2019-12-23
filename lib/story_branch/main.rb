@@ -199,9 +199,9 @@ module StoryBranch
       feature_branch_name_with_story_id = build_branch_name(
         feature_branch_name, story.id
       )
-      # rubocop:disable Metrics/LineLength
+      # rubocop:disable Layout/LineLength
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      # rubocop:enable Metrics/LineLength
+      # rubocop:enable Layout/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
     # rubocop:enable Metrics/AbcSize
@@ -222,9 +222,9 @@ module StoryBranch
         return false
       end
       if GitUtils.existing_branch? name
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         prompt.error('This name is very similar to an existing branch. Avoid confusion and use a more unique name.')
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
         return false
       end
       true

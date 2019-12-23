@@ -12,7 +12,7 @@ module StoryBranch
 
       def stories(options = {})
         stories = if options[:id]
-                    [@repo.issues(options[:id]).get]
+                    [@repo.issues(options[:id]).get.payload]
                   else
                     @repo.issues.get(params: options)
                   end
