@@ -12,9 +12,9 @@ module StoryBranch
 
       attr_reader :type
 
-      def initialize(repo_name, api_key)
+      def initialize(_options, project_id:, api_key:, **)
         # NOTE: RepoName should follow owner/repo_name format
-        @repo_name = repo_name
+        @repo_name = project_id
         @api_key = api_key
         @type = TYPE
       end
