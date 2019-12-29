@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
+require 'pry'
+
 module StoryBranch
   # Base story branch tracker class that will define the expected interface
   class TrackerBase
-    TYPE = 'undefined'
-
-    attr_reader :type
-
-    def initialize(_options = {})
-      @type = TYPE
-    end
-
     def valid?
       raise 'valid? > must be implemented in the custom tracker'
     end

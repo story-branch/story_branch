@@ -46,7 +46,8 @@ module StoryBranch
     end
 
     def finish_tag
-      @finish_tag ||= @config.fetch(project_key, :finish_tag, default: 'Finishes')
+      @finish_tag ||= @config.fetch(project_key,
+                                    :finish_tag, default: 'Finishes')
     end
 
     def issue_placement
@@ -96,8 +97,6 @@ module StoryBranch
       local = init_config('.')
       global = init_config(Dir.home)
       local.merge(global)
-      binding.pry
-
       local
     end
 

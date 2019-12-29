@@ -12,12 +12,7 @@ module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
     class Tracker < StoryBranch::TrackerBase
-      TYPE = 'jira'
-
-      attr_reader :type
-
       def initialize(tracker_domain:, project_id:, api_key:, username:)
-        super
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key

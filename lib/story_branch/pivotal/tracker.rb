@@ -10,12 +10,8 @@ module StoryBranch
     # wrapper to communicate with pivotal tracker's api.
     class Tracker < StoryBranch::TrackerBase
       API_URL = 'https://www.pivotaltracker.com/services/v5/'
-      TYPE = 'pivotal'
 
-      attr_reader :type
-
-      def initialize(_options, project_id:, api_key:, **)
-        super
+      def initialize(project_id:, api_key:, **)
         @project_id = project_id
         @api_key = api_key
       end

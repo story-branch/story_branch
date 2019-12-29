@@ -8,12 +8,9 @@ require_relative './git_wrapper'
 require_relative './config_manager'
 require 'tty-prompt'
 
-require 'pry'
-
 module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
-
   class Main
     attr_accessor :tracker
 
@@ -21,8 +18,6 @@ module StoryBranch
       @config = ConfigManager.new
       abort(@config.errors.join("\n")) unless @config.valid?
       @tracker = initialize_tracker
-      binding.pry
-
       abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
 
@@ -73,11 +68,10 @@ module StoryBranch
     private
 
     def require_pivotal
-      if @tracker.type != 'pivotal'
-        prompt.say 'The configured tracker does not support this feature'
-        return false
-      end
-      true
+      return true if @tracker.class.name.match?('Pivotal')
+
+      prompt.say 'The configured tracker does not support this feature'
+      false
     end
 
     def current_story
