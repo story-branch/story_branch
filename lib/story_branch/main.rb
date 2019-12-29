@@ -8,6 +8,8 @@ require_relative './git_wrapper'
 require_relative './config_manager'
 require 'tty-prompt'
 
+require 'pry'
+
 module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
@@ -18,7 +20,9 @@ module StoryBranch
     def initialize
       @config = ConfigManager.new
       abort(@config.errors.join("\n")) unless @config.valid?
-      initialize_tracker
+      @tracker = initialize_tracker
+      binding.pry
+
       abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
 

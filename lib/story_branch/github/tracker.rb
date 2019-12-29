@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
 require 'blanket'
+require 'story_branch/tracker_base'
 require_relative './project'
 
 module StoryBranch
   module Github
     # Github API wrapper for story branch tracker
-    class Tracker < StoryBrach::TrackerBase
+    class Tracker < StoryBranch::TrackerBase
       API_URL = 'https://api.github.com/'
       TYPE = 'github'
 
       attr_reader :type
 
-      def initialize(_options, project_id:, api_key:, **)
+      def initialize(project_id:, api_key:, **)
         super
         # NOTE: RepoName should follow owner/repo_name format
         @repo_name = project_id

@@ -5,12 +5,13 @@
 # my tracker and issues will still provide a similar api. This jira-ruby
 # is used to get the data.
 require 'jira-ruby'
+require 'story_branch/tracker_base'
 require_relative './project'
 
 module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
-    class Tracker < StoryBrach::TrackerBase
+    class Tracker < StoryBranch::TrackerBase
       TYPE = 'jira'
 
       attr_reader :type

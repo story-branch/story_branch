@@ -13,7 +13,7 @@ module StoryBranch
 
     def initialize
       @prompt = TTY::Prompt.new(interrupt: :exit)
-      @config = init_config
+      @config = load_config
       @errors = []
     end
 
@@ -38,15 +38,15 @@ module StoryBranch
     private
 
     def api_key
-      @api_key ||= @config.fetch(project_id, :api_key)
+      @api_key ||= @config.fetch(project_key, :api_key)
     end
 
     def username
-      @username ||= @config.fetch(project_id, :username)
+      @username ||= @config.fetch(project_key, :username)
     end
 
     def finish_tag
-      @finish_tag ||= @config.fetch(project_id, :finish_tag, default: 'Finishes')
+      @finish_tag ||= @config.fetch(project_key, :finish_tag, default: 'Finishes')
     end
 
     def issue_placement
@@ -92,11 +92,19 @@ module StoryBranch
       @errors << 'Project ID is not set' if project_id.nil?
     end
 
-    def init_config
+    def load_config
+      local = init_config('.')
+      global = init_config(Dir.home)
+      local.merge(global)
+      binding.pry
+
+      local
+    end
+
+    def init_config(path)
       config = ::TTY::Config.new
       config.filename = CONFIG_FILENAME
-      config.append_path '.'
-      config.append_path Dir.home
+      config.append_path path
       config.read
       config
     end

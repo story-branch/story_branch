@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require 'blanket'
+require 'story_branch/tracker_base'
 require_relative './project'
 
 module StoryBranch
   module Pivotal
     # Utility class for integration with PivotalTracker. It relies on Blanket
     # wrapper to communicate with pivotal tracker's api.
-    class Tracker <  StoryBrach::TrackerBase
+    class Tracker < StoryBranch::TrackerBase
       API_URL = 'https://www.pivotaltracker.com/services/v5/'
       TYPE = 'pivotal'
 
