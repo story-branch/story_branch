@@ -10,17 +10,17 @@ require_relative './project'
 module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
-    class Tracker
+    class Tracker < StoryBrach::TrackerBase
       TYPE = 'jira'
 
       attr_reader :type
 
       def initialize(tracker_domain:, project_id:, api_key:, username:)
+        super
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key
         @username = username
-        @type = TYPE
       end
 
       def valid?
@@ -52,10 +52,8 @@ module StoryBranch
         }
       end
 
-      def api
-        raise 'API key must be specified' unless @api_key
-
-        @api ||= JIRA::Client.new(options)
+      def configure_api
+        JIRA::Client.new(options)
       end
 
       def project

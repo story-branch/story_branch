@@ -7,16 +7,16 @@ module StoryBranch
   module Pivotal
     # Utility class for integration with PivotalTracker. It relies on Blanket
     # wrapper to communicate with pivotal tracker's api.
-    class Tracker
+    class Tracker <  StoryBrach::TrackerBase
       API_URL = 'https://www.pivotaltracker.com/services/v5/'
       TYPE = 'pivotal'
 
       attr_reader :type
 
       def initialize(_options, project_id:, api_key:, **)
+        super
         @project_id = project_id
         @api_key = api_key
-        @type = TYPE
       end
 
       def valid?
@@ -41,9 +41,7 @@ module StoryBranch
 
       private
 
-      def api
-        raise 'API key must be specified' unless @api_key
-
+      def configure_api
         Blanket.wrap API_URL, headers: { 'X-TrackerToken' => @api_key }
       end
 
