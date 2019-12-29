@@ -11,6 +11,8 @@ require 'tty-prompt'
 module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
+
+  # rubocop:disable Metrics/ClassLength
   class Main
     attr_accessor :tracker
 
@@ -229,4 +231,5 @@ module StoryBranch
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
