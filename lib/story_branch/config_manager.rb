@@ -13,68 +13,12 @@ module StoryBranch
 
     def initialize
       @prompt = TTY::Prompt.new(interrupt: :exit)
+      @config = init_config
       @errors = []
     end
 
-    def local_config
-      # TODO: For XDG config this should use something else as the path?
-      @local_config ||= init_config('.')
-    end
-
-    def global_config
-      # TODO: For XDG config this should use something else as the path?
-      @global_config ||= init_config(Dir.home)
-    end
-
-    def api_key
-      @api_key ||= global_config.fetch(project_id, :api_key)
-    end
-
-    def username
-      @username ||= global_config.fetch(project_id, :username)
-    end
-
-    def finish_tag
-      return @finish_tag if @finish_tag
-
-      fallback = global_config.fetch(project_id,
-                                     :finish_tag,
-                                     default: 'Finishes')
-      @finish_tag = local_config.fetch(:finish_tag, default: fallback)
-      @finish_tag
-    end
-
-    def issue_placement
-      return @issue_placement if @issue_placement
-
-      fallback = global_config.fetch(project_id,
-                                     :issue_placement,
-                                     default: 'End')
-      @issue_placement = local_config.fetch(:issue_placement,
-                                            default: fallback)
-      @issue_placement
-    end
-
-    def project_id
-      return @project_id if @project_id
-
-      project_ids = local_config.fetch(:project_id)
-      @project_id = choose_project_id(project_ids)
-    end
-
-    def choose_project_id(project_ids)
-      return project_ids unless project_ids.is_a? Array
-      return project_ids[0] unless project_ids.length > 1
-
-      @prompt.select('Which project you want to fetch from?', project_ids)
-    end
-
     def tracker_type
-      local_config.fetch(:tracker, default: 'pivotal-tracker')
-    end
-
-    def tracker_domain
-      tracker_domain, project_key = @config.project_id.split('|')
+      @config.fetch(:tracker, default: 'pivotal-tracker')
     end
 
     def tracker_params
@@ -93,15 +37,67 @@ module StoryBranch
 
     private
 
+    def api_key
+      @api_key ||= @config.fetch(project_id, :api_key)
+    end
+
+    def username
+      @username ||= @config.fetch(project_id, :username)
+    end
+
+    def finish_tag
+      @finish_tag ||= @config.fetch(project_id, :finish_tag, default: 'Finishes')
+    end
+
+    def issue_placement
+      @issue_placement ||= @config.fetch(:issue_placement, default: 'End')
+    end
+
+    def project_key
+      return @project_key if @project_key
+
+      project_keys = @config.fetch(:project_id)
+
+      @project_key = choose_project_id(project_keys)
+    end
+
+    def project_id
+      return @project_id if @project_id
+
+      @project_id = if tracker_type == 'jira'
+                      project_key.split('|')[1]
+                    else
+                      project_key
+                    end
+    end
+
+    def tracker_domain
+      return @tracker_domain if @tracker_domain
+
+      @tracker_domain = if tracker_type != 'jira'
+                          ''
+                        else
+                          project_key.split('|')[0]
+                        end
+    end
+
+    def choose_project_id(project_ids)
+      return project_ids unless project_ids.is_a? Array
+      return project_ids[0] unless project_ids.length > 1
+
+      @prompt.select('Which project you want to fetch from?', project_ids)
+    end
+
     def validate
       @errors << 'Project ID is not set' if project_id.nil?
     end
 
-    def init_config(path)
+    def init_config
       config = ::TTY::Config.new
       config.filename = CONFIG_FILENAME
-      config.append_path path
-      config.read if config.persisted?
+      config.append_path '.'
+      config.append_path Dir.home
+      config.read
       config
     end
   end
