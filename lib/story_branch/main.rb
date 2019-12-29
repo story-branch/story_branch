@@ -12,13 +12,12 @@ module StoryBranch
   # Main story branch class. It is responsible for the main interaction between
   # the user and Pivotal Tracker. It is also responsible for config init.
 
-  # rubocop:disable Metrics/ClassLength
   class Main
     attr_accessor :tracker
 
     def initialize
       @config = ConfigManager.new
-      abort(@config.errors.join("/n")) unless @config.valid?
+      abort(@config.errors.join("\n")) unless @config.valid?
       initialize_tracker
       abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
@@ -170,10 +169,10 @@ module StoryBranch
       branch_name = valid_branch_name(story)
       return unless branch_name
 
-      # rubocop:disable Layout/LineLength
+      # rubocop:disable Metrics/LineLength
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      # rubocop:enable Layout/LineLength
+      # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
 
@@ -219,23 +218,17 @@ module StoryBranch
     end
 
     def initialize_tracker
+      # TODO: Ideally this would be mapped out somewhere so we don't need to
+      # evaluate anything from the config here
       tracker_type = @config.tracker_type
       case tracker_type
-        when 'github'
-          StoryBranch::Github::Tracker.new(project_id, api_key)
-        when 'pivotal-tracker'
-          StoryBranch::Pivotal::Tracker.new(project_id, api_key)
-        when 'jira'
-          tracker_domain, project_key = project_id.split('|')
-          options = {
-            tracker_domain: tracker_domain,
-            project_id: project_key,
-            api_key: api_key,
-            username: username
-          }
-          StoryBranch::Jira::Tracker.new(options)
-        end
+      when 'github'
+        StoryBranch::Github::Tracker.new(@config.tracker_params)
+      when 'pivotal-tracker'
+        StoryBranch::Pivotal::Tracker.new(@config.tracker_params)
+      when 'jira'
+        StoryBranch::Jira::Tracker.new(@config.tracker_params)
+      end
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
