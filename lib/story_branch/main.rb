@@ -206,7 +206,9 @@ module StoryBranch
     # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
-      if issue_placement.casecmp('beginning').zero?
+      binding.pry
+
+      if @config.issue_placement.casecmp('beginning').zero?
         "#{story_id}-#{branch_name}"
       else
         "#{branch_name}-#{story_id}"

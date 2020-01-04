@@ -21,11 +21,15 @@ module StoryBranch
     end
 
     def tracker_type
-      @config.fetch(:tracker, default: 'pivotal-tracker')
+      @tracker_type ||= @config.fetch(:tracker, default: 'pivotal-tracker')
     end
 
     def tracker_type=(tracker)
       @local.set(:tracker, value: tracker)
+    end
+
+    def issue_placement
+      @issue_placement ||= @config.fetch(:issue_placement, default: 'End')
     end
 
     def project_key=(key)
@@ -79,10 +83,6 @@ module StoryBranch
     def finish_tag
       @finish_tag ||= @config.fetch(project_key,
                                     :finish_tag, default: 'Finishes')
-    end
-
-    def issue_placement
-      @issue_placement ||= @config.fetch(:issue_placement, default: 'End')
     end
 
     def project_key
