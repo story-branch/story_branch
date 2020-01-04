@@ -13,60 +13,61 @@ module StoryBranch
     # It will try to load the existing global story branch config
     # and then add the project id specified by the user.
     class Add < StoryBranch::Command
-      def initialize(options)
-        @options = options
-        @config = ConfigManager.init_config(Dir.home)
-        @local_config = ConfigManager.init_config('.')
+      def initialize(_options)
+        @new_config = ConfigManager.new
       end
 
       def execute(_input: $stdin, output: $stdout)
-        create_local_config
+        set_tracker_type
+        set_project_key
         create_global_config
+        @new_config.save
         output.puts 'Configuration added successfully'
       end
 
       private
 
-      def create_local_config
-        return if local_config_has_value?
+      def set_tracker_type
+        return if @new_config.contains?(project_key)
 
         puts "Setting #{tracker}"
-        @local_config.set(:tracker, value: tracker)
+        @new_config.tracker_type = tracker
+      end
 
-        puts "Appending #{project_id}"
-        @local_config.append(project_id, to: :project_id)
-
-        @local_config.write(force: true)
+      def set_project_key
+        puts "Setting #{project_key}"
+        @new_config.project_key = project_key
       end
 
       def create_global_config
         api_key = prompt.ask('Please provide the api key:', required: true)
-        @config.set(project_id, :api_key, value: api_key)
-        @config.write(force: true)
+        @new_config.api_key = api_key
 
         return unless tracker == 'jira'
 
-        # rubocop:disable Layout/LineLength
+        # rubocop:disable Metrics/LineLength
         username = prompt.ask('Please provide username (email most of the times) for this key:',
                               required: true)
-        # rubocop:enable Layout/LineLength
-        @config.set(project_id, :username, value: username)
-        @config.write(force: true)
+        # rubocop:enable Metrics/LineLength
+        @new_config.username = username
       end
 
-      def project_id
-        return @project_id if @project_id
+      def project_key
+        return @project_key if @project_key
 
+        @project_key = ask_for_project_key
+      end
+
+      def ask_for_project_key
         if tracker == 'jira'
-          # rubocop:disable Layout/LineLength
-          project_domain = prompt.ask("What is your JIRA's subdomain?", required: true)
-          project_key = prompt.ask("What is your JIRA's project key?", required: true)
-          # rubocop:enable Layout/LineLength
-          @project_id = "#{project_domain}|#{project_key}"
+          project_domain = prompt.ask("What is your JIRA's subdomain?",
+                                      required: true)
+          project_key = prompt.ask("What is your JIRA's project key?",
+                                   required: true)
+
+          "#{project_domain}|#{project_key}"
         else
-          # rubocop:disable Layout/LineLength
-          @project_id = prompt.ask("Please provide this project's id:", required: true)
-          # rubocop:enable Layout/LineLength
+          prompt.ask("Please provide this project's id:", required: true)
         end
       end
 
@@ -79,15 +80,6 @@ module StoryBranch
           'JIRA' => 'jira'
         }
         @tracker = prompt.select('Which tracker are you using?', trackers)
-      end
-
-      def local_config_has_value?
-        config_value = @local_config.fetch(:project_id)
-        if config_value.is_a? Array
-          config_value.include?(project_id)
-        else
-          config_value == project_id
-        end
       end
     end
   end

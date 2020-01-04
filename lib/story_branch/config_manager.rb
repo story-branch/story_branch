@@ -13,12 +13,29 @@ module StoryBranch
 
     def initialize
       @prompt = TTY::Prompt.new(interrupt: :exit)
-      @config = load_config
+      load_configs
+      @config = ::TTY::Config.new
+      @config.merge(@local)
+      @config.merge(@global)
       @errors = []
     end
 
     def tracker_type
       @config.fetch(:tracker, default: 'pivotal-tracker')
+    end
+
+    def tracker_type=(tracker)
+      @local.set(:tracker, value: tracker)
+    end
+
+    def project_key=(key)
+      @project_key = key
+      @local.append(key, to: :project_id) unless contains?(key)
+    end
+
+    def api_key=(key)
+      @api_key = key
+      @global.set(@project_key, :api_key, value: key)
     end
 
     def tracker_params
@@ -33,6 +50,20 @@ module StoryBranch
     def valid?
       validate
       @errors.length.zero?
+    end
+
+    def contains?(project_key)
+      project_keys = @config.fetch(:project_id)
+      if project_keys.is_a? Array
+        project_keys.include?(project_key)
+      else
+        project_keys == project_key
+      end
+    end
+
+    def save
+      @local.write(force: true)
+      @global.write(force: true)
     end
 
     private
@@ -93,18 +124,16 @@ module StoryBranch
       @errors << 'Project ID is not set' if project_id.nil?
     end
 
-    def load_config
-      local = init_config('.')
-      global = init_config(Dir.home)
-      local.merge(global)
-      local
+    def load_configs
+      @local = init_config('.')
+      @global = init_config(Dir.home)
     end
 
     def init_config(path)
       config = ::TTY::Config.new
       config.filename = CONFIG_FILENAME
       config.append_path path
-      config.read
+      config.read if config.persisted?
       config
     end
   end
