@@ -18,13 +18,14 @@ RSpec.describe StoryBranch::Main do
   let(:answer_to_no) { false }
   let(:fake_project) { OpenStruct.new }
   let(:tracker_type) { 'pivotal-tracker' }
-  let(:issue_placement) { 'beginning' }
+  let(:issue_placement) { 'end' }
+  let(:finish_tag) { 'Finishes' }
   let(:config) do
     instance_double(
       StoryBranch::ConfigManager,
       valid?: true, tracker_type: tracker_type, tracker_params: {
         project_id: '123456', api_key: 'myamazingkey'
-      }, issue_placement: issue_placement
+      }, issue_placement: issue_placement, finish_tag: finish_tag
     )
   end
   # NOTE: When prompting for what to do in case branch name is too similar,
@@ -138,6 +139,7 @@ RSpec.describe StoryBranch::Main do
 
         context 'settings set issue id to be in the beginning' do
           let(:branch_name_with_id) { "#{story.id}-#{branch_name}" }
+          let(:issue_placement) { 'beginning' }
 
           it 'creates the branch for the feature based on the feature name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
@@ -146,8 +148,6 @@ RSpec.describe StoryBranch::Main do
         end
 
         context 'when the branch name is not longer that 40 characters' do
-          let(:issue_placement) { 'end' }
-
           it 'creates the branch for the feature based on the feature name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
@@ -159,7 +159,6 @@ RSpec.describe StoryBranch::Main do
           let(:branch_name_with_id) do
             "#{StoryBranch::StringUtils.truncate(branch_name)}-#{story.id}"
           end
-          let(:issue_placement) { 'end' }
 
           it 'creates the branch for the feature based on the truncated name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
@@ -446,12 +445,7 @@ RSpec.describe StoryBranch::Main do
 
       context 'commit message is based on the settings' do
         context 'if the value is set to a word' do
-          let(:local_config) do
-            conf = ::TTY::Config.new
-            conf.set('project_id', value: '123456')
-            conf.set('finish_tag', value: 'Bananas')
-            conf
-          end
+          let(:finish_tag) { 'Bananas' }
           let(:commit_message) { '[Bananas #111] amazing story' }
 
           it 'prompts the user to commit with default message' do
@@ -462,12 +456,7 @@ RSpec.describe StoryBranch::Main do
         end
 
         context 'if the value is set to an empty string' do
-          let(:local_config) do
-            conf = ::TTY::Config.new
-            conf.set('project_id', value: '123456')
-            conf.set('finish_tag', value: '')
-            conf
-          end
+          let(:finish_tag) { '' }
           let(:commit_message) { '[#111] amazing story' }
 
           it 'prompts the user to commit with default message' do

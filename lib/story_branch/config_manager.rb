@@ -32,6 +32,11 @@ module StoryBranch
       @issue_placement ||= @config.fetch(:issue_placement, default: 'End')
     end
 
+    def finish_tag
+      @finish_tag ||= @config.fetch(project_key,
+                                    :finish_tag, default: 'Finishes')
+    end
+
     def project_key=(key)
       @project_key = key
       @local.append(key, to: :project_id) unless contains?(key)
@@ -78,11 +83,6 @@ module StoryBranch
 
     def username
       @username ||= @config.fetch(project_key, :username)
-    end
-
-    def finish_tag
-      @finish_tag ||= @config.fetch(project_key,
-                                    :finish_tag, default: 'Finishes')
     end
 
     def project_key

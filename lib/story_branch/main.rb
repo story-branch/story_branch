@@ -154,7 +154,7 @@ module StoryBranch
     end
 
     def build_finish_message
-      message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
+      message_tag = [@config.finish_tag, "##{current_story.id}"].join(' ').strip
       "[#{message_tag}] #{current_story.title}"
     end
 
@@ -171,6 +171,7 @@ module StoryBranch
 
       # rubocop:disable Metrics/LineLength
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
+
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
       # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
@@ -206,8 +207,6 @@ module StoryBranch
     # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
-      binding.pry
-
       if @config.issue_placement.casecmp('beginning').zero?
         "#{story_id}-#{branch_name}"
       else
