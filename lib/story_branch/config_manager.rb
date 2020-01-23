@@ -2,12 +2,14 @@
 
 require 'tty-config'
 require 'tty-prompt'
+require 'xdg'
 
 module StoryBranch
   # Config manager is used to manage all possible configuration settings
   # it uses mainly TTY::Config with the configuration file name set
   class ConfigManager
     CONFIG_FILENAME = '.story_branch'
+    GLOBAL_PATH = Dir.home
 
     attr_reader :errors
 
@@ -125,15 +127,31 @@ module StoryBranch
     end
 
     def load_configs
-      @local = init_config('.')
-      @global = init_config(Dir.home)
+      @local = read_config('.')
+      xdg_conf = XDG::Config.new
+      home_path = if conf_exist?(xdg_conf.home)
+                    xdg_conf.home
+                  else
+                    Dir.home
+                  end
+      @global = read_config(home_path)
+    end
+
+    def read_config(path)
+      config = init_config(path)
+      config.read if config.persisted?
+      config
+    end
+
+    def conf_exist?(path)
+      config = init_config(path)
+      config.persisted?
     end
 
     def init_config(path)
       config = ::TTY::Config.new
       config.filename = CONFIG_FILENAME
       config.append_path path
-      config.read if config.persisted?
       config
     end
   end
