@@ -60,7 +60,7 @@ module StoryBranch
         raise 'project key must be set' unless @project_id
 
         jira_project = api.Project.find(@project_id)
-        @project = Project.new(jira_project, extra_query)
+        @project = Project.new(jira_project, @extra_query)
       end
     end
   end
