@@ -59,7 +59,8 @@ module StoryBranch
         tracker_domain: tracker_domain,
         username: username,
         project_id: project_id,
-        api_key: api_key
+        api_key: api_key,
+        extra_query: extra_query
       }
     end
 
@@ -98,6 +99,10 @@ module StoryBranch
       project_keys = @config.fetch(:project_id)
 
       @project_key = choose_project_id(project_keys)
+    end
+
+    def extra_query
+      @extra_query ||= @config.fetch(project_key, :extra_query, default: '')
     end
 
     def project_id

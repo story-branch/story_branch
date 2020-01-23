@@ -12,12 +12,15 @@ module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
     class Tracker < StoryBranch::TrackerBase
-      def initialize(tracker_domain:, project_id:, api_key:, username:)
+      # rubocop:disable Metrics/LineLength
+      def initialize(tracker_domain:, project_id:, api_key:, username:, extra_query:)
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key
         @username = username
+        @extra_query = extra_query
       end
+      # rubocop:enable Metrics/LineLength
 
       def valid?
         [@api_key, @project_id, @username, @tracker_url].none?(&:nil?)
@@ -57,7 +60,7 @@ module StoryBranch
         raise 'project key must be set' unless @project_id
 
         jira_project = api.Project.find(@project_id)
-        @project = Project.new(jira_project)
+        @project = Project.new(jira_project, extra_query)
       end
     end
   end
