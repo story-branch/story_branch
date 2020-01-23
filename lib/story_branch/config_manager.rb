@@ -7,6 +7,7 @@ require 'xdg'
 module StoryBranch
   # Config manager is used to manage all possible configuration settings
   # it uses mainly TTY::Config with the configuration file name set
+  # rubocop:disable Metrics/ClassLength
   class ConfigManager
     CONFIG_FILENAME = '.story_branch'
 
@@ -154,4 +155,5 @@ module StoryBranch
       config
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

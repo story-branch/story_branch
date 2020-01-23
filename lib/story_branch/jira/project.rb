@@ -17,11 +17,11 @@ module StoryBranch
         stories = if options[:id]
                     [@project.issues.find(options[:id])]
                   else
-                    # rubocop:disable Layout/LineLength
+                    # rubocop:disable Metrics/LineLength
                     @project.client.Issue.jql(
                       "project=#{@project.key} AND status='To Do' AND assignee=currentUser()"
                     )
-                    # rubocop:enable Layout/LineLength
+                    # rubocop:enable Metrics/LineLength
                   end
 
         stories.map { |s| Issue.new(s, @project) }
