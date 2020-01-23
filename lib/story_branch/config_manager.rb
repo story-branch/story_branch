@@ -51,7 +51,7 @@ module StoryBranch
 
     def username=(username)
       @username = username
-      @global.set(@project_key, :username, value: key)
+      @global.set(@project_key, :username, value: username)
     end
 
     def tracker_params
