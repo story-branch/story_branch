@@ -49,6 +49,11 @@ module StoryBranch
       @global.set(@project_key, :api_key, value: key)
     end
 
+    def username=(username)
+      @username = username
+      @global.set(@project_key, :username, value: key)
+    end
+
     def tracker_params
       {
         tracker_domain: tracker_domain,
