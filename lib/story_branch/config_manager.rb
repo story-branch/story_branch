@@ -9,7 +9,6 @@ module StoryBranch
   # it uses mainly TTY::Config with the configuration file name set
   class ConfigManager
     CONFIG_FILENAME = '.story_branch'
-    GLOBAL_PATH = Dir.home
 
     attr_reader :errors
 
@@ -129,10 +128,10 @@ module StoryBranch
     def load_configs
       @local = read_config('.')
       xdg_conf = XDG::Config.new
-      home_path = if conf_exist?(xdg_conf.home)
-                    xdg_conf.home
-                  else
+      home_path = if conf_exist?(Dir.home)
                     Dir.home
+                  else
+                    xdg_conf.home
                   end
       @global = read_config(home_path)
     end
