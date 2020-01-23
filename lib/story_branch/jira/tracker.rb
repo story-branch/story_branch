@@ -5,22 +5,18 @@
 # my tracker and issues will still provide a similar api. This jira-ruby
 # is used to get the data.
 require 'jira-ruby'
+require 'story_branch/tracker_base'
 require_relative './project'
 
 module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
-    class Tracker
-      TYPE = 'jira'
-
-      attr_reader :type
-
+    class Tracker < StoryBranch::TrackerBase
       def initialize(tracker_domain:, project_id:, api_key:, username:)
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key
         @username = username
-        @type = TYPE
       end
 
       def valid?
@@ -52,10 +48,8 @@ module StoryBranch
         }
       end
 
-      def api
-        raise 'API key must be specified' unless @api_key
-
-        @api ||= JIRA::Client.new(options)
+      def configure_api
+        JIRA::Client.new(options)
       end
 
       def project

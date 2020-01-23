@@ -2,10 +2,15 @@
 
 require 'spec_helper'
 require 'story_branch/commands/add'
+require 'xdg'
 
 RSpec.describe StoryBranch::Commands::Add do
   let(:prompt) { instance_double('TTY::Prompt') }
-  let(:config_directory) { FileUtils.mkdir_p Dir.home }
+  let(:xdg_conf) { XDG::Config.new }
+  let(:config_directory) do
+    FileUtils.mkdir_p xdg_conf.home
+    FileUtils.mkdir_p Dir.home
+  end
 
   before do
     allow(TTY::Prompt).to receive(:new).and_return(prompt)
@@ -22,7 +27,7 @@ RSpec.describe StoryBranch::Commands::Add do
   describe 'when there is no config file' do
     it 'creates a new config in home directory' do
       config = TTY::Config.new
-      config.append_path(Dir.home)
+      config.append_path(xdg_conf.home)
       config.filename = '.story_branch'
       expect(config.persisted?).to eq true
       config.read

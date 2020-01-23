@@ -17,14 +17,9 @@ module StoryBranch
     attr_accessor :tracker
 
     def initialize
-      # TODO: Config manager should be responsible for handling the
-      # configuration and the story branch should only initialize one
-      # config manager that has attr accessors for needed values
-      # Read local config and decide what Utility to use
-      # (e.g. PivotalUtils, GithubUtils, ...)
-      @local_config = ConfigManager.init_config('.')
-      @global_config = ConfigManager.init_config(Dir.home)
-      initialize_tracker
+      @config = ConfigManager.new
+      abort(@config.errors.join("\n")) unless @config.valid?
+      @tracker = initialize_tracker
       abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
 
@@ -75,11 +70,10 @@ module StoryBranch
     private
 
     def require_pivotal
-      if @tracker.type != 'pivotal'
-        prompt.say 'The configured tracker does not support this feature'
-        return false
-      end
-      true
+      return true if @tracker.class.name.match?('Pivotal')
+
+      prompt.say 'The configured tracker does not support this feature'
+      false
     end
 
     def current_story
@@ -159,29 +153,8 @@ module StoryBranch
       @prompt ||= TTY::Prompt.new(interrupt: :exit)
     end
 
-    def finish_tag
-      return @finish_tag if @finish_tag
-
-      fallback = @global_config.fetch(project_id,
-                                      :finish_tag,
-                                      default: 'Finishes')
-      @finish_tag = @local_config.fetch(:finish_tag, default: fallback)
-      @finish_tag
-    end
-
-    def issue_placement
-      return @issue_placement if @issue_placement
-
-      fallback = @global_config.fetch(project_id,
-                                      :issue_placement,
-                                      default: 'End')
-      @issue_placement = @local_config.fetch(:issue_placement,
-                                             default: fallback)
-      @issue_placement
-    end
-
     def build_finish_message
-      message_tag = [finish_tag, "##{current_story.id}"].join(' ').strip
+      message_tag = [@config.finish_tag, "##{current_story.id}"].join(' ').strip
       "[#{message_tag}] #{current_story.title}"
     end
 
@@ -196,10 +169,11 @@ module StoryBranch
       branch_name = valid_branch_name(story)
       return unless branch_name
 
-      # rubocop:disable Layout/LineLength
+      # rubocop:disable Metrics/LineLength
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
+
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      # rubocop:enable Layout/LineLength
+      # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
 
@@ -233,65 +207,30 @@ module StoryBranch
     # rubocop:enable Metrics/MethodLength
 
     def build_branch_name(branch_name, story_id)
-      if issue_placement.casecmp('beginning').zero?
+      if @config.issue_placement.casecmp('beginning').zero?
         "#{story_id}-#{branch_name}"
       else
         "#{branch_name}-#{story_id}"
       end
     end
 
-    def project_id
-      return @project_id if @project_id
-
-      project_ids = @local_config.fetch(:project_id)
-      @project_id = choose_project_id(project_ids)
-    end
-
-    def choose_project_id(project_ids)
-      return project_ids unless project_ids.is_a? Array
-      return project_ids[0] unless project_ids.length > 1
-
-      prompt.select('Which project you want to fetch from?', project_ids)
-    end
-
-    def api_key
-      @api_key ||= @global_config.fetch(project_id, :api_key)
-    end
-
-    def username
-      @username ||= @global_config.fetch(project_id, :username)
-    end
-
     def current_branch
       @current_branch ||= GitWrapper.current_branch
     end
 
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/MethodLength
     def initialize_tracker
-      if project_id.nil?
-        prompt.say 'Project ID not set'
-        exit 0
+      # TODO: Ideally this would be mapped out somewhere so we don't need to
+      # evaluate anything from the config here
+      tracker_type = @config.tracker_type
+      case tracker_type
+      when 'github'
+        StoryBranch::Github::Tracker.new(@config.tracker_params)
+      when 'pivotal-tracker'
+        StoryBranch::Pivotal::Tracker.new(@config.tracker_params)
+      when 'jira'
+        StoryBranch::Jira::Tracker.new(@config.tracker_params)
       end
-      tracker_type = @local_config.fetch(:tracker, default: 'pivotal-tracker')
-      @tracker = case tracker_type
-                 when 'github'
-                   StoryBranch::Github::Tracker.new(project_id, api_key)
-                 when 'pivotal-tracker'
-                   StoryBranch::Pivotal::Tracker.new(project_id, api_key)
-                 when 'jira'
-                   tracker_domain, project_key = project_id.split('|')
-                   options = {
-                     tracker_domain: tracker_domain,
-                     project_id: project_key,
-                     api_key: api_key,
-                     username: username
-                   }
-                   StoryBranch::Jira::Tracker.new(options)
-                 end
     end
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/MethodLength
   end
   # rubocop:enable Metrics/ClassLength
 end

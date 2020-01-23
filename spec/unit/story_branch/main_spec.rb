@@ -17,15 +17,16 @@ RSpec.describe StoryBranch::Main do
   let(:story_from_tracker) { nil }
   let(:answer_to_no) { false }
   let(:fake_project) { OpenStruct.new }
-  let(:local_config) do
-    conf = ::TTY::Config.new
-    conf.set('project_id', value: '123456')
-    conf
-  end
-  let(:global_config) do
-    conf = ::TTY::Config.new
-    conf.set('123456', 'api_key', value: 'myamazingkey')
-    conf
+  let(:tracker_type) { 'pivotal-tracker' }
+  let(:issue_placement) { 'end' }
+  let(:finish_tag) { 'Finishes' }
+  let(:config) do
+    instance_double(
+      StoryBranch::ConfigManager,
+      valid?: true, tracker_type: tracker_type, tracker_params: {
+        project_id: '123456', api_key: 'myamazingkey'
+      }, issue_placement: issue_placement, finish_tag: finish_tag
+    )
   end
   # NOTE: When prompting for what to do in case branch name is too similar,
   # we have 1,2,3 as options. Being 1: Rename, 2: Proceed, 3: Abort
@@ -61,23 +62,11 @@ RSpec.describe StoryBranch::Main do
     allow(prompt).to receive(:say)
     allow(prompt).to receive(:yes?).and_return answer_to_no
     allow(prompt).to receive(:ask).and_return branch_name
-    allow(StoryBranch::ConfigManager).to receive(:init_config) do |arg|
-      if arg == '.'
-        local_config
-      elsif arg == Dir.home
-        global_config
-      end
-    end
+    allow(StoryBranch::ConfigManager).to receive(:new).and_return config
     allow(sb.tracker).to receive(:stories).and_return stories
     allow(sb.tracker).to receive(:stories_with_state).and_return stories
     allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
     sb
-  end
-
-  it 'loads the config files' do
-    expect(StoryBranch::ConfigManager).to(
-      have_received(:init_config).exactly(2).times
-    )
   end
 
   describe 'tracker initialization' do
@@ -90,35 +79,12 @@ RSpec.describe StoryBranch::Main do
     end
 
     describe 'when there is a tracker defined in config files' do
-      let(:local_config) do
-        conf = ::TTY::Config.new
-        conf.set('project_id', value: '123456')
-        conf.set('tracker', value: 'github')
-        conf
-      end
+      let(:tracker_type) { 'github' }
 
       it 'initializes the matching tracker' do
         expect(sb.tracker).to_not be(nil)
         expect(sb.tracker.valid?).to eq true
         expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
-      end
-    end
-
-    describe 'when there are multiple local projects configured' do
-      let(:local_config) do
-        conf = ::TTY::Config.new
-        conf.set('project_id', value: %w[123456 54321])
-        conf
-      end
-      let(:global_config) do
-        conf = ::TTY::Config.new
-        conf.set('123456', 'api_key', value: 'myamazingkey')
-        conf
-      end
-
-      it 'prompts the user to choose the project to use' do
-        expect(prompt).to have_received(:select)
-          .with('Which project you want to fetch from?', %w[123456 54321])
       end
     end
   end
@@ -172,13 +138,8 @@ RSpec.describe StoryBranch::Main do
         let(:branch_exists) { false }
 
         context 'settings set issue id to be in the beginning' do
-          let(:local_config) do
-            conf = ::TTY::Config.new
-            conf.set('project_id', value: '123456')
-            conf.set('issue_placement', value: 'beginning')
-            conf
-          end
           let(:branch_name_with_id) { "#{story.id}-#{branch_name}" }
+          let(:issue_placement) { 'beginning' }
 
           it 'creates the branch for the feature based on the feature name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
@@ -198,6 +159,7 @@ RSpec.describe StoryBranch::Main do
           let(:branch_name_with_id) do
             "#{StoryBranch::StringUtils.truncate(branch_name)}-#{story.id}"
           end
+
           it 'creates the branch for the feature based on the truncated name' do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
@@ -483,12 +445,7 @@ RSpec.describe StoryBranch::Main do
 
       context 'commit message is based on the settings' do
         context 'if the value is set to a word' do
-          let(:local_config) do
-            conf = ::TTY::Config.new
-            conf.set('project_id', value: '123456')
-            conf.set('finish_tag', value: 'Bananas')
-            conf
-          end
+          let(:finish_tag) { 'Bananas' }
           let(:commit_message) { '[Bananas #111] amazing story' }
 
           it 'prompts the user to commit with default message' do
@@ -499,12 +456,7 @@ RSpec.describe StoryBranch::Main do
         end
 
         context 'if the value is set to an empty string' do
-          let(:local_config) do
-            conf = ::TTY::Config.new
-            conf.set('project_id', value: '123456')
-            conf.set('finish_tag', value: '')
-            conf
-          end
+          let(:finish_tag) { '' }
           let(:commit_message) { '[#111] amazing story' }
 
           it 'prompts the user to commit with default message' do

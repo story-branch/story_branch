@@ -78,17 +78,5 @@ module StoryBranch
         StoryBranch::Commands::Add.new(options).execute
       end
     end
-
-    desc 'migrate', 'Migrate old story branch configuration to the new format'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    def migrate(*)
-      if options[:help]
-        invoke :help, ['migrate']
-      else
-        require_relative 'commands/migrate'
-        StoryBranch::Commands::Migrate.new(options).execute
-      end
-    end
   end
 end
