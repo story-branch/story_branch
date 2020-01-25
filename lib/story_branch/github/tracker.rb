@@ -32,6 +32,11 @@ module StoryBranch
         project.stories(id: story_id).first
       end
 
+      def open_story(story_id)
+        get_story_by_id(story_id)
+        binding.pry
+      end
+
       private
 
       def configure_api
