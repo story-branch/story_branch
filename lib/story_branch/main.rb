@@ -67,6 +67,15 @@ module StoryBranch
       update_status('started', 'unstarted', 'unstart')
     end
 
+    def open_current_url
+      if current_story
+        prompt.say 'Opening story in browser...'
+        StoryBranch::UrlOpener.open_url(current_story.html_url)
+      else
+        prompt.say 'Could not find matching story in configured tracker'
+      end
+    end
+
     private
 
     def require_pivotal

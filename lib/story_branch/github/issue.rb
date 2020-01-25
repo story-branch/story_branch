@@ -7,7 +7,7 @@ module StoryBranch
   module Github
     # GitHub Issue representation
     class Issue
-      attr_accessor :title, :id
+      attr_accessor :title, :id, :html_url
 
       def initialize(blanket_story, repo)
         @repo = repo
@@ -18,6 +18,7 @@ module StoryBranch
         @milestone =  if blanket_story.milestone
                         Milestone.new(blanket_story.milestone)
                       end
+        @html_url = blanket_story.html_url
       end
 
       def update_state

@@ -11,9 +11,9 @@ module StoryBranch
       end
 
       def execute(_input: $stdin, _output: $stdout)
-        # Load config
-        # init tracker
-        # open url
+        require_relative '../main'
+        sb = StoryBranch::Main.new
+        sb.open_current_url
       end
     end
   end
