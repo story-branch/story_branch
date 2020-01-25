@@ -18,6 +18,18 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
+    desc 'open_issue', 'Command description...'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def open_issue(*)
+      if options[:help]
+        invoke :help, ['open_issue']
+      else
+        require_relative 'commands/open_issue'
+        StoryBranch::Commands::OpenIssue.new(options).execute
+      end
+    end
+
     desc 'unstart', 'Mark a started story as un-started in Pivotal Tracker'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
