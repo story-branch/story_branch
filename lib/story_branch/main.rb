@@ -6,6 +6,7 @@ require_relative './jira/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
+require_relative './url_opener'
 require 'tty-prompt'
 
 module StoryBranch
