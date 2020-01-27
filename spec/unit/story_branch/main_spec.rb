@@ -18,14 +18,14 @@ RSpec.describe StoryBranch::Main do
   let(:answer_to_no) { false }
   let(:fake_project) { OpenStruct.new }
   let(:tracker_type) { 'pivotal-tracker' }
+  let(:tracker_params) { { project_id: '123456', api_key: 'myamazingkey' } }
   let(:issue_placement) { 'end' }
   let(:finish_tag) { 'Finishes' }
   let(:config) do
     instance_double(
       StoryBranch::ConfigManager,
-      valid?: true, tracker_type: tracker_type, tracker_params: {
-        project_id: '123456', api_key: 'myamazingkey'
-      }, issue_placement: issue_placement, finish_tag: finish_tag
+      valid?: true, tracker_type: tracker_type, tracker_params: tracker_params,
+      issue_placement: issue_placement, finish_tag: finish_tag
     )
   end
   # NOTE: When prompting for what to do in case branch name is too similar,
@@ -335,14 +335,22 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'story_finish' do
-    describe 'when the branch name does not follow story branch format' do
-      let(:branch_story_parts) { {} }
-      let(:story_from_tracker) { 'something to check condition is met' }
+    let(:story_double) { instance_double(StoryBranch::Jira::Issue) }
+    let(:tracker_type) { 'jira' }
+    let(:tracker_params) do
+      { tracker_domain: 'storybrancher', username: 'sb', extra_query: '',
+        project_id: 'SB', api_key: '123456' }
+    end
 
-      it 'prints the error message to the user' do
-        sb.story_finish
-        msg = 'No tracked feature associated with this branch'
-        expect(prompt).to have_received(:error).with msg
+    before do
+      allow(sb.tracker).to receive(:current_story).and_return(story_double)
+    end
+
+    describe 'when the branch name does not follow story branch format' do
+      it 'does nothing' do
+        # TODO: make method call return something
+        res = sb.story_finish
+        expect(res).to eq nil
       end
     end
 
