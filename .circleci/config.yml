@@ -64,15 +64,15 @@ jobs:
 
             bundle exec rspec $TEST_FILES
 
-      - run:
-          name: Code Climate Test Coverage
-          command: |
-            ./cc-test-reporter after-build --exit-code $?
-
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
+
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter after-build --exit-code $?
 
   upload-coverage:
     <<: *defaults
