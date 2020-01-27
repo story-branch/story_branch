@@ -5,7 +5,7 @@
 # my tracker and issues will still provide a similar api. This jira-ruby
 # is used to get the data.
 require 'jira-ruby'
-require 'story_branch/tracker_base'
+require_relative '../tracker_base'
 require_relative './project'
 
 module StoryBranch
@@ -14,8 +14,11 @@ module StoryBranch
     class Tracker < StoryBranch::TrackerBase
       # rubocop:disable Metrics/LineLength
       def initialize(tracker_domain:, project_id:, api_key:, username:, extra_query:)
+        super
+
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
+        @issue_regex = Regexp.new("#{@project_id}-(\\d+)")
         @api_key = api_key
         @username = username
         @extra_query = extra_query

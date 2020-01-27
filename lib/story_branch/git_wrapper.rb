@@ -47,7 +47,7 @@ module StoryBranch
       current_branch_line = all_branches.detect do |line|
         line.match(/\*/)
       end
-      current_branch_line.tr('*', ' ')
+      current_branch_line.tr('*', ' ').strip
     end
 
     def self.all_branches

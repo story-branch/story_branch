@@ -16,7 +16,7 @@ module StoryBranch
       # Probably will need a specific query builder per tracker
       def stories(options = {})
         stories = if options[:id]
-                    [@project.issues.find(options[:id])]
+                    [@project.client.Issue.find(options[:id])]
                   else
                     @project.client.Issue.jql(jql_query)
                   end

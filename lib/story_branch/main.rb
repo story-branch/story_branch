@@ -6,6 +6,7 @@ require_relative './jira/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
+require_relative './url_opener'
 require 'tty-prompt'
 
 module StoryBranch
@@ -67,6 +68,15 @@ module StoryBranch
       update_status('started', 'unstarted', 'unstart')
     end
 
+    def open_current_url
+      if current_story
+        prompt.say 'Opening story in browser...'
+        StoryBranch::UrlOpener.open_url(current_story.html_url)
+      else
+        prompt.say 'Could not find matching story in configured tracker'
+      end
+    end
+
     private
 
     def require_pivotal
@@ -77,17 +87,9 @@ module StoryBranch
     end
 
     def current_story
-      return @current_story if @current_story
+      return nil unless @tracker
 
-      current_story = GitUtils.current_branch_story_parts
-
-      unless current_story.empty?
-        @current_story = @tracker.get_story_by_id(current_story[:id])
-        return @current_story if @current_story
-      end
-
-      prompt.error('No tracked feature associated with this branch')
-      nil
+      @tracker.current_story
     end
 
     def unstaged_changes?

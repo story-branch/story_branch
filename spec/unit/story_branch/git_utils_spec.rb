@@ -62,7 +62,7 @@ RSpec.describe StoryBranch::GitUtils do
     end
   end
 
-  describe 'current_branch_story_parts' do
+  describe 'branch_to_story_string' do
     let(:branch) { 'amazing-feature-1' }
 
     before do
@@ -70,10 +70,19 @@ RSpec.describe StoryBranch::GitUtils do
         .and_return(branch)
     end
 
-    it 'returns story title and id' do
-      expect(StoryBranch::GitUtils.current_branch_story_parts).to eq(
-        title: 'amazing feature', id: 1
-      )
+    context 'when no regex is passed' do
+      it 'returns regex matching between current branch and default regex' do
+        res = StoryBranch::GitUtils.branch_to_story_string
+        expect(res[0]).to eq branch
+        expect(res[1]).to eq '1'
+      end
+    end
+
+    context 'when regex is passed' do
+      it 'returns regex matching between current branch and default regex' do
+        res = StoryBranch::GitUtils.branch_to_story_string(/bananas/)
+        expect(res).to eq nil
+      end
     end
   end
 end

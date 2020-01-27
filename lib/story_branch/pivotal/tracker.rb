@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'blanket'
-require 'story_branch/tracker_base'
+require_relative '../tracker_base'
 require_relative './project'
 
 module StoryBranch
@@ -12,6 +12,7 @@ module StoryBranch
       API_URL = 'https://www.pivotaltracker.com/services/v5/'
 
       def initialize(project_id:, api_key:, **)
+        super
         @project_id = project_id
         @api_key = api_key
       end

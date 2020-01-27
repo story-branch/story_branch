@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 module StoryBranch
   # Base story branch tracker class that will define the expected interface
   class TrackerBase
+    def initialize(_options = {})
+      @issue_regex = Regexp.new('(\\d+)')
+    end
+
     def valid?
       raise 'valid? > must be implemented in the custom tracker'
     end
@@ -19,6 +21,21 @@ module StoryBranch
 
     def get_story_by_id(_story_id)
       []
+    end
+
+    def current_story
+      return @current_story if @current_story
+
+      # TODO: This should look at the tracker configuration and search
+      # for the string either in the beginning or the end, according
+      # to what is configured
+      story_from_branch = GitUtils.branch_to_story_string(@issue_regex)
+      if story_from_branch.length == 2
+        @current_story = get_story_by_id(story_from_branch[0])
+        return @current_story
+      end
+      prompt.error('No tracked feature associated with this branch')
+      nil
     end
 
     private

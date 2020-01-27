@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'blanket'
-require 'story_branch/tracker_base'
+require_relative '../tracker_base'
 require_relative './project'
 
 module StoryBranch
@@ -11,6 +11,7 @@ module StoryBranch
       API_URL = 'https://api.github.com/'
 
       def initialize(project_id:, api_key:, **)
+        super
         # NOTE: RepoName should follow owner/repo_name format
         @repo_name = project_id
         @api_key = api_key
