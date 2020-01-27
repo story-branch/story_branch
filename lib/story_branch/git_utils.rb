@@ -29,7 +29,7 @@ module StoryBranch
       false
     end
 
-    def self.branch_to_story_string(regex_matcher = /(.*)-(\d+$)/)
+    def self.branch_to_story_string(regex_matcher = /.*-(\d+$)/)
       GitWrapper.current_branch.match(regex_matcher)
     end
 
