@@ -27,6 +27,8 @@ workflows:
 jobs:
   test:
     <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
     steps:
       - checkout
 
