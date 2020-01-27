@@ -8,6 +8,8 @@ module StoryBranch
 
       # TODO: Add component and labels to the info of the issue
       def initialize(jira_issue, project)
+        binding.pry
+
         @project = project
         @story = jira_issue
         @title = jira_issue.summary

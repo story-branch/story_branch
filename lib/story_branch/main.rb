@@ -87,17 +87,9 @@ module StoryBranch
     end
 
     def current_story
-      return @current_story if @current_story
+      return nil unless @tracker
 
-      current_story = GitUtils.current_branch_story_parts
-
-      unless current_story.empty?
-        @current_story = @tracker.get_story_by_id(current_story[:id])
-        return @current_story if @current_story
-      end
-
-      prompt.error('No tracked feature associated with this branch')
-      nil
+      @tracker.current_story
     end
 
     def unstaged_changes?

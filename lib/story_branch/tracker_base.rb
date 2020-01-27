@@ -21,6 +21,20 @@ module StoryBranch
       []
     end
 
+    def current_story
+      return @current_story if @current_story
+
+      binding.pry
+
+      story_from_branch = GitUtils.branch_to_story_string(@issue_regex)
+      if story_from_branch.length == 2
+        @current_story = get_story_by_id(story_from_branch[0])
+        return @current_story
+      end
+      prompt.error('No tracked feature associated with this branch')
+      nil
+    end
+
     private
 
     def api
