@@ -75,6 +75,11 @@ jobs:
       - run:
           name: Code Climate Test Coverage
           command: |
+            ./cc-test-reporter format-coverage -t simplecov
+
+      - run:
+          name: Code Climate Test Coverage
+          command: |
             ./cc-test-reporter after-build -t simplecov --exit-code $?
 
   upload-coverage:
