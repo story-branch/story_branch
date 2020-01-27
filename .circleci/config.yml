@@ -15,10 +15,6 @@ workflows:
               # this enables circleci to trigger on tags
               only: /.*/
 
-      - upload-coverage:
-          requires:
-            - test
-
       - publish:
           requires:
             - test
@@ -72,13 +68,12 @@ jobs:
       - run:
           name: Code Climate Test Coverage
           command: |
-            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+            ./cc-test-reporter after-build --exit-code $?
 
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
-          destination: test-results
 
   upload-coverage:
     <<: *defaults
