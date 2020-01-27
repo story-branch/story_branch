@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'story_branch/commands/open_issue'
 
 RSpec.describe StoryBranch::Commands::OpenIssue do
-  it "executes `open_issue` command successfully" do
+  it 'executes `open_issue` command successfully' do
     output = StringIO.new
     options = {}
     command = StoryBranch::Commands::OpenIssue.new(options)
