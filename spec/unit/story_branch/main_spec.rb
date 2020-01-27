@@ -335,7 +335,7 @@ RSpec.describe StoryBranch::Main do
   end
 
   describe 'story_finish' do
-    let(:story_double) { instance_double(StoryBranch::Jira::Issue) }
+    let(:story_double) { nil }
     let(:tracker_type) { 'jira' }
     let(:tracker_params) do
       { tracker_domain: 'storybrancher', username: 'sb', extra_query: '',
@@ -355,48 +355,18 @@ RSpec.describe StoryBranch::Main do
     end
 
     describe 'when the feature id does not match a feature in the tracker' do
-      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
-      let(:story_from_tracker) { nil }
+      let(:story_double) { nil }
 
-      it 'tries to fetch the story from the tracker' do
-        sb.story_finish
-        expect(sb.tracker).to have_received(:get_story_by_id).with('111')
-      end
-
-      it 'prints the error message to the user' do
-        sb.story_finish
-        msg = 'No tracked feature associated with this branch'
-        expect(prompt).to have_received(:error).with msg
+      it 'does nothing' do
+        # TODO: make method call return something
+        res = sb.story_finish
+        expect(res).to eq nil
       end
     end
 
     describe 'when there are untracked files' do
-      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
-      let(:story_from_tracker) do
-        instance_double(StoryBranch::Pivotal::Story,
-                        title: 'amazing story', id: '111')
-      end
-
-      before do
-        allow(StoryBranch::GitUtils).to receive(:status?).and_return true
-      end
-
-      it 'prints the message informing the user' do
-        sb.story_finish
-        message = <<~MESSAGE
-          There are unstaged changes
-          Use git add to stage changes before running git finish
-          Use git stash if you want to hide changes for this commit
-        MESSAGE
-        expect(prompt).to have_received(:say).once.with(message)
-      end
-    end
-
-    describe 'when there are unstaged modified files' do
-      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
-      let(:story_from_tracker) do
-        instance_double(StoryBranch::Pivotal::Story,
-                        title: 'amazing story', id: '111')
+      let(:story_double) do
+        instance_double(StoryBranch::Jira::Issue, id: 'SB-123', title: 'yay')
       end
 
       before do
@@ -415,10 +385,8 @@ RSpec.describe StoryBranch::Main do
     end
 
     describe 'when there are no changes to commit' do
-      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
-      let(:story_from_tracker) do
-        instance_double(StoryBranch::Pivotal::Story,
-                        title: 'amazing story', id: '111')
+      let(:story_double) do
+        instance_double(StoryBranch::Jira::Issue, id: 'SB-123', title: 'yay')
       end
 
       before do
@@ -436,13 +404,11 @@ RSpec.describe StoryBranch::Main do
     end
 
     describe 'when there are staged changes to be commited' do
-      let(:branch_story_parts) { { title: 'amazing story', id: '111' } }
-      let(:story_from_tracker) do
-        instance_double(StoryBranch::Pivotal::Story,
-                        title: 'amazing story', id: '111')
+      let(:story_double) do
+        instance_double(StoryBranch::Jira::Issue, id: 'SB-123', title: 'yay')
       end
       let(:answer_to_no) { false }
-      let(:commit_message) { '[Finishes #111] amazing story' }
+      let(:commit_message) { '[Finishes #SB-123] yay' }
 
       before do
         allow(StoryBranch::GitUtils).to receive(:status?) do |arg|
@@ -454,7 +420,7 @@ RSpec.describe StoryBranch::Main do
       context 'commit message is based on the settings' do
         context 'if the value is set to a word' do
           let(:finish_tag) { 'Bananas' }
-          let(:commit_message) { '[Bananas #111] amazing story' }
+          let(:commit_message) { '[Bananas #SB-123] yay' }
 
           it 'prompts the user to commit with default message' do
             expect(prompt).to have_received(:yes?).once
@@ -465,7 +431,7 @@ RSpec.describe StoryBranch::Main do
 
         context 'if the value is set to an empty string' do
           let(:finish_tag) { '' }
-          let(:commit_message) { '[#111] amazing story' }
+          let(:commit_message) { '[#SB-123] yay' }
 
           it 'prompts the user to commit with default message' do
             expect(prompt).to have_received(:yes?).once
