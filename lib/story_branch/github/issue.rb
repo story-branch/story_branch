@@ -15,9 +15,9 @@ module StoryBranch
         @title = blanket_story.title
         @id = blanket_story.number
         @labels = blanket_story.labels.map { |label| Label.new(label) }
-        @milestone =  if blanket_story.milestone
-                        Milestone.new(blanket_story.milestone)
-                      end
+        @milestone = if blanket_story.milestone
+                       Milestone.new(blanket_story.milestone)
+                     end
         @html_url = blanket_story.html_url
       end
 

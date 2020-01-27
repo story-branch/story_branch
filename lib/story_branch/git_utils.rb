@@ -29,8 +29,8 @@ module StoryBranch
       false
     end
 
-    def self.current_story
-      /(.*)-(\d+$)/.match GitWrapper.current_branch
+    def self.current_story(regex_matcher = /(.*)-(\d+$)/)
+      regex_matcher.match GitWrapper.current_branch
     end
 
     def self.current_branch_story_parts

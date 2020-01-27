@@ -14,6 +14,7 @@ module StoryBranch
     class Tracker < StoryBranch::TrackerBase
       # rubocop:disable Metrics/LineLength
       def initialize(tracker_domain:, project_id:, api_key:, username:, extra_query:)
+        @issue_regex = "#{@project_id}-(d+)"
         @tracker_url = "https://#{tracker_domain}.atlassian.net"
         @project_id = project_id
         @api_key = api_key

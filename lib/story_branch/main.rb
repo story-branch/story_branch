@@ -38,7 +38,7 @@ module StoryBranch
     end
 
     def story_finish
-      return unless current_story
+      return unless current_story(tracker.issue_regex)
       return if unstaged_changes?
       return if nothing_to_add?
 
