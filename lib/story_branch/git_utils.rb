@@ -29,21 +29,8 @@ module StoryBranch
       false
     end
 
-    def self.current_story(regex_matcher = /(.*)-(\d+$)/)
-      puts '[Deprecated] Move logic to tracker instead'
-      regex_matcher.match GitWrapper.current_branch
-    end
-
     def self.branch_to_story_string(regex_matcher = /(.*)-(\d+$)/)
       GitWrapper.current_branch.match(regex_matcher)
-    end
-
-    def self.current_branch_story_parts
-      matches = current_story
-      return {} unless matches&.length == 3
-
-      title = matches[1].tr('-', ' ').strip
-      { title: title, id: matches[2].to_i }
     end
 
     def self.status?(state)

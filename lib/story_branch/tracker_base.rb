@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 module StoryBranch
   # Base story branch tracker class that will define the expected interface
   class TrackerBase
+    def initialize(_options = {})
+      @issue_regex = new Regexp('(\\d+)')
+    end
+
     def valid?
       raise 'valid? > must be implemented in the custom tracker'
     end
@@ -23,8 +25,6 @@ module StoryBranch
 
     def current_story
       return @current_story if @current_story
-
-      binding.pry
 
       story_from_branch = GitUtils.branch_to_story_string(@issue_regex)
       if story_from_branch.length == 2
