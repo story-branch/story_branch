@@ -65,7 +65,7 @@ jobs:
             bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
-                            $TEST_FILES$TEST_FILES
+                            $TEST_FILES
 
       - store_test_results:
           path: /tmp/test-results
