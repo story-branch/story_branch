@@ -163,11 +163,6 @@ module StoryBranch
     def create_feature_branch(story)
       return if story.nil?
 
-      if GitUtils.branch_for_story_exists? story.id
-        prompt.error("An existing branch has the same story id: #{story.id}")
-        return
-      end
-
       branch_name = valid_branch_name(story)
       return unless branch_name
 

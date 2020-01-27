@@ -20,15 +20,6 @@ module StoryBranch
       false
     end
 
-    def self.branch_for_story_exists?(id)
-      GitWrapper.branch_names.each do |n|
-        branch_id = n.match(/-[1-9]+[0-9]*$/)
-        next unless branch_id
-        return true if branch_id.to_s == "-#{id}"
-      end
-      false
-    end
-
     def self.branch_to_story_string(regex_matcher = /.*-(\d+$)/)
       GitWrapper.current_branch.match(regex_matcher)
     end
