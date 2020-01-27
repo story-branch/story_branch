@@ -27,13 +27,21 @@ workflows:
 jobs:
   test:
     <<: *defaults
+
     steps:
       - checkout
 
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter before-build
+
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-
 
       - run:
           name: install dependencies
@@ -44,7 +52,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: run tests
@@ -61,7 +69,16 @@ jobs:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
-          destination: test-results
+
+      - run:
+          name: Code Climate Test Coverage convert to json
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov
+
+      - run:
+          name: Code Climate Test Coverage upload results
+          command: |
+            ./cc-test-reporter after-build -t simplecov --exit-code $?
 
   publish:
     <<: *defaults
@@ -70,8 +87,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-
 
       - run:
           name: install dependencies
@@ -82,7 +99,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Setup Rubygems
