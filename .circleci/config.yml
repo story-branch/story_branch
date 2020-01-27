@@ -15,6 +15,10 @@ workflows:
               # this enables circleci to trigger on tags
               only: /.*/
 
+      - upload-coverage:
+          requires:
+            - test
+
       - publish:
           requires:
             - test
@@ -27,15 +31,21 @@ workflows:
 jobs:
   test:
     <<: *defaults
-    environment:
-      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
+
     steps:
       - checkout
 
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter before-build
+
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-
 
       - run:
           name: install dependencies
@@ -46,7 +56,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: run tests
@@ -59,11 +69,38 @@ jobs:
                             --out /tmp/test-results/rspec.xml \
                             $TEST_FILES
 
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
           destination: test-results
+
+  upload-coverage:
+    <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
+
+    steps:
+      # This will restore files from persist_to_workspace step
+      # Thanks to it we will have access to CodeClimate test coverage files from
+      # each parallel job. We need them in order to merge it into one file in next step.
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Install Code Climate Test Reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          # merge CodeClimate files from each parallel job into sum coverage
+          # and then upload it to CodeClimate dashboard
+          command: |
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
   publish:
     <<: *defaults
@@ -72,8 +109,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "Gemfile.lock" }}
+          - v2-dependencies-
 
       - run:
           name: install dependencies
@@ -84,7 +121,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Setup Rubygems
