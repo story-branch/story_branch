@@ -56,16 +56,13 @@ RSpec.describe StoryBranch::Main do
         stories[0]
       end
     end
-    allow(prompt).to receive(:error)
-    allow(prompt).to receive(:warn)
-    allow(prompt).to receive(:ok)
-    allow(prompt).to receive(:say)
-    allow(prompt).to receive(:yes?).and_return answer_to_no
-    allow(prompt).to receive(:ask).and_return branch_name
+    allow(prompt).to receive_messages(error: true, warn: true, ok: true,
+                                      say: true, yes?: answer_to_no,
+                                      ask: branch_name)
     allow(StoryBranch::ConfigManager).to receive(:new).and_return config
-    allow(sb.tracker).to receive(:stories).and_return stories
-    allow(sb.tracker).to receive(:stories_with_state).and_return stories
-    allow(sb.tracker).to receive(:get_story_by_id).and_return story_from_tracker
+    allow(sb.tracker).to receive_messages(stories: stories,
+                                          stories_with_state: stories,
+                                          get_story_by_id: story_from_tracker)
     sb
   end
 
