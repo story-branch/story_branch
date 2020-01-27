@@ -43,25 +43,6 @@ RSpec.describe StoryBranch::GitUtils do
     end
   end
 
-  describe 'branch_for_story_exists?' do
-    describe 'existing branches include the passed id' do
-      it 'fetches all branches with command execution' do
-        StoryBranch::GitUtils.branch_for_story_exists?(1)
-        expect(StoryBranch::GitWrapper).to have_received(:branch_names)
-      end
-
-      it 'returns true' do
-        expect(StoryBranch::GitUtils.branch_for_story_exists?(1)).to eq true
-      end
-    end
-
-    describe 'existing branches does not include the passed id' do
-      it 'returns false' do
-        expect(StoryBranch::GitUtils.branch_for_story_exists?(3)).to eq false
-      end
-    end
-  end
-
   describe 'branch_to_story_string' do
     let(:branch) { 'amazing-feature-1' }
 
