@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
-require 'story_branch/url_opener'
+require 'story_branch/main'
 require 'story_branch/commands/open_issue'
 
 RSpec.describe StoryBranch::Commands::OpenIssue do
   let(:output) { StringIO.new }
   let(:options) { {} }
+  let(:sb_double) { double(StoryBranch::Main, open_current_url: true) }
 
   before do
-    allow(StoryBranch::UrlOpener).to receive(:open_url).and_return true
+    allow(StoryBranch::Main).to receive(:new).and_return sb_double
     command = StoryBranch::Commands::OpenIssue.new(options)
     command.execute(output: output)
   end
@@ -18,6 +19,6 @@ RSpec.describe StoryBranch::Commands::OpenIssue do
   end
 
   it 'opens url' do
-    expect(StoryBranch::UrlOpener).to have_received(:open_url)
+    expect(sb_double).to have_received(:open_current_url)
   end
 end
