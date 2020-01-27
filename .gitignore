@@ -2,3 +2,4 @@
 story_branch-*.gem
 /.pairs
 .byebug_history
+coverage
