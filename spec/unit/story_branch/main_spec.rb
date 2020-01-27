@@ -164,19 +164,6 @@ RSpec.describe StoryBranch::Main do
         end
       end
 
-      describe 'when the story id already has a branch' do
-        let(:branch_exists) { true }
-
-        it 'does not create a new branch' do
-          expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
-        end
-
-        it 'shows an informative message' do
-          message = "An existing branch has the same story id: #{story.id}"
-          expect(prompt).to have_received(:error).with(message)
-        end
-      end
-
       describe 'when branch name is very similar to an exsiting one' do
         let(:similar_branch) { true }
 
