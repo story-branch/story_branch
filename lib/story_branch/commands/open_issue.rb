@@ -10,10 +10,11 @@ module StoryBranch
         @options = options
       end
 
-      def execute(_input: $stdin, _output: $stdout)
+      def execute(_input: $stdin, output: $stdout)
         require_relative '../main'
         sb = StoryBranch::Main.new
-        sb.open_current_url
+        res = sb.open_current_url
+        output.write(res)
       end
     end
   end
