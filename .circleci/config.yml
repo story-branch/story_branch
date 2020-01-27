@@ -71,33 +71,14 @@ jobs:
           path: /tmp/test-results
 
       - run:
-          name: Code Climate Test Coverage
+          name: Code Climate Test Coverage convert to json
           command: |
             ./cc-test-reporter format-coverage -t simplecov
 
       - run:
-          name: Code Climate Test Coverage
+          name: Code Climate Test Coverage upload results
           command: |
             ./cc-test-reporter after-build -t simplecov --exit-code $?
-
-  upload-coverage:
-    <<: *defaults
-    steps:
-      # This will restore files from persist_to_workspace step
-      # Thanks to it we will have access to CodeClimate test coverage files from
-      # each parallel job. We need them in order to merge it into one file in next step.
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: Install Code Climate Test Reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run:
-          # merge CodeClimate files from each parallel job into sum coverage
-          # and then upload it to CodeClimate dashboard
-          command: |
-            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input -
 
   publish:
     <<: *defaults
