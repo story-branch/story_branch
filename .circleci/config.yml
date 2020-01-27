@@ -27,6 +27,8 @@ workflows:
 jobs:
   test:
     <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
 
     steps:
       - checkout
@@ -77,9 +79,6 @@ jobs:
 
   upload-coverage:
     <<: *defaults
-    environment:
-      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID
-
     steps:
       # This will restore files from persist_to_workspace step
       # Thanks to it we will have access to CodeClimate test coverage files from
