@@ -4,11 +4,17 @@
 
 # Story Branch
 
-Story branch is a CLI application that interacts with Pivotal Tracker or Github at the
+Story branch is a CLI application that interacts with Pivotal Tracker, Github and Jira
 at the moment.
-It allows you to start and un-start stories in Pivotal Tracker, as well as creating
-branches based on the story name and id and have a final commit message marking
-the story as Finished.
+
+For all the trackers it supports creating local branches from the tickets or
+opening the ticket in your browser from the branch you're working on. In the future
+I plan to support different workflows in order to integrate your individual
+process in the tool.
+
+As for PivotalTracker, since the flow is mostly the same for everyone, it allows
+you to start and un-start stories as well.
+
 
 [View Changelog](Changelog.md)
 
