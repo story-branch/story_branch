@@ -30,7 +30,7 @@ module StoryBranch
       private
 
       def transform_url(url)
-        url.gsub(%r{rest\/api.*$}, "browse/#{@id}")
+        url.gsub(%r{rest/api.*$}, "browse/#{@id}")
       end
     end
   end

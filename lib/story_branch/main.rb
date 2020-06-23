@@ -93,9 +93,7 @@ module StoryBranch
     end
 
     def unstaged_changes?
-      unless GitUtils.status?(:untracked) || GitUtils.status?(:modified)
-        return false
-      end
+      return false unless GitUtils.status?(:untracked) || GitUtils.status?(:modified)
 
       message = <<~MESSAGE
         There are unstaged changes
@@ -166,18 +164,15 @@ module StoryBranch
       branch_name = valid_branch_name(story)
       return unless branch_name
 
-      # rubocop:disable Metrics/LineLength
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
 
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      # rubocop:enable Metrics/LineLength
       GitWrapper.create_branch feature_branch_name_with_story_id
     end
 
     def valid_branch_name(story)
       prompt.say "You are checked out at: #{current_branch}"
-      branch_name = prompt.ask('Provide a new branch name',
-                               default: story.dashed_title)
+      branch_name = prompt.ask('Provide a new branch name', default: story.dashed_title)
       feature_branch_name = StringUtils.truncate(branch_name.chomp)
 
       validate_branch_name(feature_branch_name)
@@ -187,8 +182,7 @@ module StoryBranch
     # rubocop:disable Metrics/MethodLength
     def validate_branch_name(name)
       if GitUtils.similar_branch? name
-        prompt.warn('This name is very similar to an existing branch.'\
-                    ' It is recommended to use a more unique name.')
+        prompt.warn('This name is very similar to an existing branch. It is recommended to use a more unique name.')
         decision = prompt.select('What to do?') do |menu|
           menu.choice 'Rename the branch', 1
           menu.choice 'Proceed with branch name', 2
@@ -221,11 +215,11 @@ module StoryBranch
       tracker_type = @config.tracker_type
       case tracker_type
       when 'github'
-        StoryBranch::Github::Tracker.new(@config.tracker_params)
+        StoryBranch::Github::Tracker.new(**@config.tracker_params)
       when 'pivotal-tracker'
-        StoryBranch::Pivotal::Tracker.new(@config.tracker_params)
+        StoryBranch::Pivotal::Tracker.new(**@config.tracker_params)
       when 'jira'
-        StoryBranch::Jira::Tracker.new(@config.tracker_params)
+        StoryBranch::Jira::Tracker.new(**@config.tracker_params)
       end
     end
   end

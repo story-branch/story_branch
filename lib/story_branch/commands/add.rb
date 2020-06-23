@@ -45,10 +45,8 @@ module StoryBranch
 
         return unless tracker == 'jira'
 
-        # rubocop:disable Metrics/LineLength
         username = prompt.ask('Please provide username (email most of the times) for this key:',
                               required: true)
-        # rubocop:enable Metrics/LineLength
         @new_config.username = username
       end
 

@@ -12,7 +12,6 @@ module StoryBranch
   module Jira
     # JIRA API wrapper for story branch tracker
     class Tracker < StoryBranch::TrackerBase
-      # rubocop:disable Metrics/LineLength
       def initialize(tracker_domain:, project_id:, api_key:, username:, extra_query:)
         super
 
@@ -23,7 +22,6 @@ module StoryBranch
         @username = username
         @extra_query = extra_query
       end
-      # rubocop:enable Metrics/LineLength
 
       def valid?
         [@api_key, @project_id, @username, @tracker_url].none?(&:nil?)
