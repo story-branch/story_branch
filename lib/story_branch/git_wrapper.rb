@@ -36,7 +36,7 @@ module StoryBranch
       # remotes/origin/allow.... <- remote branch (remove 'remotes/origin')
       # * allow.... <- * indicates current branch (remove '* ')
       # allow <- local branch (do nothing)
-      regex = %r{(^remotes\/.*\/|\s|[*])}
+      regex = %r{(^remotes/.*/|\s|[*])}
       all_branches.map do |line|
         line = line.sub(regex, '')
         line
