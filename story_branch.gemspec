@@ -63,7 +63,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'tty-prompt', '~> 0.18'
   spec.add_runtime_dependency 'xdg', '~> 3.0'
 
-  spec.add_development_dependency 'bundler', '~> 1.17', '< 2.0'
+  spec.add_development_dependency 'bundler', '~> 2.1'
   spec.add_development_dependency 'simplecov', '~> 0.16'
   spec.add_development_dependency 'fakefs', '~> 0.14'
   spec.add_development_dependency 'git', '~> 1.5'
@@ -71,7 +71,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry', '~> 0.11'
   spec.add_development_dependency 'rake', '~> 12.3', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3'
+  spec.add_development_dependency 'rubocop', '~> 0.86'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'
-  spec.add_development_dependency 'tty', '~> 0.10'
 end
 # rubocop:enable Metrics/BlockLength
