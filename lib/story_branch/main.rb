@@ -221,11 +221,11 @@ module StoryBranch
       tracker_type = @config.tracker_type
       case tracker_type
       when 'github'
-        StoryBranch::Github::Tracker.new(@config.tracker_params)
+        StoryBranch::Github::Tracker.new(**@config.tracker_params)
       when 'pivotal-tracker'
-        StoryBranch::Pivotal::Tracker.new(@config.tracker_params)
+        StoryBranch::Pivotal::Tracker.new(**@config.tracker_params)
       when 'jira'
-        StoryBranch::Jira::Tracker.new(@config.tracker_params)
+        StoryBranch::Jira::Tracker.new(**@config.tracker_params)
       end
     end
   end

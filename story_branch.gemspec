@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
     'documentation_uri' => 'https://github.com/story-branch/story_branch/blob/master/README.md',
     'source_code_uri' => 'https://github.com/story-branch/story_branch'
   }
-  spec.required_ruby_version = ['>= 2.4', '< 2.7']
+  spec.required_ruby_version = ['>= 2.4', '< 3']
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been
@@ -69,7 +69,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'git', '~> 1.5'
   spec.add_development_dependency 'ostruct', '~> 0.1'
   spec.add_development_dependency 'pry', '~> 0.11'
-  spec.add_development_dependency 'rake', '>= 12.3.3'
+  spec.add_development_dependency 'rake', '~> 12.3', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'
   spec.add_development_dependency 'tty', '~> 0.10'
