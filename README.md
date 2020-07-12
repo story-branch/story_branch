@@ -37,7 +37,7 @@ $ story_branch -h
 
 Commands:
   story_branch configure       # Configure a new story branch configuration
-  story_branch create          # Create branch from estimated stories in pivotal tracker
+  story_branch create          # Create branch from a ticket in the tracker
   story_branch finish          # Creates a git commit message for the staged changes with a [Finishes] tag
   story_branch help [COMMAND]  # Describe available commands or one specific command
   story_branch migrate         # Migrate old story branch configuration to the new format
