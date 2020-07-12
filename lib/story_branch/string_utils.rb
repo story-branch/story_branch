@@ -11,7 +11,7 @@ module StoryBranch
         undef: :replace, # Replace anything not defined in ASCII
         replace: '-' # Use a dash for those replacements
       }
-      res.encode(Encoding.find('ASCII'), encoding_options)
+      res.encode(Encoding.find('ASCII'), **encoding_options)
     end
 
     def self.dashed(text)
