@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'story_branch/commands/add'
+require 'story_branch/commands/configure'
 require 'xdg'
 
-RSpec.describe StoryBranch::Commands::Add do
+RSpec.describe StoryBranch::Commands::Configure do
   let(:prompt) { instance_double('TTY::Prompt') }
   let(:xdg_conf) { XDG::Config.new }
   let(:config_directory) do
@@ -19,7 +19,7 @@ RSpec.describe StoryBranch::Commands::Add do
 
     FakeFS.with_fresh do
       config_directory
-      command = StoryBranch::Commands::Add.new({})
+      command = StoryBranch::Commands::Configure.new({})
       command.execute
     end
   end

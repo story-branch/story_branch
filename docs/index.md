@@ -38,8 +38,8 @@ Commands:
   story_branch finish          # Creates a git commit message for the staged changes with a [Finishes] tag
   story_branch help [COMMAND]  # Describe available commands or one specific command
   story_branch migrate         # Migrate old story branch configuration to the new format
-  story_branch start           # Mark an estimated story as started in Pivotal Tracker
-  story_branch unstart         # Mark a started story as un-started in Pivotal Tracker
+  story_branch start           # Mark an estimated story as started [Only for Pivotal Tracker]
+  story_branch unstart         # Mark a started story as un-started [Only for Pivotal Tracker]
   story_branch version         # story_branch gem version
 ```
 

@@ -12,7 +12,7 @@ module StoryBranch
     #
     # It will try to load the existing global story branch config
     # and then add the project id specified by the user.
-    class Add < StoryBranch::Command
+    class Configure < StoryBranch::Command
       def initialize(_options)
         @new_config = ConfigManager.new
       end

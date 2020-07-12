@@ -10,7 +10,7 @@ RSpec.describe '`story_branch start` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Mark an estimated story as started in Pivotal Tracker
+      Mark an estimated story as started [Only for Pivotal Tracker]
     OUT
 
     expect(output).to eq(expected_output)

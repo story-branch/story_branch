@@ -10,7 +10,7 @@ RSpec.describe '`story_branch unstart` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Mark a started story as un-started in Pivotal Tracker
+      Mark a started story as un-started [Only for Pivotal Tracker]
     OUT
 
     expect(output).to eq(expected_output)
