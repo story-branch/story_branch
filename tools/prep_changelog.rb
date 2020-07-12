@@ -26,10 +26,13 @@ def print_all_logs
   puts cleanup_tags
 
   cleanup_tags.each_with_index do |tag, idx|
-    next if idx + 1 >= cleanup_tags.length
-
     from = tag[:tag]
-    to = cleanup_tags[idx + 1][:tag]
+    if idx + 1 == cleanup_tags.length
+      to = 'HEAD'
+    else
+      from = tag[:tag]
+      to = cleanup_tags[idx + 1][:tag]
+    end
     grab_and_print_log(from, to)
   end
 end
