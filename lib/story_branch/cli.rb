@@ -18,7 +18,7 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
-    desc 'open_issue', 'Command description...'
+    desc 'open_issue', 'Open ticket in the configured tracker'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def open_issue(*)

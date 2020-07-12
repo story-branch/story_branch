@@ -10,7 +10,7 @@ RSpec.describe '`story_branch open_issue` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Command description...
+      Open ticket in the configured tracker
     OUT
 
     expect(output).to eq(expected_output)
