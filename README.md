@@ -119,14 +119,14 @@ the full list.
 
 ## Configuring PivotalTracker
 
-When running the command `story_branch add` you'll be asked 3 things:
+When running the command `story_branch configure` you'll be asked 3 things:
 1. tracker - You should select Pivotal Tracker
 2. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
 3. api key - this is your personal api key. You can get that from [your profile page](https://www.pivotaltracker.com/profile)
 
 ## Configuring Github
 
-When running the command `story_branch add` you'll be asked 3 things:
+When running the command `story_branch configure` you'll be asked 3 things:
 1. project id - This is the github repository name in the format `<owner>/<repo_name>`. E.g. `story-branch/story_branch`.
 2. tracker - You should select Github
 3. api key - this is your personal api token. You can create one under your

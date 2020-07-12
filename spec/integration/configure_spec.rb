@@ -5,7 +5,7 @@ RSpec.describe '`story_branch configure` command', type: :cli do
     output = `exe/story_branch help configure`
     expected_output = <<~OUT
       Usage:
-        story_branch add
+        story_branch configure
 
       Options:
         -h, [--help], [--no-help]  # Display usage information
