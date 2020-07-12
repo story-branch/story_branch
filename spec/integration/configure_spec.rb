@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe '`story_branch add` command', type: :cli do
-  it 'executes `story_branch help add` command successfully' do
-    output = `exe/story_branch help add`
+RSpec.describe '`story_branch configure` command', type: :cli do
+  it 'executes `story_branch help configure` command successfully' do
+    output = `exe/story_branch help configure`
     expected_output = <<~OUT
       Usage:
         story_branch add
