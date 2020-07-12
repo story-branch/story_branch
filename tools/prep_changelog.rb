@@ -17,6 +17,7 @@ def grab_and_print_log(from, to)
 end
 
 # rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 def print_all_logs
   all_tags = StoryBranch::GitWrapper.command_lines('tag --list')
   cleanup_tags = all_tags.map do |t|
@@ -36,6 +37,7 @@ def print_all_logs
     grab_and_print_log(from, to)
   end
 end
+# rubocop:enable Metrics/AbcSize
 # rubocop:enable Metrics/MethodLength
 
 all_logs = ARGV[0] == 'all'
