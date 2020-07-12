@@ -18,7 +18,7 @@ module StoryBranch
     end
     map %w[--version -v] => :version
 
-    desc 'open_issue', 'Command description...'
+    desc 'open_issue', 'Open ticket in the configured tracker'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def open_issue(*)
@@ -30,7 +30,7 @@ module StoryBranch
       end
     end
 
-    desc 'unstart', 'Mark a started story as un-started in Pivotal Tracker'
+    desc 'unstart', 'Mark a started story as un-started [Only for Pivotal Tracker]'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def unstart(*)
@@ -42,7 +42,7 @@ module StoryBranch
       end
     end
 
-    desc 'start', 'Mark an estimated story as started in Pivotal Tracker'
+    desc 'start', 'Mark an estimated story as started [Only for Pivotal Tracker]'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def start(*)
@@ -67,7 +67,7 @@ module StoryBranch
       end
     end
 
-    desc 'create', 'Create branch from estimated stories in pivotal tracker'
+    desc 'create', 'Create branch from a ticket in the tracker'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def create(*)
@@ -79,15 +79,15 @@ module StoryBranch
       end
     end
 
-    desc 'add', 'Add a new story branch configuration'
+    desc 'configure', 'Setup story branch with a new/existing project'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
-    def add(*)
+    def configure(*)
       if options[:help]
-        invoke :help, ['add']
+        invoke :help, ['configure']
       else
-        require_relative 'commands/add'
-        StoryBranch::Commands::Add.new(options).execute
+        require_relative 'commands/configure'
+        StoryBranch::Commands::Configure.new(options).execute
       end
     end
   end

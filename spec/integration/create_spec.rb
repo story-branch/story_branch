@@ -10,7 +10,7 @@ RSpec.describe '`story_branch create` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Create branch from estimated stories in pivotal tracker
+      Create branch from a ticket in the tracker
     OUT
 
     expect(output).to eq(expected_output)
