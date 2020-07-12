@@ -62,6 +62,8 @@ module StoryBranch
 
         jira_project = api.Project.find(@project_id)
         @project = Project.new(jira_project, @extra_query)
+      rescue JIRA::HTTPError => e
+        raise "failed to authenticate: #{e.inspect}"
       end
     end
   end
