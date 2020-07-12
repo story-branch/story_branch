@@ -33,7 +33,7 @@ You can see all the commands available by running
 $ story_branch -h
 
 Commands:
-  story_branch configure       # Add a new story branch configuration
+  story_branch configure       # Setup story branch with a new/existing project
   story_branch create          # Create branch from a ticket in the tracker
   story_branch finish          # Creates a git commit message for the staged changes with a [Finishes] tag
   story_branch help [COMMAND]  # Describe available commands or one specific command

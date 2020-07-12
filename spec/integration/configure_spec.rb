@@ -10,7 +10,7 @@ RSpec.describe '`story_branch configure` command', type: :cli do
       Options:
         -h, [--help], [--no-help]  # Display usage information
 
-      Add a new story branch configuration
+      Setup story branch with a new/existing project
     OUT
 
     expect(output).to eq(expected_output)
