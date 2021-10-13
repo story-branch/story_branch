@@ -10,6 +10,10 @@ workflows:
   test-and-publish:
     jobs:
       - test:
+          matrix:
+            parameters:
+              ruby_version: ["ruby:2.6-buster", "ruby:2.7-buster", "ruby:3.0-buster"]
+
           filters:
             tags:
               # this enables circleci to trigger on tags
