@@ -1,6 +1,9 @@
 version: 2.1
 
 defaults: &defaults
+  parameters:
+    ruby-version:
+      type: string
   docker:
     - image: circleci/<< parameters.ruby-version >>
   working_directory: ~/repo
