@@ -7,8 +7,9 @@ require 'pp'
 require 'fakefs/safe'
 require 'story_branch'
 require 'ostruct'
-
+require 'tty/prompt/test'
 require 'simplecov'
+
 SimpleCov.start
 
 RSpec.configure do |config|
