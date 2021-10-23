@@ -1,13 +1,5 @@
 version: 2.1
 
-defaults: &defaults
-  parameters:
-    ruby_version:
-      type: string
-  docker:
-    - image: circleci/<< parameters.ruby_version >>
-  working_directory: ~/repo
-
 workflows:
   version: 2
   test-and-publish:
@@ -23,8 +15,6 @@ workflows:
               only: /.*/
 
       - publish:
-          parameters:
-            ruby_version: "ruby:3.0-buster"
           requires:
             - test
           filters:
@@ -35,7 +25,12 @@ workflows:
 
 jobs:
   test:
-    <<: *defaults
+    parameters:
+      ruby_version:
+        type: string
+    docker:
+      - image: circleci/<< parameters.ruby_version >>
+    working_directory: ~/repo
 
     steps:
       - checkout
@@ -80,7 +75,10 @@ jobs:
             ./cc-test-reporter after-build -t simplecov --exit-code $?
 
   publish:
-    <<: *defaults
+    docker:
+      - image: circleci/ruby:3.0-buster
+    working_directory: ~/repo
+
     steps:
       - checkout
 
