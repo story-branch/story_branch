@@ -22,14 +22,14 @@ workflows:
               # this enables circleci to trigger on tags
               only: /.*/
 
-      # - publish:
-      #     requires:
-      #       - test
-      #     filters:
-      #       tags:
-      #         only: /^v[0-9]\.[0-9]\.[0-9].*/
-      #       branches:
-      #         ignore: /.*/
+      - publish:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v[0-9]\.[0-9]\.[0-9].*/
+            branches:
+              ignore: /.*/
 
 jobs:
   test:
