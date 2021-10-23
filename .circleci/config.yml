@@ -23,6 +23,8 @@ workflows:
               only: /.*/
 
       - publish:
+          parameters:
+            ruby_version: "ruby:3.0-buster"
           requires:
             - test
           filters:
