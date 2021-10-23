@@ -4,3 +4,4 @@ story_branch-*.gem
 .byebug_history
 coverage
 tools/release*.*
+Gemfile.lock
