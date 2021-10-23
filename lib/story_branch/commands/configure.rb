@@ -14,6 +14,7 @@ module StoryBranch
     # and then add the project id specified by the user.
     class Configure < StoryBranch::Command
       def initialize(_options)
+        super()
         @new_config = ConfigManager.new
       end
 

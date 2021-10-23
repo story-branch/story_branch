@@ -114,7 +114,6 @@ module StoryBranch
       true
     end
 
-    # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/MethodLength
     def update_status(current_status, next_status, action)
       stories = @tracker.stories_with_state(current_status)
@@ -139,7 +138,6 @@ module StoryBranch
       story
     end
     # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
 
     def build_stories_structure(stories)
       options = {}

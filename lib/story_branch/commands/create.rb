@@ -8,6 +8,7 @@ module StoryBranch
     # started stories in the tracker
     class Create < StoryBranch::Command
       def initialize(options)
+        super()
         @options = options
       end
 

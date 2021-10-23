@@ -7,6 +7,7 @@ module StoryBranch
     # Command to start an estimated story
     class Start < StoryBranch::Command
       def initialize(options)
+        super()
         @options = options
       end
 

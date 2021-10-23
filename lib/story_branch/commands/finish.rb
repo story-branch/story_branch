@@ -7,6 +7,7 @@ module StoryBranch
     # Command to finish a story
     class Finish < StoryBranch::Command
       def initialize(options)
+        super()
         @options = options
       end
 
