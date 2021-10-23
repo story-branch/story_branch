@@ -45,10 +45,10 @@ jobs:
             chmod +x ./cc-test-reporter
       - run: ./cc-test-reporter before-build
 
-      - restore_cache:
-          keys:
-          - v2-dependencies-{{ checksum "Gemfile.lock" }}
-          - v2-dependencies-
+      # - restore_cache:
+      #     keys:
+      #     - v2-dependencies-{{ checksum "Gemfile.lock" }}
+      #     - v2-dependencies-
 
       - run:
           name: install dependencies
@@ -56,10 +56,10 @@ jobs:
             gem install bundler
             bundle install --jobs=4 --retry=3 --path vendor/bundle
 
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
+      # - save_cache:
+      #     paths:
+      #       - ./vendor/bundle
+      #     key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: run tests
