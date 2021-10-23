@@ -4,6 +4,7 @@ require 'spec_helper'
 require 'story_branch/main'
 require 'story_branch/config_manager'
 require 'story_branch/git_utils'
+require 'tty-prompt'
 
 RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::Prompt::Test.new }
