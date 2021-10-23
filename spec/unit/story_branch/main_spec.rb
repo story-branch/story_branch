@@ -6,7 +6,7 @@ require 'story_branch/config_manager'
 require 'story_branch/git_utils'
 
 RSpec.describe StoryBranch::Main do
-  let(:prompt) { TTY::TestPrompt.new }
+  let(:prompt) { TTY::Prompt::Test.new }
   let(:sb) { StoryBranch::Main.new }
   let(:current_branch_name) { 'rspec-testing' }
   let(:branch_story_parts) { {} }

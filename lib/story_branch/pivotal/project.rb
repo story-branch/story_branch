@@ -10,17 +10,17 @@ module StoryBranch
         @project = blanket_project
       end
 
+      private
+
       # Returns an array of PT Stories (Story Class)
       # TODO: add other possible args
-      def stories(options = {}, estimated = true)
+      def stories(options = {})
         stories = if options[:id]
                     [@project.stories(options[:id]).get.payload]
                   else
                     @project.stories.get(params: options)
                   end
         stories = stories.map { |s| Story.new(s, @project) }
-        return stories if estimated == false
-
         stories.select(&:estimated)
       end
     end

@@ -1,15 +1,14 @@
-version: 2
-
-defaults: &defaults
-  docker:
-    - image: circleci/ruby:2.6.5-node
-  working_directory: ~/repo
+version: 2.1
 
 workflows:
   version: 2
   test-and-publish:
     jobs:
       - test:
+          matrix:
+            parameters:
+              ruby_version: ["ruby:2.6-buster", "ruby:2.7-buster", "ruby:3.0-buster"]
+
           filters:
             tags:
               # this enables circleci to trigger on tags
@@ -26,7 +25,12 @@ workflows:
 
 jobs:
   test:
-    <<: *defaults
+    parameters:
+      ruby_version:
+        type: string
+    docker:
+      - image: circleci/<< parameters.ruby_version >>
+    working_directory: ~/repo
 
     steps:
       - checkout
@@ -38,21 +42,11 @@ jobs:
             chmod +x ./cc-test-reporter
       - run: ./cc-test-reporter before-build
 
-      - restore_cache:
-          keys:
-          - v2-dependencies-{{ checksum "Gemfile.lock" }}
-          - v2-dependencies-
-
       - run:
           name: install dependencies
           command: |
             gem install bundler
             bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: run tests
@@ -81,7 +75,10 @@ jobs:
             ./cc-test-reporter after-build -t simplecov --exit-code $?
 
   publish:
-    <<: *defaults
+    docker:
+      - image: circleci/ruby:3.0-buster
+    working_directory: ~/repo
+
     steps:
       - checkout
 

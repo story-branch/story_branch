@@ -7,6 +7,7 @@ module StoryBranch
     # OpenIssue command is used to open the associated ticket in the browser
     class OpenIssue < StoryBranch::Command
       def initialize(options)
+        super()
         @options = options
       end
 

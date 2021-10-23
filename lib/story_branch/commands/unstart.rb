@@ -7,6 +7,7 @@ module StoryBranch
     # Command to unstart a previously started story
     class Unstart < StoryBranch::Command
       def initialize(options)
+        super()
         @options = options
       end
 
