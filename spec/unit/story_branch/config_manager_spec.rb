@@ -2,10 +2,9 @@
 
 require 'spec_helper'
 require 'story_branch/config_manager'
-require 'tty-prompt'
 
 RSpec.describe StoryBranch::ConfigManager do
-  let(:prompt) { TTY::Prompt::Test.new }
+  let(:prompt) { TTY::TestPrompt.new }
 
   let!(:local_config) do
     conf = ::TTY::Config.new
