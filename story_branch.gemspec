@@ -61,7 +61,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'tty-config', '~> 0.2', '> 0.2'
   spec.add_runtime_dependency 'tty-pager',  '~> 0.12', '> 0.12'
   spec.add_runtime_dependency 'tty-prompt', '~> 0.18', '> 0.18'
-  spec.add_runtime_dependency 'xdg', '> 3.0', '< 5'
+  spec.add_runtime_dependency 'xdg', '> 3.0', '< 6'
 
   spec.add_development_dependency 'bundler', '~> 2.1', '> 2.1'
   spec.add_development_dependency 'fakefs', '> 0.14', '< 2'
