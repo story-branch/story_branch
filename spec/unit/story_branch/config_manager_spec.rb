@@ -57,4 +57,26 @@ RSpec.describe StoryBranch::ConfigManager do
       expect(sb_config.finish_tag).to eq 'Finishes'
     end
   end
+
+  describe 'branch_username' do
+    it 'defaults to nil' do
+      expect(sb_config.branch_username).to eq nil
+    end
+
+    context 'when a value is set' do
+      let!(:global_config) do
+        FileUtils.mkdir_p Dir.home
+        conf = ::TTY::Config.new
+        conf.filename = '.story_branch'
+        conf.append_path Dir.home
+        conf.set('123456', 'api_key', value: 'myamazingkey')
+        conf.set('branch_username', value: 'zebananas')
+        conf.write(force: true)
+      end
+
+      it 'uses the value from the config' do
+        expect(sb_config.branch_username).to eq 'zebananas'
+      end
+    end
+  end
 end
