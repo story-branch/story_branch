@@ -35,7 +35,7 @@ module StoryBranch
     end
 
     def branch_username
-      @branch_username ||= @config.fetch(:branch_username)
+      @branch_username ||= @config.fetch(project_key, :branch_username)
     end
 
     def finish_tag

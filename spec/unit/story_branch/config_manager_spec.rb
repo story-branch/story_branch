@@ -70,7 +70,7 @@ RSpec.describe StoryBranch::ConfigManager do
         conf.filename = '.story_branch'
         conf.append_path Dir.home
         conf.set('123456', 'api_key', value: 'myamazingkey')
-        conf.set('branch_username', value: 'zebananas')
+        conf.set('123456', 'branch_username', value: 'zebananas')
         conf.write(force: true)
       end
 
