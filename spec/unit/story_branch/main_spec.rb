@@ -21,11 +21,13 @@ RSpec.describe StoryBranch::Main do
   let(:tracker_params) { { project_id: '123456', api_key: 'myamazingkey' } }
   let(:issue_placement) { 'end' }
   let(:finish_tag) { 'Finishes' }
+  let(:branch_username) { nil }
+  # TODO: This should generate the actual config and not use mocked instances
   let(:config) do
     instance_double(
       StoryBranch::ConfigManager,
       valid?: true, tracker_type: tracker_type, tracker_params: tracker_params,
-      issue_placement: issue_placement, finish_tag: finish_tag
+      issue_placement: issue_placement, finish_tag: finish_tag, branch_username: branch_username
     )
   end
   # NOTE: When prompting for what to do in case branch name is too similar,
@@ -209,6 +211,17 @@ RSpec.describe StoryBranch::Main do
             expect(StoryBranch::GitWrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
+        end
+      end
+
+      describe 'when the project is configured to have a branch username' do
+        let(:branch_username) { 'zebananas' }
+        let(:final_branch_name) { "#{branch_username}/#{branch_name_with_id}" }
+        # NOTE: User selects proceed
+        let(:similar_branch_option) { 2 }
+
+        it 'creates the branch prefixed by the branch username' do
+          expect(StoryBranch::GitWrapper).to have_received(:create_branch).with(final_branch_name)
         end
       end
     end
