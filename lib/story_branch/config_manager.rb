@@ -34,6 +34,10 @@ module StoryBranch
       @issue_placement ||= @config.fetch(:issue_placement, default: 'End')
     end
 
+    def branch_username
+      @branch_username ||= @config.fetch(project_key, :branch_username)
+    end
+
     def finish_tag
       @finish_tag ||= @config.fetch(project_key,
                                     :finish_tag, default: 'Finishes')
