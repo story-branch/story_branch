@@ -1,3 +1,8 @@
+# 2.1.0
+Wed Jul 20 18:30:00 2022 +0800
+
+- Add configuration support to prepend branch name with a user prefix (#122)
+
 # 0.3.3
 Tue Jun 26 15:18:37 2018 +0800
 
