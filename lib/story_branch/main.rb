@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require_relative './pivotal/tracker'
-require_relative './github/tracker'
-require_relative './jira/tracker'
 require_relative './git_utils'
 require_relative './git_wrapper'
 require_relative './config_manager'
 require_relative './url_opener'
+require_relative 'tracker_initializer'
+
 require 'tty-prompt'
 
 module StoryBranch
@@ -20,7 +19,7 @@ module StoryBranch
     def initialize
       @config = ConfigManager.new
       abort(@config.errors.join("\n")) unless @config.valid?
-      @tracker = initialize_tracker
+      @tracker = StoryBranch::TrackerInitializer.initialize_tracker(config: @config)
       abort('Invalid tracker configuration setting.') unless @tracker.valid?
     end
 
@@ -208,20 +207,6 @@ module StoryBranch
 
     def current_branch
       @current_branch ||= GitWrapper.current_branch
-    end
-
-    def initialize_tracker
-      # TODO: Ideally this would be mapped out somewhere so we don't need to
-      # evaluate anything from the config here
-      tracker_type = @config.tracker_type
-      case tracker_type
-      when 'github'
-        StoryBranch::Github::Tracker.new(**@config.tracker_params)
-      when 'pivotal-tracker'
-        StoryBranch::Pivotal::Tracker.new(**@config.tracker_params)
-      when 'jira'
-        StoryBranch::Jira::Tracker.new(**@config.tracker_params)
-      end
     end
   end
   # rubocop:enable Metrics/ClassLength
