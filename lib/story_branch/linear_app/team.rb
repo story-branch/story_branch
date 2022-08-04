@@ -13,7 +13,8 @@ module StoryBranch
       def stories(_options = {})
         # TODO: handle graphql errors
         response = @client.get(graphql_query)
-        stories_json = response.parsed_response['data']['team']['issues']['nodes']
+        p response.parsed_response
+        stories_json = response.parsed_response['data']['viewer']['assignedIssues']['nodes']
         stories_json.map { |story| Issue.new(story, @team_id) }
       end
 
@@ -21,23 +22,15 @@ module StoryBranch
 
       def graphql_query
         %Q(
-          query Team {
-            team(id: "#{@team_id}") {
-              id
-              name
-              issues {
+          query Issue {
+            viewer {
+              assignedIssues (filter: { team: { name: { eq: "#{@team_id}"} } }) {
                 nodes {
                   id
                   title
                   description
                   number
                   url
-                  assignee {
-                    id
-                    name
-                  }
-                  createdAt
-                  archivedAt
                 }
               }
             }
