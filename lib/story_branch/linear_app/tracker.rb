@@ -8,7 +8,7 @@ module StoryBranch
   module LinearApp
     # Linear App API wrapper for story branch tracker
     class Tracker < StoryBranch::TrackerBase
-      API_URL = 'https://api.github.com/'
+      API_URL = 'https://api.linear.app/'
 
       def initialize(project_id:, api_key:, **)
         super
