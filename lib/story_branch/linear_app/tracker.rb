@@ -41,7 +41,7 @@ module StoryBranch
       private
 
       def configure_api
-        @auth ||= self
+        client
       end
 
       def project

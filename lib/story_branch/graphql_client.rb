@@ -7,6 +7,7 @@ require_relative 'graphql_response'
 module StoryBranch
   class GraphqlClientError < StandardError; end
 
+  # Simple graphql client
   class GraphqlClient
     def initialize(api_url:, api_key:)
       @api_url = api_url

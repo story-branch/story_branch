@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Model to handle graphql response and make it more friendly. Detect if errors
+# are present in the reponse and marks the response as failed if so
+# gives a few accessors to data
 class GraphqlResponse
   def initialize(response:)
     @response = response
