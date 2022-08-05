@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 require_relative '../tracker_base'
-require_relative './team'
-require_relative './client'
+require_relative '../graphql_client'
+require_relative 'team'
 
 module StoryBranch
   module LinearApp
     # Linear App API wrapper for story branch tracker
     class Tracker < StoryBranch::TrackerBase
+      API_URL = 'https://api.github.com/'
+
       def initialize(project_id:, api_key:, **)
         super
 
@@ -33,7 +35,7 @@ module StoryBranch
       end
 
       def client
-        @client ||= StoryBranch::LinearApp::Client.new(@api_key)
+        @client ||= StoryBranch::GraphqlClient.new(api_url: API_URL, api_key: @api_key)
       end
 
       private
