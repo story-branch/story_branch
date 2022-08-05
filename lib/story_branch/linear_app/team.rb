@@ -11,11 +11,11 @@ module StoryBranch
       end
 
       def stories(_options = {})
-        # TODO: handle graphql errors
         response = @client.get(graphql_query)
-        p response.parsed_response
-        stories_json = response.parsed_response['data']['viewer']['assignedIssues']['nodes']
+        stories_json = response.data['viewer']['assignedIssues']['nodes']
         stories_json.map { |story| Issue.new(story, @team_id) }
+      rescue StoryBranch::LinearApp::ClientError => e
+        raise "Error while querying for tickets:\n#{e.message}"
       end
 
       private
