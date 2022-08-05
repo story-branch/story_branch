@@ -10,11 +10,17 @@ class GraphqlResponse
   end
 
   def success?
-    errors.nil?
+    errors.nil? && @response.success?
   end
 
   def errors
-    @errors ||= @response.parsed_response['errors']
+    return @errors if @errors
+
+    @errors = if @response.success?
+                @response.parsed_response['errors']
+              else
+                [@response.response, @response.parsed_response]
+              end
   end
 
   def full_error_messages

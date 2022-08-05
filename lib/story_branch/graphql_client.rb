@@ -13,7 +13,7 @@ module StoryBranch
       @auth = api_key
     end
 
-    def get(graphql_query:, endpoint: '/graphql')
+    def get(graphql_query:, endpoint: 'graphql')
       body_json = query_params_json(graphql_query)
 
       gql_response = HTTParty.post(graphql_endpoint(endpoint), headers: headers, body: body_json)
