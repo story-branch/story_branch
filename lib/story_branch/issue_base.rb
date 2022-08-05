@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module StoryBranch
+  # Base class to represent an issue/ticket
   class IssueBase
     attr_reader :title, :id, :html_url
 

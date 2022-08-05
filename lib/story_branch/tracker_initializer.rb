@@ -7,6 +7,8 @@ require_relative './jira/tracker'
 require_relative './linear_app/tracker'
 
 module StoryBranch
+  # helper class to find out which tracker should be initialized based on the
+  # configuration values
   class TrackerInitializer
     def self.initialize_tracker(config:)
       tracker_class = find_tracker_class(config.tracker_type)

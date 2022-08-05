@@ -4,6 +4,8 @@ require_relative 'issue'
 
 module StoryBranch
   module LinearApp
+    # LinearApp groups tickets in teams, so this is the team representation in
+    # story branch. It's equivalent to a project
     class Team
       def initialize(team_id, client)
         @team_id = team_id
@@ -20,8 +22,8 @@ module StoryBranch
 
       private
 
-      def graphql_query
-        %Q(
+      def graphql_query # rubocop:disable Metrics/MethodLength
+        %(
           query Issue {
             viewer {
               assignedIssues (filter: { team: { name: { eq: "#{@team_id}"} } }) {
