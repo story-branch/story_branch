@@ -2,6 +2,7 @@
 
 require_relative '../config_manager'
 require_relative '../command'
+require_relative '../constants'
 require 'tty-config'
 require 'tty-prompt'
 
@@ -73,12 +74,7 @@ module StoryBranch
       def tracker
         return @tracker if @tracker
 
-        trackers = {
-          'Pivotal Tracker' => 'pivotal-tracker',
-          'Github' => 'github',
-          'JIRA' => 'jira'
-        }
-        @tracker = prompt.select('Which tracker are you using?', trackers)
+        @tracker = prompt.select('Which tracker are you using?', StoryBranch::AVAILABLE_TRACKERS)
       end
     end
   end
