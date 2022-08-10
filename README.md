@@ -116,9 +116,25 @@ While
 
 `issue_placement: End`
 
-`story_branch create` will create a branch in the format: `<issue_number>-<issue_title>`
+`story_branch create` will create a branch in the format: `<issue_title>-<issue_number>`
 
+##### Branch username
 
+In some cases your workflow requires you to have an identifier prefixing the branch name.
+You can configure that by setting the configuration `branch_username` under your project's
+name in the global `story_branch.yml` file (`defaults to: ~/.config/.story_branch.yml`)
+
+E.g.
+
+```
+story-branch/story_branch:
+  api_key: my_fantastic_api_key
+  branch_username: rui
+```
+
+Doing so, when running `story_branch create`, it will create a branch in the format: `rui/<issue_number>-<issue_title>`
+
+Naturally, the issue number will be placed based on the issue placement setting
 
 ##### Finish tag
 
