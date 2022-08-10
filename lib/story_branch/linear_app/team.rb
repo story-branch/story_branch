@@ -16,7 +16,7 @@ module StoryBranch
         response = @client.get(graphql_query: graphql_query)
         stories_json = response.data['viewer']['assignedIssues']['nodes']
         stories_json.map { |story| Issue.new(story, @team_id) }
-      rescue StoryBranch::GraphqlClientError => e
+      rescue StoryBranch::Graphql::Error => e
         raise "Error while querying for tickets:\n#{e.message}"
       end
 
