@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require 'story_branch-graphql'
 require_relative '../tracker_base'
-require_relative '../graphql_client'
 require_relative 'team'
 
 module StoryBranch
@@ -35,7 +35,7 @@ module StoryBranch
       end
 
       def client
-        @client ||= StoryBranch::GraphqlClient.new(api_url: API_URL, api_key: @api_key)
+        @client ||= StoryBranch::Graphql::Client.new(api_url: API_URL, api_key: @api_key)
       end
 
       private

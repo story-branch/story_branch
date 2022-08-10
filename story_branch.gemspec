@@ -57,6 +57,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'damerau-levenshtein', '~> 1.3', '> 1.3'
   spec.add_runtime_dependency 'httparty', '>0'
   spec.add_runtime_dependency 'jira-ruby', '> 1.7', '< 3'
+  spec.add_runtime_dependency 'story_branch-graphql', '~> 0.0.1'
   spec.add_runtime_dependency 'thor', '> 0.20', '< 2'
   spec.add_runtime_dependency 'tty-command', '~> 0.8', '> 0.8'
   spec.add_runtime_dependency 'tty-config', '~> 0.2', '> 0.2'
