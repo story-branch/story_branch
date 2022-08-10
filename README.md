@@ -2,6 +2,29 @@
 [![CircleCI](https://circleci.com/gh/story-branch/story_branch/tree/master.svg?style=svg)](https://circleci.com/gh/story-branch/story_branch/tree/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7dbd75908417656853d7/maintainability)](https://codeclimate.com/github/story-branch/story_branch/maintainability)
 
+# Table of Contents
+
+* [Installing](#installing)
+* [Usage](#usage)
+* [Commands available](#commands-available)
+* [Commentary](#commentary)
+    * [Configuration](#configuration)
+        * [Configuring PivotalTracker](#configuring-pivotaltracker)
+        * [Configuring Github](#configuring-github)
+        * [Configuring JIRA](#configuring-jira)
+        * [Configuring LinearApp](#configuring-linearapp)
+        * [Available settings](#available-settings)
+            * [Issue placement](#issue-placement)
+            * [Branch username](#branch-username)
+            * [Finish tag](#finish-tag)
+    * [Creating a new branch following the naming convention](#creating-a-new-branch-following-the-naming-convention)
+    * [PivotalTracker specific commands](#pivotaltracker-specific-commands)
+* [Migrating](#migrating)
+    * [Old configuration](#old-configuration)
+    * [Old commands](#old-commands)
+* [Contributing](#contributing)
+
+
 # Story Branch
 
 Story branch is a CLI application that interacts with Pivotal Tracker, Github and Jira
