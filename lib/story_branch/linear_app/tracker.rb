@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'story_branch-graphql'
+require 'story_branch/graphql'
 require_relative '../tracker_base'
 require_relative 'team'
 
