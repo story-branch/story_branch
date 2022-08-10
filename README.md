@@ -46,25 +46,81 @@ Commands:
   story_branch version         # story_branch gem version
 ```
 
-## Settings
+## Commentary
 
-Story branch has a command available that will help you creating the configurations
-for the projects, but essentially you'll be asked for the pivotal tracker project id and your api key.
+`story_branch configure`: Step by step configuration of a new tracker for your project
 
-### Configuring the project id
+### Configuration
 
-The project id you can get it easily from the url when viewing the project.
-This value will be stored in the local configuration file that will be committed
-to the working repository
+The configuration is split into two different files: a `.story_branch.yml` in the root folder
+of the project where you're configuring the tool and a `.story_branch.yml` in user's home directory.
 
-### Configuring the api key
+For the management of the home directory, story_branch relies on [XDG](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+specification, so if configured, it'll be installed under `~/.config` or whatever your machine
+specifies.
 
-The api key you can get it from your account settings.
-This value will be stored in your global configuration file that typically is
-not shared with your co-workers in the repository. This way, each user will
-be properly identified in the tracker
+The idea behind the two files is that the one in the root of the project should be committed to your
+repository and defines basic tracker configuration settings to be shared across the contributors
+to your repository. These configuration settings include the tracker type, project id in the tracker,
+where you want the ticket number to be placed amongst others.
 
-### Configuring the finish tag
+The file under your config directory is meant to be stored only locally as it will contain the api
+keys needed for story branch to access your tracker. The story_branch file under your config directory
+should not be published anywhere.
+
+#### Configuring PivotalTracker
+
+When running the command `story_branch configure` you'll be asked 3 things:
+1. tracker - You should select Pivotal Tracker
+2. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
+3. api key - this is your personal api key. You can get that from [your profile page](https://www.pivotaltracker.com/profile)
+
+#### Configuring Github
+
+When running the command `story_branch configure` you'll be asked 3 things:
+1. tracker - You should select Github
+2. project id - This is the github repository name in the format `<owner>/<repo_name>`. E.g. `story-branch/story_branch`.
+3. api key - this is your personal api token. You can create one under your [developer profile tokens page](https://github.com/settings/tokens)
+
+#### Configuring JIRA
+
+The configuration for JIRA is slightly more complex as the endpoint changes according
+to your project setup. You will need an API token, which you can create a new one in your [JIRA id management page](https://id.atlassian.com/manage/api-tokens)
+1. tracker - You should select JIRA
+2. JIRA's subdomain - you should type the JIRA's subdomain that you use to access in your browser. E.g I'd type perxtechnologies to access to <https://perxtechnologies.atlassian.net>
+3. JIRA's project key - this should match which project you want to fetch the issues from. E.g. PW is the key for my Project Whistler, so I'd type PW
+4. API key that you should have gotten in the first description step
+5. username used for login in the JIRA usually. If you use google email authentication, the username should be your email
+
+#### Configuring LinearApp
+
+When running the command `story_branch configure` you'll be asked 3 things:
+1. tracker - You should select LinearApp
+2. project id - This should be your team's id.
+3. api key - this is your personal api token. You can create one under your [account API settings](https://linear.app/settings/api)
+
+#### Available settings
+
+##### Issue placement
+
+On your local config you can add a line with `issue_placement: <Beginning|End>`.
+Based on this configuration, when running `story_branch create`, the ticket id will be
+used as prefix or suffix on the branch name.
+
+E.g.
+`issue_placement: Beginning`
+
+`story_branch create` will create a branch in the format: `<issue_number>-<issue_title>`
+
+While
+
+`issue_placement: End`
+
+`story_branch create` will create a branch in the format: `<issue_number>-<issue_title>`
+
+
+
+##### Finish tag
 
 On your local config you can add a line with `finish_tag: <Some random word>`.
 This tag will be used in the commit message when running `story_branch finish`.
@@ -75,28 +131,11 @@ E.g.
 `story_branch finish` will make a commit with the message
 `[Resolves #12313] story title`
 
+### Creating a new branch following the naming convention
 
-### .story_branch files
-
-When configuring story branch, it will create two .story_branch.yml files: one in
-your home folder (`~/`) and one in your project's root (`./`).
-The one in your home folder will be used to store the different project's configurations
-such as which api key to use. This is done so you don't need to commit your
-api key to the repository but still be able to use different keys in case you
-have different accounts.
-
-The one in your project root will keep a reference to the project configuration.
-For now, this reference is the project id. This file can be safely committed to
-the repository and shared amongst your co-workers.
-
-## Commentary
-
-`story_branch create`: Creates a git branch with automatic reference to a
-Pivotal Tracker Story. It will get started stories from your active
-project. You can enter text and press TAB to search for a story
-name, or TAB to show the full list. It will then suggest an editable
-branch name. When the branch is created the `story_id` will
-be appended to it.
+`story_branch create`: Creates a git branch with automatic reference to a tracker ticket.
+The tickets/stories that will be fetched will depend on the project type. Once you choose the
+ticket to work on, a new branch will be created based on the ticket title and id.
 
 e.g. `my-story-name-1234567`
 
@@ -107,6 +146,8 @@ e.g: `[Finishes #1234567] My story name`
 You must stage all changes (or stash them) first. Note the commit will not
 be pushed. Note: You'll be able to bail out of the commit.
 
+### PivotalTracker specific commands
+
 `story_branch start`: Start a story in Pivotal Tracker from the terminal.
 It'll get all un-started stories in your current project. You can
 enter text and press TAB to search for a story name, or TAB to show
@@ -116,31 +157,6 @@ the full list.
 It'll get all started stories in your current project. You can
 enter text and press TAB to search for a story name, or TAB to show
 the full list.
-
-## Configuring PivotalTracker
-
-When running the command `story_branch configure` you'll be asked 3 things:
-1. tracker - You should select Pivotal Tracker
-2. project id - This can be fetched from the PivotalTracker url. E.g in the url `https://www.pivotaltracker.com/n/projects/651417`, the project id would be `651417`
-3. api key - this is your personal api key. You can get that from [your profile page](https://www.pivotaltracker.com/profile)
-
-## Configuring Github
-
-When running the command `story_branch configure` you'll be asked 3 things:
-1. project id - This is the github repository name in the format `<owner>/<repo_name>`. E.g. `story-branch/story_branch`.
-2. tracker - You should select Github
-3. api key - this is your personal api token. You can create one under your
-[developer profile tokens page](https://github.com/settings/tokens)
-
-## Configuring JIRA
-
-The configuration for JIRA is slightly more complex as the endpoint changes according
-to your project setup. You will need an API token, which you can create a new one in your [JIRA id management page](https://id.atlassian.com/manage/api-tokens)
-1. tracker - You should select JIRA
-2. JIRA's subdomain - you should type the JIRA's subdomain that you use to access in your browser. E.g I'd type perxtechnologies to access to https://perxtechnologies.atlassian.net
-3. JIRA's project key - this should match which project you want to fetch the issues from. E.g. PW is the key for my Project Whistler, so I'd type PW
-4. API key that you should have gotten in the first description step
-5. username used for login in the JIRA usually. If you use google email authentication, the username should be your email
 
 ## Migrating
 
