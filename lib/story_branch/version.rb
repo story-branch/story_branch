@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module StoryBranch
-  VERSION = '2.2.0alpha'
+  VERSION = '2.2.0'
 end

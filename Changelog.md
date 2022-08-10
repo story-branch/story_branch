@@ -1,3 +1,11 @@
+# 2.2.0
+
+Wed Aug 11 07:37:00 2022 +0800
+
+- Add support for linear.app (#127)
+  - Adds dependency on story branch's graphql client
+- Update README to match closer to current gem behavior
+
 # 2.1.0
 Wed Jul 20 18:30:00 2022 +0800
 
