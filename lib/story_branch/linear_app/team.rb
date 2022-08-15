@@ -26,7 +26,7 @@ module StoryBranch
         %(
           query Issue {
             viewer {
-              assignedIssues (filter: { team: { name: { eq: "#{@team_id}"} } }) {
+              assignedIssues (filter: { team: { key: { eq: "#{@team_id}"} } }) {
                 nodes {
                   id
                   title
