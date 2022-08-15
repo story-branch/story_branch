@@ -22,21 +22,7 @@ RSpec.describe StoryBranch::LinearApp::Team do
   end
 
   let(:expected_graphql_query) do
-    %(
-      query Issue {
-        viewer {
-          assignedIssues (filter: { team: { key: { eq: "#{team_key}"} } }) {
-            nodes {
-              id
-              title
-              description
-              number
-              url
-            }
-          }
-        }
-      }
-    ).squeeze
+    "\n query Issue {\n viewer {\n assignedIssues (filter: { team: { key: { eq: \"BAN\"} } }) {\n nodes {\n id\n title\n description\n number\n url\n }\n }\n }\n }\n "
   end
 
   before do
