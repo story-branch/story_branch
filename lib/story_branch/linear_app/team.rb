@@ -37,7 +37,7 @@ module StoryBranch
               }
             }
           }
-        )
+        ).squeeze
       end
     end
   end
