@@ -16,6 +16,7 @@ module StoryBranch
         # NOTE: project should be the representation of linear app team
         @team_id = project_id
         @api_key = api_key
+        @issue_regex = Regexp.new("#{@team_id}-(\\d+)")
       end
 
       def valid?
