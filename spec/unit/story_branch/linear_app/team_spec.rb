@@ -9,20 +9,22 @@ RSpec.describe StoryBranch::LinearApp::Team do
   let(:team_key) { 'BAN' }
   let(:stories) do
     OpenStruct.new(data: {
-      'viewer' => {
-        'assignedIssues' => {
-          'nodes' => [
-            'title' => 'Hello',
-            'number' => '123123',
-            'url' => 'https://googl.e'
-          ]
-        }
-      }
-    })
+                     'viewer' => {
+                       'assignedIssues' => {
+                         'nodes' => [
+                           'title' => 'Hello',
+                           'number' => '123123',
+                           'url' => 'https://googl.e'
+                         ]
+                       }
+                     }
+                   })
   end
 
   let(:expected_graphql_query) do
+    # rubocop:disable Layout/LineLength
     "\n query Issue {\n viewer {\n assignedIssues (filter: { team: { key: { eq: \"BAN\"} } }) {\n nodes {\n id\n title\n description\n number\n url\n }\n }\n }\n }\n "
+    # rubocop:enable Layout/LineLength
   end
 
   before do
