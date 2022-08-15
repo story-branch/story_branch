@@ -21,6 +21,24 @@ RSpec.describe StoryBranch::LinearApp::Team do
     })
   end
 
+  let(:expected_graphql_query) do
+    %(
+      query Issue {
+        viewer {
+          assignedIssues (filter: { team: { key: { eq: "#{team_key}"} } }) {
+            nodes {
+              id
+              title
+              description
+              number
+              url
+            }
+          }
+        }
+      }
+    ).squeeze
+  end
+
   before do
     allow(client).to receive(:get).and_return(stories)
   end
@@ -29,6 +47,8 @@ RSpec.describe StoryBranch::LinearApp::Team do
     it 'fetches the stories from graphql client' do
       team = described_class.new(team_key, client)
       stories = team.stories
+
+      expect(client).to have_received(:get).with(graphql_query: expected_graphql_query)
 
       expect(stories.length).to eq 1
       expect(stories[0].is_a?(StoryBranch::LinearApp::Issue)).to eq true
