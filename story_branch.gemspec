@@ -57,7 +57,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'damerau-levenshtein', '~> 1.3', '> 1.3'
   spec.add_runtime_dependency 'httparty', '>0'
   spec.add_runtime_dependency 'jira-ruby', '> 1.7', '< 3'
-  spec.add_runtime_dependency 'story_branch-graphql', '~> 0.0.1'
+  spec.add_runtime_dependency 'story_branch-graphql', '~> 0.0.2'
   spec.add_runtime_dependency 'thor', '> 0.20', '< 2'
   spec.add_runtime_dependency 'tty-command', '~> 0.8', '> 0.8'
   spec.add_runtime_dependency 'tty-config', '~> 0.2', '> 0.2'
@@ -71,9 +71,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'ostruct', '~> 0.1', '> 0.1'
   spec.add_development_dependency 'pry', '~> 0.11', '> 0.11'
   spec.add_development_dependency 'rake', '>= 12.3.3', '< 14'
-  spec.add_development_dependency 'rubocop', '~> 1.22'
   spec.add_development_dependency 'rspec', '~> 3', '> 3'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4', '> 0.4'
+  spec.add_development_dependency 'rubocop', '~> 1.22'
   spec.add_development_dependency 'simplecov', '~> 0.16', '> 0.16'
 end
 # rubocop:enable Metrics/BlockLength
