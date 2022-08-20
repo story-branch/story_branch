@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'damerau-levenshtein'
-require 'story_branch-git_wrapper'
+require 'story_branch/git_wrapper'
 
 module StoryBranch
   # Class used to interact with git. It relies on git gem as the wrapper
