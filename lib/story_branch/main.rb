@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require 'story_branch-git_wrapper'
 require_relative './git_utils'
-require_relative './git_wrapper'
 require_relative './config_manager'
 require_relative './url_opener'
 require_relative 'tracker_initializer'
