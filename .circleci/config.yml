@@ -7,7 +7,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              ruby_version: ["ruby:2.6-buster", "ruby:2.7-buster", "ruby:3.0-buster"]
+              ruby_version: ["ruby:2.6", "ruby:2.7", "ruby:3.0"]
 
           filters:
             tags:
@@ -76,7 +76,7 @@ jobs:
 
   publish:
     docker:
-      - image: cimg/ruby:3.0-buster
+      - image: cimg/ruby:3.0
     working_directory: ~/repo
 
     steps:
