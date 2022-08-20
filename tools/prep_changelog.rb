@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/story_branch/git_wrapper'
+require 'story_branch-git_wrapper'
 
 def grab_and_print_log(from, to)
   all_log = StoryBranch::GitWrapper.command("log #{from}..#{to}")

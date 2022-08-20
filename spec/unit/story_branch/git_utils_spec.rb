@@ -2,7 +2,6 @@
 
 require 'spec_helper'
 require 'story_branch/git_utils'
-require 'story_branch/git_wrapper'
 
 RSpec.describe StoryBranch::GitUtils do
   let(:distances) { [3, 4, 3, 4] }
