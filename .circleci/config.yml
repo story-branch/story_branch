@@ -29,7 +29,7 @@ jobs:
       ruby_version:
         type: string
     docker:
-      - image: circleci/<< parameters.ruby_version >>
+      - image: cimg/<< parameters.ruby_version >>
     working_directory: ~/repo
 
     steps:
@@ -76,7 +76,7 @@ jobs:
 
   publish:
     docker:
-      - image: circleci/ruby:3.0-buster
+      - image: cimg/ruby:3.0-buster
     working_directory: ~/repo
 
     steps:
