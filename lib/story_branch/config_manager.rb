@@ -3,6 +3,7 @@
 require 'tty-config'
 require 'tty-prompt'
 require 'xdg'
+require 'story_branch/git'
 
 module StoryBranch
   # Config manager is used to manage all possible configuration settings
@@ -141,7 +142,7 @@ module StoryBranch
     end
 
     def load_configs
-      @local = read_config('.')
+      @local = local_config
       xdg_conf = XDG::Config.new
       home_path = if conf_exist?(Dir.home)
                     Dir.home
@@ -149,6 +150,11 @@ module StoryBranch
                     xdg_conf.home
                   end
       @global = read_config(home_path)
+    end
+
+    def local_config
+      possible_local_paths = [Dir.pwd, StoryBranch::Git::Wrapper.command('rev-parse --show-toplevel')].uniq
+      read_config(possible_local_paths)
     end
 
     def read_config(path)
@@ -162,10 +168,13 @@ module StoryBranch
       config.persisted?
     end
 
-    def init_config(path)
+    def init_config(paths)
+      paths = Array(paths)
       config = ::TTY::Config.new
       config.filename = CONFIG_FILENAME
-      config.append_path path
+      paths.each do |path|
+        config.append_path path
+      end
       config
     end
   end

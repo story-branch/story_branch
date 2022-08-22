@@ -79,4 +79,25 @@ RSpec.describe StoryBranch::ConfigManager do
       end
     end
   end
+
+  describe 'when the local config is not in the current path' do
+    let(:git_root_path) { '/tmp/'}
+    let!(:local_config) do
+      FileUtils.mkdir_p git_root_path
+      conf = ::TTY::Config.new
+      conf.filename = '.story_branch'
+      conf.append_path git_root_path
+      conf.set('project_id', value: %w[123456 54321])
+      conf.write(force: true)
+    end
+
+    before do
+      allow(::StoryBranch::Git::Wrapper).to receive(:command).and_return(git_root_path)
+    end
+
+    it 'is a valid configuration' do
+      expect(sb_config.valid?).to eq true
+    end
+
+  end
 end
