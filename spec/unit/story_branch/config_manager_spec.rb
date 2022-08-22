@@ -81,7 +81,7 @@ RSpec.describe StoryBranch::ConfigManager do
   end
 
   describe 'when the local config is not in the current path' do
-    let(:git_root_path) { '/tmp/'}
+    let(:git_root_path) { '/tmp/' }
     let!(:local_config) do
       FileUtils.mkdir_p git_root_path
       conf = ::TTY::Config.new
@@ -98,6 +98,5 @@ RSpec.describe StoryBranch::ConfigManager do
     it 'is a valid configuration' do
       expect(sb_config.valid?).to eq true
     end
-
   end
 end
