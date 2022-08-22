@@ -8,7 +8,7 @@ RSpec.describe StoryBranch::GitUtils do
   let(:branches) { %w[amazing-name-1 amazing-feature-2] }
 
   before do
-    allow(StoryBranch::GitWrapper).to receive(:branch_names)
+    allow(StoryBranch::Git::Wrapper).to receive(:branch_names)
       .and_return(branches)
     allow(DamerauLevenshtein).to receive(:distance).and_return(*distances)
   end
@@ -46,7 +46,7 @@ RSpec.describe StoryBranch::GitUtils do
     let(:branch) { 'amazing-feature-1' }
 
     before do
-      allow(StoryBranch::GitWrapper).to receive(:current_branch)
+      allow(StoryBranch::Git::Wrapper).to receive(:current_branch)
         .and_return(branch)
     end
 
