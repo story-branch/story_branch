@@ -41,7 +41,7 @@ RSpec.describe StoryBranch::Main do
       branch_for_story_exists?: branch_exists,
       similar_branch?: similar_branch
     )
-    allow(StoryBranch::GitWrapper).to receive_messages(
+    allow(StoryBranch::Git::Wrapper).to receive_messages(
       create_branch: true,
       current_branch: current_branch_name,
       commit: true
@@ -141,14 +141,14 @@ RSpec.describe StoryBranch::Main do
           let(:issue_placement) { 'beginning' }
 
           it 'creates the branch for the feature based on the feature name' do
-            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
         end
 
         context 'when the branch name is not longer that 40 characters' do
           it 'creates the branch for the feature based on the feature name' do
-            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
         end
@@ -160,7 +160,7 @@ RSpec.describe StoryBranch::Main do
           end
 
           it 'creates the branch for the feature based on the truncated name' do
-            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
         end
@@ -180,7 +180,7 @@ RSpec.describe StoryBranch::Main do
           let(:similar_branch_option) { 3 }
 
           it 'does not create a new branch' do
-            expect(StoryBranch::GitWrapper).to_not have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to_not have_received(:create_branch)
           end
         end
 
@@ -189,7 +189,7 @@ RSpec.describe StoryBranch::Main do
           let(:similar_branch_option) { 2 }
 
           it 'creates the branch with the similar name' do
-            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
         end
@@ -208,7 +208,7 @@ RSpec.describe StoryBranch::Main do
           end
 
           it 'creates the branch with the similar name' do
-            expect(StoryBranch::GitWrapper).to have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).to have_received(:create_branch)
               .with(branch_name_with_id)
           end
         end
@@ -221,7 +221,7 @@ RSpec.describe StoryBranch::Main do
         let(:similar_branch_option) { 2 }
 
         it 'creates the branch prefixed by the branch username' do
-          expect(StoryBranch::GitWrapper).to have_received(:create_branch).with(final_branch_name)
+          expect(StoryBranch::Git::Wrapper).to have_received(:create_branch).with(final_branch_name)
         end
       end
     end
@@ -448,7 +448,7 @@ RSpec.describe StoryBranch::Main do
           let(:answer_to_no) { true }
 
           it 'commits with the message' do
-            expect(StoryBranch::GitWrapper).to have_received(:commit)
+            expect(StoryBranch::Git::Wrapper).to have_received(:commit)
               .with(commit_message)
           end
         end
