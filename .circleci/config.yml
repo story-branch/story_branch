@@ -45,6 +45,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            rm Gemfile.lock
             gem install bundler
             bundle install --jobs=4 --retry=3 --path vendor/bundle
 
