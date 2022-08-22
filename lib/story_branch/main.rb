@@ -44,7 +44,7 @@ module StoryBranch
       commit_message = build_finish_message
       proceed = prompt.yes?("Commit with standard message? #{commit_message}")
       if proceed
-        GitWrapper.commit commit_message
+        Git::Wrapper.commit commit_message
       else
         prompt.say 'Aborted'
       end
@@ -164,7 +164,7 @@ module StoryBranch
       feature_branch_name_with_story_id = build_branch_name(branch_name, story.id)
 
       prompt.say("Creating: #{feature_branch_name_with_story_id} with #{current_branch} as parent")
-      GitWrapper.create_branch feature_branch_name_with_story_id
+      Git::Wrapper.create_branch feature_branch_name_with_story_id
     end
 
     def valid_branch_name(story)
@@ -206,7 +206,7 @@ module StoryBranch
     end
 
     def current_branch
-      @current_branch ||= GitWrapper.current_branch
+      @current_branch ||= Git::Wrapper.current_branch
     end
   end
   # rubocop:enable Metrics/ClassLength

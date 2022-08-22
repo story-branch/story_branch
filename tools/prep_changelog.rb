@@ -3,7 +3,7 @@
 require 'story_branch/git_wrapper'
 
 def grab_and_print_log(from, to)
-  all_log = StoryBranch::GitWrapper.command("log #{from}..#{to}")
+  all_log = StoryBranch::Git::Wrapper.command("log #{from}..#{to}")
 
   matches = all_log.scan(/CHANGELOG\n(.*?)--- 8< ---/m).flatten
   matches.map!(&:strip)
@@ -19,7 +19,7 @@ end
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
 def print_all_logs
-  all_tags = StoryBranch::GitWrapper.command_lines('tag --list')
+  all_tags = StoryBranch::Git::Wrapper.command_lines('tag --list')
   cleanup_tags = all_tags.map do |t|
     { cleanup_tag: t.delete('v'), tag: t }
   end
