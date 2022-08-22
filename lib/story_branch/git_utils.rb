@@ -8,7 +8,7 @@ module StoryBranch
   # and levenshtein algo to determine branch name proximity
   class GitUtils
     def self.similar_branch?(name)
-      GitWrapper.branch_names.each do |n|
+      Git::Wrapper.branch_names.each do |n|
         return true if DamerauLevenshtein.distance(n, name) < 3
 
         branch_name_match = n.match(/(.*)(-[1-9]+[0-9]*$)/)
@@ -21,11 +21,11 @@ module StoryBranch
     end
 
     def self.branch_to_story_string(regex_matcher = /.*-(\d+$)/)
-      GitWrapper.current_branch.match(regex_matcher)
+      Git::Wrapper.current_branch.match(regex_matcher)
     end
 
     def self.status?(state)
-      status = GitWrapper.status
+      status = Git::Wrapper.status
       return false unless status
 
       !status[state].empty?
