@@ -1,3 +1,17 @@
+# 2.3.0
+
+Mon Aug 22 23:55:00 2022 +0800
+
+- Moved Git::Wrapper to separate gem
+- Try to read local file from both current path and git root's directory (#136)
+
+# 2.2.1
+
+Mon Aug 15 17:36:00 2022 +0800
+
+- Fixed broken command story_branch open when using linear.app (#126)
+- Fixed linear.app graphql query to filter team by key instead of name (#130)
+
 # 2.2.0
 
 Wed Aug 11 07:37:00 2022 +0800
