@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'story_branch/git_wrapper'
+require 'story_branch/git/wrapper'
 require_relative './git_utils'
 require_relative './config_manager'
 require_relative './url_opener'
