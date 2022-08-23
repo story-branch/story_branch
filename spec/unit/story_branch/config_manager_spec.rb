@@ -4,26 +4,31 @@ require 'spec_helper'
 require 'story_branch/config_manager'
 
 RSpec.describe StoryBranch::ConfigManager do
-  let(:prompt) { TTY::Prompt::Test.new }
-
-  let!(:local_config) do
+  def create_local_config(file_path:)
     conf = ::TTY::Config.new
     conf.filename = '.story_branch'
-    conf.append_path '.'
+    conf.append_path file_path
     conf.set('project_id', value: %w[123456 54321])
     conf.write(force: true)
   end
-  let!(:global_config) do
+
+  def create_global_config(settings = [])
     FileUtils.mkdir_p Dir.home
     conf = ::TTY::Config.new
     conf.filename = '.story_branch'
     conf.append_path Dir.home
-    conf.set('123456', 'api_key', value: 'myamazingkey')
+    settings.each do |setting|
+      conf.set(setting[:project_id], setting[:key], setting[:value])
+    end
     conf.write(force: true)
   end
+
+  let(:prompt) { TTY::Prompt::Test.new }
   let(:sb_config) { described_class.new }
 
   before do
+    create_local_config('.')
+    create_global_config([{ project_id: '123456', key: 'api_key', value: 'myamazingkey' }])
     allow(::TTY::Prompt).to receive(:new).and_return(prompt)
     allow(prompt).to receive(:select).and_return '123456'
   end
@@ -60,19 +65,14 @@ RSpec.describe StoryBranch::ConfigManager do
 
   describe 'branch_username' do
     it 'defaults to nil' do
-      expect(sb_config.branch_username).to eq nil
+      expect(sb_config.branch_username).to be_nil
     end
 
     context 'when a value is set' do
-      let!(:global_config) do
-        FileUtils.mkdir_p Dir.home
-        conf = ::TTY::Config.new
-        conf.filename = '.story_branch'
-        conf.append_path Dir.home
-        conf.set('123456', 'api_key', value: 'myamazingkey')
-        conf.set('123456', 'branch_username', value: 'zebananas')
-        conf.write(force: true)
-      end
+      create_global_config(
+        [{ project_id: '123456', key: 'api_key', value: 'myamazingkey' },
+         { project_id: '123456', key: 'branch_username', value: 'zebananas' }]
+      )
 
       it 'uses the value from the config' do
         expect(sb_config.branch_username).to eq 'zebananas'
@@ -82,21 +82,14 @@ RSpec.describe StoryBranch::ConfigManager do
 
   describe 'when the local config is not in the current path' do
     let(:git_root_path) { '/tmp/' }
-    let!(:local_config) do
-      FileUtils.mkdir_p git_root_path
-      conf = ::TTY::Config.new
-      conf.filename = '.story_branch'
-      conf.append_path git_root_path
-      conf.set('project_id', value: %w[123456 54321])
-      conf.write(force: true)
-    end
 
     before do
+      create_local_config(file_path: git_root_path)
       allow(::StoryBranch::Git::Wrapper).to receive(:command).and_return(git_root_path)
     end
 
     it 'is a valid configuration' do
-      expect(sb_config.valid?).to eq true
+      expect(sb_config.valid?).to be true
     end
   end
 end
