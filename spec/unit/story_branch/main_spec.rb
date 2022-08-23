@@ -16,7 +16,7 @@ RSpec.describe StoryBranch::Main do
   let(:stories) { [] }
   let(:story_from_tracker) { nil }
   let(:answer_to_no) { false }
-  let(:fake_project) { OpenStruct.new }
+  let(:fake_project) { instance_double(StoryBranch::Pivotal::Project, stories: []) }
   let(:tracker_type) { 'pivotal-tracker' }
   let(:tracker_params) { { project_id: '123456', api_key: 'myamazingkey' } }
   let(:issue_placement) { 'end' }
@@ -35,7 +35,6 @@ RSpec.describe StoryBranch::Main do
   let(:similar_branch_option) { 3 }
 
   before do
-    allow(fake_project).to receive(:stories)
     allow(StoryBranch::GitUtils).to receive_messages(
       current_branch_story_parts: branch_story_parts,
       branch_for_story_exists?: branch_exists,
