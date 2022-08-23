@@ -7,7 +7,7 @@ require 'story_branch/git_utils'
 
 RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::Prompt::Test.new }
-  let(:sb) { StoryBranch::Main.new }
+  let(:sb) { described_class.new }
   let(:current_branch_name) { 'rspec-testing' }
   let(:branch_story_parts) { {} }
   let(:branch_exists) { false }

@@ -5,7 +5,7 @@ require 'story_branch/commands/configure'
 require 'xdg'
 
 RSpec.describe StoryBranch::Commands::Configure do
-  let(:prompt) { instance_double('TTY::Prompt') }
+  let(:prompt) { instance_double(TTY::Prompt) }
   let(:xdg_conf) { XDG::Config.new }
   let(:config_directory) do
     FileUtils.mkdir_p xdg_conf.home
@@ -19,7 +19,7 @@ RSpec.describe StoryBranch::Commands::Configure do
 
     FakeFS.with_fresh do
       config_directory
-      command = StoryBranch::Commands::Configure.new({})
+      command = described_class.new({})
       command.execute
     end
   end

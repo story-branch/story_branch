@@ -11,7 +11,7 @@ RSpec.describe StoryBranch::Commands::Finish do
   end
 
   it 'invokes story branch main finish method' do
-    command = StoryBranch::Commands::Finish.new({})
+    command = described_class.new({})
     command.execute
     expect(sb).to have_received(:story_finish)
   end

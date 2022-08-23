@@ -10,7 +10,7 @@ RSpec.describe StoryBranch::Commands::OpenIssue do
 
   before do
     allow(StoryBranch::Main).to receive(:new).and_return sb_double
-    command = StoryBranch::Commands::OpenIssue.new(options)
+    command = described_class.new(options)
     command.execute(output: output)
   end
 
