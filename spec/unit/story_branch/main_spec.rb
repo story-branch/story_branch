@@ -79,9 +79,11 @@ RSpec.describe StoryBranch::Main do
     describe 'when there is a tracker defined in config files' do
       let(:tracker_type) { 'github' }
 
-      it 'initializes the matching tracker' do
-        expect(sb.tracker).not_to be_nil
+      it 'is a valid tracker' do
         expect(sb.tracker.valid?).to be true
+      end
+
+      it 'initializes the matching tracker' do
         expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
       end
     end
