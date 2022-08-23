@@ -10,7 +10,7 @@ RSpec.describe StoryBranch::Commands::Unstart do
   end
 
   it 'invokes story branch main create method' do
-    command = StoryBranch::Commands::Unstart.new({})
+    command = described_class.new({})
     command.execute
     expect(sb).to have_received(:story_unstart)
   end

@@ -75,6 +75,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3', '> 3'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4', '> 0.4'
   spec.add_development_dependency 'rubocop', '~> 1.22'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.6'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.12'
   spec.add_development_dependency 'simplecov', '~> 0.16', '> 0.16'
 end
 # rubocop:enable Metrics/BlockLength

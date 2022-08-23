@@ -8,7 +8,7 @@ RSpec.describe StoryBranch::StringUtils do
 
   describe 'dashed' do
     it 'converts non alphabet to dash' do
-      dashed = StoryBranch::StringUtils.dashed(simple_string)
+      dashed = described_class.dashed(simple_string)
       expect(dashed).to eq 'H-e-l-l-o-W-h-o-A-r-e'
     end
   end
@@ -21,7 +21,7 @@ RSpec.describe StoryBranch::StringUtils do
       invalid_byte = "\255"
       test_string = [some_ascii, some_unicode, more_ascii, invalid_byte].join
 
-      sanitized = StoryBranch::StringUtils.sanitize(test_string)
+      sanitized = described_class.sanitize(test_string)
       result_string = 'abc---e-----------123ABC'
       expect(sanitized).to eq result_string
     end
@@ -29,7 +29,7 @@ RSpec.describe StoryBranch::StringUtils do
 
   describe 'normalised_branch_name' do
     it 'downcases the dashed string' do
-      res = StoryBranch::StringUtils.normalised_branch_name(simple_string)
+      res = described_class.normalised_branch_name(simple_string)
       expect(res).to eq 'h-e-l-l-o-w-h-o-a-r-e'
     end
   end
@@ -37,10 +37,10 @@ RSpec.describe StoryBranch::StringUtils do
   describe 'undashed' do
     it 'converts dashed string into human readable' do
       str = 'abc---e-----------123ABC'
-      res = StoryBranch::StringUtils.undashed(str)
+      res = described_class.undashed(str)
       expect(res).to eq 'Abc e 123abc'
       str = 'h-e-l-l-o-w-h-o-are-'
-      res = StoryBranch::StringUtils.undashed(str)
+      res = described_class.undashed(str)
       expect(res).to eq 'H e l l o w h o are'
     end
   end
@@ -48,19 +48,19 @@ RSpec.describe StoryBranch::StringUtils do
   describe 'truncate' do
     it 'returns the original string if the length is less than max length' do
       str = 'amazing bananas'
-      res = StoryBranch::StringUtils.truncate(str)
+      res = described_class.truncate(str)
       expect(res).to eq str
     end
 
     it 'returns the original string if the length is less than max length' do
       str = 'amazing bananas'
-      res = StoryBranch::StringUtils.truncate(str, str.length)
+      res = described_class.truncate(str, str.length)
       expect(res).to eq str
     end
 
     it 'returns the truncated string if the length is greater than max' do
       str = 'amazing bananas'
-      res = StoryBranch::StringUtils.truncate(str, 7)
+      res = described_class.truncate(str, 7)
       expect(res).to eq 'amazing'
     end
   end

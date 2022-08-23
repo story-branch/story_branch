@@ -11,7 +11,7 @@ RSpec.describe StoryBranch::Commands::Create do
   end
 
   it 'invokes story branch main create method' do
-    command = StoryBranch::Commands::Create.new({})
+    command = described_class.new({})
     command.execute
     expect(sb).to have_received(:create_story_branch)
   end

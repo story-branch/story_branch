@@ -123,10 +123,10 @@ module StoryBranch
     def tracker_domain
       return @tracker_domain if @tracker_domain
 
-      @tracker_domain = if tracker_type != 'jira'
-                          ''
-                        else
+      @tracker_domain = if tracker_type == 'jira'
                           project_key.split('|')[0]
+                        else
+                          ''
                         end
     end
 

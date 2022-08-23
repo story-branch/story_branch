@@ -12,21 +12,21 @@ RSpec.describe StoryBranch::Github::Tracker do
     describe 'when there is a repo name and an api key' do
       it 'is true' do
         tracker = described_class.new(project_id: 'reponame', api_key: 'apikey')
-        expect(tracker.valid?).to eq true
+        expect(tracker.valid?).to be true
       end
     end
 
     describe 'when there is a repo name but no api key' do
       it 'is false' do
         tracker = described_class.new(project_id: 'reponame', api_key: nil)
-        expect(tracker.valid?).to eq false
+        expect(tracker.valid?).to be false
       end
     end
 
     describe 'when there is an api key but no repo name' do
       it 'is false' do
         tracker = described_class.new(project_id: nil, api_key: 'apikey')
-        expect(tracker.valid?).to eq false
+        expect(tracker.valid?).to be false
       end
     end
   end

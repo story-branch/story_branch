@@ -7,7 +7,7 @@ require 'story_branch/git_utils'
 
 RSpec.describe StoryBranch::Main do
   let(:prompt) { TTY::Prompt::Test.new }
-  let(:sb) { StoryBranch::Main.new }
+  let(:sb) { described_class.new }
   let(:current_branch_name) { 'rspec-testing' }
   let(:branch_story_parts) { {} }
   let(:branch_exists) { false }
@@ -16,7 +16,7 @@ RSpec.describe StoryBranch::Main do
   let(:stories) { [] }
   let(:story_from_tracker) { nil }
   let(:answer_to_no) { false }
-  let(:fake_project) { OpenStruct.new }
+  let(:fake_project) { instance_double(StoryBranch::Pivotal::Project, stories: []) }
   let(:tracker_type) { 'pivotal-tracker' }
   let(:tracker_params) { { project_id: '123456', api_key: 'myamazingkey' } }
   let(:issue_placement) { 'end' }
@@ -35,7 +35,6 @@ RSpec.describe StoryBranch::Main do
   let(:similar_branch_option) { 3 }
 
   before do
-    allow(fake_project).to receive(:stories)
     allow(StoryBranch::GitUtils).to receive_messages(
       current_branch_story_parts: branch_story_parts,
       branch_for_story_exists?: branch_exists,
@@ -70,9 +69,11 @@ RSpec.describe StoryBranch::Main do
 
   describe 'tracker initialization' do
     describe 'when there is no tracker defined in config files' do
-      it 'initializes pivotal tracker' do
-        expect(sb.tracker).to_not be(nil)
-        expect(sb.tracker.valid?).to eq true
+      it 'initializes a valid tracker' do
+        expect(sb.tracker.valid?).to be true
+      end
+
+      it 'is a Pivotal::Tracker' do
         expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
       end
     end
@@ -80,9 +81,11 @@ RSpec.describe StoryBranch::Main do
     describe 'when there is a tracker defined in config files' do
       let(:tracker_type) { 'github' }
 
+      it 'is a valid tracker' do
+        expect(sb.tracker.valid?).to be true
+      end
+
       it 'initializes the matching tracker' do
-        expect(sb.tracker).to_not be(nil)
-        expect(sb.tracker.valid?).to eq true
         expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
       end
     end
@@ -108,7 +111,7 @@ RSpec.describe StoryBranch::Main do
 
     describe 'when there are features' do
       let(:stories) do
-        fake_story = OpenStruct.new(name: 'test', id: '123456')
+        fake_story = { name: 'test', id: '123456' }.with_indifferent_access
         [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
@@ -170,8 +173,8 @@ RSpec.describe StoryBranch::Main do
         let(:similar_branch) { true }
 
         it 'shows an informative message' do
-          message = 'This name is very similar to an existing branch. '\
-          'It is recommended to use a more unique name.'
+          message = 'This name is very similar to an existing branch. ' \
+                    'It is recommended to use a more unique name.'
           expect(prompt).to have_received(:warn).with(message)
         end
 
@@ -180,7 +183,7 @@ RSpec.describe StoryBranch::Main do
           let(:similar_branch_option) { 3 }
 
           it 'does not create a new branch' do
-            expect(StoryBranch::Git::Wrapper).to_not have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).not_to have_received(:create_branch)
           end
         end
 
@@ -347,7 +350,7 @@ RSpec.describe StoryBranch::Main do
       it 'does nothing' do
         # TODO: make method call return something
         res = sb.story_finish
-        expect(res).to eq nil
+        expect(res).to be_nil
       end
     end
 
@@ -355,7 +358,7 @@ RSpec.describe StoryBranch::Main do
       it 'does nothing' do
         # TODO: make method call return something
         res = sb.story_finish
-        expect(res).to eq nil
+        expect(res).to be_nil
       end
     end
 

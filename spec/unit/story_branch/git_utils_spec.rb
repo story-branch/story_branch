@@ -15,7 +15,7 @@ RSpec.describe StoryBranch::GitUtils do
 
   describe 'similar_branch?' do
     it 'determnines levenshtein distance between branch name and branch list' do
-      StoryBranch::GitUtils.similar_branch?('new-branch-name')
+      described_class.similar_branch?('new-branch-name')
       expect(DamerauLevenshtein).to have_received(:distance)
         .with('amazing-name-1', 'new-branch-name')
       expect(DamerauLevenshtein).to have_received(:distance)
@@ -30,14 +30,15 @@ RSpec.describe StoryBranch::GitUtils do
       let(:distances) { [3, 4, 3, 4] }
 
       it 'returns false' do
-        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq false
+        expect(described_class.similar_branch?('new-branch')).to be false
       end
     end
 
     describe 'when levenshtein distance is close' do
       let(:distances) { [2] }
+
       it 'returns false' do
-        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq true
+        expect(described_class.similar_branch?('new-branch')).to be true
       end
     end
   end
@@ -52,7 +53,7 @@ RSpec.describe StoryBranch::GitUtils do
 
     context 'when no regex is passed' do
       it 'returns regex matching between current branch and default regex' do
-        res = StoryBranch::GitUtils.branch_to_story_string
+        res = described_class.branch_to_story_string
         expect(res[0]).to eq branch
         expect(res[1]).to eq '1'
       end
@@ -60,8 +61,8 @@ RSpec.describe StoryBranch::GitUtils do
 
     context 'when regex is passed' do
       it 'returns regex matching between current branch and default regex' do
-        res = StoryBranch::GitUtils.branch_to_story_string(/bananas/)
-        expect(res).to eq nil
+        res = described_class.branch_to_story_string(/bananas/)
+        expect(res).to be_nil
       end
     end
   end

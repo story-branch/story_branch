@@ -5,7 +5,7 @@ require 'story_branch/commands/configure'
 require 'xdg'
 
 RSpec.describe StoryBranch::Commands::Configure do
-  let(:prompt) { instance_double('TTY::Prompt') }
+  let(:prompt) { instance_double(TTY::Prompt) }
   let(:xdg_conf) { XDG::Config.new }
   let(:config_directory) do
     FileUtils.mkdir_p xdg_conf.home
@@ -19,7 +19,7 @@ RSpec.describe StoryBranch::Commands::Configure do
 
     FakeFS.with_fresh do
       config_directory
-      command = StoryBranch::Commands::Configure.new({})
+      command = described_class.new({})
       command.execute
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe StoryBranch::Commands::Configure do
       config = TTY::Config.new
       config.append_path(xdg_conf.home)
       config.filename = '.story_branch'
-      expect(config.persisted?).to eq true
+      expect(config.persisted?).to be true
       config.read
       expect(config.fetch('123456', :api_key)).to eq 'amazingkey'
     end
@@ -38,7 +38,7 @@ RSpec.describe StoryBranch::Commands::Configure do
       config = TTY::Config.new
       config.append_path('.')
       config.filename = '.story_branch'
-      expect(config.persisted?).to eq true
+      expect(config.persisted?).to be true
       config.read
       expect(config.fetch(:project_id)).to eq ['123456']
       expect(config.fetch(:tracker)).to eq 'pivotal-tracker'
@@ -65,7 +65,7 @@ RSpec.describe StoryBranch::Commands::Configure do
       config = TTY::Config.new
       config.append_path(Dir.home)
       config.filename = '.story_branch'
-      expect(config.persisted?).to eq true
+      expect(config.persisted?).to be true
       config.read
       expect(config.fetch('1234560000', :api_key)).to eq 'amazingkey0000'
       expect(config.fetch('123456', :api_key)).to eq 'amazingkey'
@@ -76,7 +76,7 @@ RSpec.describe StoryBranch::Commands::Configure do
         config = TTY::Config.new
         config.append_path('.')
         config.filename = '.story_branch'
-        expect(config.persisted?).to eq true
+        expect(config.persisted?).to be true
         config.read
         expect(config.fetch(:project_id)).to eq %w[1234560000 123456]
       end
@@ -103,7 +103,7 @@ RSpec.describe StoryBranch::Commands::Configure do
         config = TTY::Config.new
         config.append_path('.')
         config.filename = '.story_branch'
-        expect(config.persisted?).to eq true
+        expect(config.persisted?).to be true
         config.read
         expect(config.fetch(:project_id)).to eq %w[1234560000 123456]
       end
@@ -129,7 +129,7 @@ RSpec.describe StoryBranch::Commands::Configure do
         config = TTY::Config.new
         config.append_path('.')
         config.filename = '.story_branch'
-        expect(config.persisted?).to eq true
+        expect(config.persisted?).to be true
         config.read
         expect(config.fetch(:project_id)).to eq '123456'
       end

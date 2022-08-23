@@ -57,7 +57,7 @@ RSpec.describe StoryBranch::Github::Project do
           .with(all_issues[0], blanket_project).once
         expect(StoryBranch::Github::Issue).to have_received(:new)
           .with(all_issues[1], blanket_project).once
-        expect(StoryBranch::Github::Issue).to_not have_received(:new)
+        expect(StoryBranch::Github::Issue).not_to have_received(:new)
           .with(all_issues[2], blanket_project)
       end
     end
