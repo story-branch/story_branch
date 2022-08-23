@@ -69,9 +69,11 @@ RSpec.describe StoryBranch::Main do
 
   describe 'tracker initialization' do
     describe 'when there is no tracker defined in config files' do
-      it 'initializes pivotal tracker' do
-        expect(sb.tracker).not_to be_nil
+      it 'initializes a valid tracker' do
         expect(sb.tracker.valid?).to be true
+      end
+
+      it 'is a Pivotal::Tracker' do
         expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
       end
     end
@@ -109,7 +111,7 @@ RSpec.describe StoryBranch::Main do
 
     describe 'when there are features' do
       let(:stories) do
-        fake_story = OpenStruct.new(name: 'test', id: '123456')
+        fake_story = { name: 'test', id: '123456' }.with_indifferent_access
         [StoryBranch::Pivotal::Story.new(fake_story, fake_project)]
       end
       let(:story) { stories[0] }
