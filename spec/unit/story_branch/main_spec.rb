@@ -71,8 +71,8 @@ RSpec.describe StoryBranch::Main do
   describe 'tracker initialization' do
     describe 'when there is no tracker defined in config files' do
       it 'initializes pivotal tracker' do
-        expect(sb.tracker).to_not be(nil)
-        expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker).not_to be_nil
+        expect(sb.tracker.valid?).to be true
         expect(sb.tracker.class).to eq StoryBranch::Pivotal::Tracker
       end
     end
@@ -81,8 +81,8 @@ RSpec.describe StoryBranch::Main do
       let(:tracker_type) { 'github' }
 
       it 'initializes the matching tracker' do
-        expect(sb.tracker).to_not be(nil)
-        expect(sb.tracker.valid?).to eq true
+        expect(sb.tracker).not_to be_nil
+        expect(sb.tracker.valid?).to be true
         expect(sb.tracker.class).to eq StoryBranch::Github::Tracker
       end
     end
@@ -170,8 +170,8 @@ RSpec.describe StoryBranch::Main do
         let(:similar_branch) { true }
 
         it 'shows an informative message' do
-          message = 'This name is very similar to an existing branch. '\
-          'It is recommended to use a more unique name.'
+          message = 'This name is very similar to an existing branch. ' \
+                    'It is recommended to use a more unique name.'
           expect(prompt).to have_received(:warn).with(message)
         end
 
@@ -180,7 +180,7 @@ RSpec.describe StoryBranch::Main do
           let(:similar_branch_option) { 3 }
 
           it 'does not create a new branch' do
-            expect(StoryBranch::Git::Wrapper).to_not have_received(:create_branch)
+            expect(StoryBranch::Git::Wrapper).not_to have_received(:create_branch)
           end
         end
 
@@ -347,7 +347,7 @@ RSpec.describe StoryBranch::Main do
       it 'does nothing' do
         # TODO: make method call return something
         res = sb.story_finish
-        expect(res).to eq nil
+        expect(res).to be_nil
       end
     end
 
@@ -355,7 +355,7 @@ RSpec.describe StoryBranch::Main do
       it 'does nothing' do
         # TODO: make method call return something
         res = sb.story_finish
-        expect(res).to eq nil
+        expect(res).to be_nil
       end
     end
 

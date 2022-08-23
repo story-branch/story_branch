@@ -39,7 +39,7 @@ RSpec.describe StoryBranch::LinearApp::Team do
       expect(client).to have_received(:get).with(graphql_query: expected_graphql_query)
 
       expect(stories.length).to eq 1
-      expect(stories[0].is_a?(StoryBranch::LinearApp::Issue)).to eq true
+      expect(stories[0].is_a?(StoryBranch::LinearApp::Issue)).to be true
       expect(stories[0].to_s).to eq 'BAN-123123 - Hello'
     end
   end

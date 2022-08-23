@@ -30,14 +30,15 @@ RSpec.describe StoryBranch::GitUtils do
       let(:distances) { [3, 4, 3, 4] }
 
       it 'returns false' do
-        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq false
+        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to be false
       end
     end
 
     describe 'when levenshtein distance is close' do
       let(:distances) { [2] }
+
       it 'returns false' do
-        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to eq true
+        expect(StoryBranch::GitUtils.similar_branch?('new-branch')).to be true
       end
     end
   end
@@ -61,7 +62,7 @@ RSpec.describe StoryBranch::GitUtils do
     context 'when regex is passed' do
       it 'returns regex matching between current branch and default regex' do
         res = StoryBranch::GitUtils.branch_to_story_string(/bananas/)
-        expect(res).to eq nil
+        expect(res).to be_nil
       end
     end
   end

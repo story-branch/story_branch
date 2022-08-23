@@ -4,6 +4,6 @@ require 'story_branch'
 
 RSpec.describe StoryBranch do
   it 'has a version number' do
-    expect(StoryBranch::VERSION).not_to be nil
+    expect(StoryBranch::VERSION).not_to be_nil
   end
 end

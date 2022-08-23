@@ -34,7 +34,7 @@ RSpec.describe StoryBranch::ConfigManager do
   end
 
   it 'is a valid configuration' do
-    expect(sb_config.valid?).to eq true
+    expect(sb_config.valid?).to be true
   end
 
   describe 'when there are multiple local projects configured' do
