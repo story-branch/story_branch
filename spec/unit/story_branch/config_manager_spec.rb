@@ -69,10 +69,12 @@ RSpec.describe StoryBranch::ConfigManager do
     end
 
     context 'when a value is set' do
-      create_global_config(
-        [{ project_id: '123456', key: 'api_key', value: 'myamazingkey' },
-         { project_id: '123456', key: 'branch_username', value: 'zebananas' }]
-      )
+      before do
+        create_global_config(
+          [{ project_id: '123456', key: 'api_key', value: 'myamazingkey' },
+           { project_id: '123456', key: 'branch_username', value: 'zebananas' }]
+        )
+      end
 
       it 'uses the value from the config' do
         expect(sb_config.branch_username).to eq 'zebananas'
